@@ -1,0 +1,2959 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Pemberatan Tugas Guru</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js for Visual Analysis -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- html2pdf.js for Direct Real PDF Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f1f5f9;
+    }
+
+    /* Header gradient matching SM Sains Alam Shah (ASiS) Official Royal Navy & Gold Theme */
+    .header-banner {
+      background: linear-gradient(135deg, #091a36 0%, #173b77 55%, #d97706 100%);
+      box-shadow: 0 4px 20px rgba(12, 35, 64, 0.25);
+    }
+
+    /* Custom scrollbar ASiS theme */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e40af;
+      border-radius: 4px;
+    }
+
+    /* ================= GAYA CETAKAN LANGSUNG (@MEDIA PRINT) ================= */
+    @media print {
+      /* Sembunyikan semua elemen aplikasi utama & modal semasa mencetak */
+      body > *:not(#isolatedPrintMount) {
+        display: none !important;
+      }
+
+      body {
+        background-color: #ffffff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      /* Paparkan hanya kawasan pelekap cetak rasmi */
+      #isolatedPrintMount {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+      }
+
+      #isolatedPrintMount * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      @page {
+        size: A4 portrait;
+        margin: 12mm 10mm 12mm 10mm;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 pb-12">
+
+  <!-- Main Container -->
+  <div class="max-w-7xl mx-auto p-2 sm:p-4 md:p-6">
+    
+    <!-- Outer Card Wrapper matching ASiS Royal Blue & Gold frame -->
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-blue-900/60">
+      
+      <!-- HEADER BANNER ASiS THEME (KEMAS TANPA LOGO) -->
+      <header class="header-banner py-6 px-4 sm:px-8 text-white relative text-center">
+        <div class="max-w-3xl mx-auto">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 bg-blue-950/80 border border-amber-400/60 rounded-full text-[11px] font-bold text-amber-300 uppercase tracking-widest mb-2 shadow-inner">
+            <i class="fa-solid fa-graduation-cap"></i> Kreatif • Inovatif • Produktif
+          </div>
+          <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-wide drop-shadow-md uppercase text-white leading-tight">
+            Sistem Pemberatan Tugas
+          </h1>
+          <p id="headerSubTitleLabel" class="text-amber-300 text-xs sm:text-sm md:text-base font-bold mt-1 tracking-wider drop-shadow">
+            Pengurusan & Pemantauan Beban Tugas Guru
+          </p>
+        </div>
+      </header>
+
+      <!-- NAVIGATION TABS -->
+      <nav class="bg-slate-100/95 border-b border-slate-200 p-2 overflow-x-auto">
+        <div class="flex items-center space-x-1 sm:space-x-2 min-w-max" id="navTabs">
+          <button onclick="switchTab('pentadbiran')" id="tab-pentadbiran" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition duration-150">
+            <i class="fa-solid fa-table-cells-large text-amber-400"></i> Pentadbiran
+          </button>
+          <button onclick="switchTab('kurikulum')" id="tab-kurikulum" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition duration-150">
+            <i class="fa-solid fa-book-open"></i> Kurikulum
+          </button>
+          <button onclick="switchTab('hem')" id="tab-hem" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition duration-150">
+            <i class="fa-solid fa-users"></i> HEM
+          </button>
+          <button onclick="switchTab('kokurikulum')" id="tab-kokurikulum" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition duration-150">
+            <i class="fa-solid fa-trophy"></i> KoKurikulum
+          </button>
+          <button onclick="switchTab('asrama')" id="tab-asrama" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition duration-150">
+            <i class="fa-solid fa-bed"></i> Asrama
+          </button>
+          <button onclick="switchTab('graf')" id="tab-graf" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition duration-150">
+            <i class="fa-solid fa-chart-column"></i> Analisis Graf
+          </button>
+          <button onclick="switchTab('carian')" id="tab-carian" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition duration-150">
+            <i class="fa-solid fa-magnifying-glass"></i> Carian Guru
+          </button>
+          <button onclick="switchTab('muatturun')" id="tab-muatturun" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition duration-150">
+            <i class="fa-solid fa-download"></i> Muat Turun Data
+          </button>
+          <button onclick="switchTab('setting')" id="tab-setting" class="tab-btn px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition duration-150">
+            <i class="fa-solid fa-gear"></i> Setting
+          </button>
+        </div>
+      </nav>
+
+      <!-- MAIN CONTENT PANELS -->
+      <main class="p-4 sm:p-6 md:p-8 bg-white min-h-[500px]">
+
+        <!-- ================= SECTION 1: BORANG TUGASAN ================= -->
+        <div id="section-form" class="space-y-6">
+          <div class="border-b-2 border-blue-900/20 pb-3 flex justify-between items-center flex-wrap gap-2">
+            <h2 id="sectionTitle" class="text-xl sm:text-2xl font-extrabold text-blue-950 flex items-center gap-2">
+              Bahagian Pentadbiran
+            </h2>
+            <span class="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-300 px-3 py-1 rounded-full">
+              Standard Agihan Tugas Guru ASiS
+            </span>
+          </div>
+
+          <!-- PILIH NAMA GURU & JUMLAH MATA KESELURUHAN -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
+            <div class="lg:col-span-8">
+              <label class="block text-blue-950 font-bold mb-2 text-sm sm:text-base">
+                Nama Guru
+              </label>
+              <select id="selectGuru" onchange="onSelectGuruChange()" class="w-full px-4 py-2.5 rounded-lg border-2 border-blue-800/60 focus:outline-none focus:ring-2 focus:ring-blue-600 font-medium text-slate-800 bg-white shadow-sm">
+                <option value="">-- Sila Pilih Nama Guru --</option>
+              </select>
+            </div>
+
+            <!-- KAD JUMLAH MATA (ASIS GOLD & BLUE) -->
+            <div class="lg:col-span-4">
+              <div class="bg-gradient-to-r from-amber-50 to-amber-100/70 border-2 border-amber-400 rounded-lg p-2.5 text-center flex items-center justify-center gap-2 shadow-sm">
+                <span class="text-slate-700 font-bold text-sm sm:text-base">Mata Bahagian:</span>
+                <span id="labelMataBahagian" class="text-blue-950 font-extrabold text-lg sm:text-xl">0</span>
+                <span class="text-amber-400 font-bold">|</span>
+                <span class="text-slate-700 font-bold text-sm sm:text-base">Keseluruhan:</span>
+                <span id="labelJumlahMata" class="text-blue-800 font-black text-xl sm:text-2xl">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SENARAI ROW TUGASAN DINAMIK -->
+          <div class="bg-blue-50/40 border-2 border-blue-900/20 rounded-xl p-4 sm:p-5">
+            <div id="tasksContainer" class="space-y-3">
+              <!-- Dinamik Task Rows dimasukkan di sini via JavaScript -->
+            </div>
+
+            <!-- BUTANG TAMBAH TUGASAN -->
+            <div class="mt-4">
+              <button type="button" onclick="addNewTaskRow()" class="bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold px-4 py-2 rounded-lg shadow inline-flex items-center gap-2 text-sm transition">
+                <i class="fa-solid fa-circle-plus text-blue-950"></i> Tambah Tugasan
+              </button>
+            </div>
+          </div>
+
+          <!-- BUTANG TINDAKAN (SIMPAN & KEMASKINI) -->
+          <div class="flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-slate-100">
+            <button type="button" onclick="saveCurrentDuties()" class="bg-blue-900 hover:bg-blue-950 text-white font-bold px-6 py-2.5 rounded-lg shadow-md inline-flex items-center gap-2 transition duration-150 border border-blue-700">
+              <i class="fa-regular fa-square-check text-amber-400"></i> Simpan
+            </button>
+            <button type="button" onclick="refreshCurrentForm()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-6 py-2.5 rounded-lg shadow inline-flex items-center gap-2 transition duration-150">
+              <i class="fa-solid fa-arrows-rotate"></i> Kemaskini
+            </button>
+          </div>
+        </div>
+
+        <!-- ================= SECTION 2: ANALISIS GRAF ================= -->
+        <div id="section-graf" class="hidden space-y-6">
+          <div class="border-b border-slate-200 pb-3 flex flex-wrap justify-between items-center gap-2">
+            <div>
+              <h2 class="text-2xl font-extrabold text-blue-950">Analisis Beban Tugas Guru ASiS</h2>
+              <p class="text-sm text-slate-500">Pemantauan agihan mata tugasan guru demi memastikan keadilan beban kerja.</p>
+            </div>
+            <div class="flex items-center gap-2 text-xs font-semibold">
+              <span class="px-2 py-1 bg-slate-200 text-slate-800 rounded">Rendah (&lt; 10)</span>
+              <span class="px-2 py-1 bg-blue-100 text-blue-900 rounded border border-blue-300">Seimbang (10 - 20)</span>
+              <span class="px-2 py-1 bg-amber-100 text-amber-900 rounded border border-amber-300">Optimum (21 - 28)</span>
+              <span class="px-2 py-1 bg-red-100 text-red-800 rounded border border-red-300">Tinggi (&gt; 28)</span>
+            </div>
+          </div>
+
+          <!-- PANEL PINTAS BUTANG CETAK & EKSPORT ANALISIS -->
+          <div class="bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 p-4 rounded-2xl text-white shadow-lg border border-blue-800 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="font-extrabold text-sm sm:text-base text-amber-300 flex items-center gap-2">
+                <i class="fa-solid fa-print"></i> Pusat Cetakan & Eksport Laporan Analisis
+              </h3>
+              <p class="text-xs text-blue-200">Jana dan cetak analisis rasmi mengikut format eksekutif ASiS atau portfolio tertentu.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <!-- Butang 1: Cetak Laporan Analisis Penuh -->
+              <button onclick="handlePrintAnalysis('full')" class="bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold px-3.5 py-2 rounded-lg text-xs inline-flex items-center gap-1.5 shadow transition cursor-pointer">
+                <i class="fa-solid fa-file-invoice"></i> Cetak Analisis Penuh
+              </button>
+              <!-- Butang 2: Modal Pilihan Laporan Khusus -->
+              <button onclick="openCustomAnalysisModal()" class="bg-blue-800 hover:bg-blue-700 text-white font-bold px-3.5 py-2 rounded-lg text-xs inline-flex items-center gap-1.5 shadow transition cursor-pointer border border-blue-600">
+                <i class="fa-solid fa-sliders text-amber-400"></i> Cetak Laporan Khusus...
+              </button>
+              <!-- Butang 3: Muat Turun Graf sebagai Imej PNG -->
+              <button onclick="downloadChartAsPNG()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-3.5 py-2 rounded-lg text-xs inline-flex items-center gap-1.5 shadow transition cursor-pointer">
+                <i class="fa-solid fa-image"></i> Simpan Graf (PNG)
+              </button>
+            </div>
+          </div>
+
+          <!-- STATS OVERVIEW -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+              <p class="text-xs text-blue-800 font-bold uppercase tracking-wider">Jumlah Guru</p>
+              <h3 id="statTotalGuru" class="text-2xl font-black text-blue-950 mt-1">0</h3>
+            </div>
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
+              <p class="text-xs text-amber-800 font-bold uppercase tracking-wider">Purata Beban Mata</p>
+              <h3 id="statPurataMata" class="text-2xl font-black text-amber-950 mt-1">0</h3>
+            </div>
+            <div class="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
+              <p class="text-xs text-red-700 font-bold uppercase tracking-wider">Mata Tertinggi</p>
+              <h3 id="statMaxMata" class="text-2xl font-black text-red-950 mt-1">0</h3>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-center">
+              <p class="text-xs text-slate-700 font-bold uppercase tracking-wider">Mata Terendah</p>
+              <h3 id="statMinMata" class="text-2xl font-black text-slate-900 mt-1">0</h3>
+            </div>
+          </div>
+
+          <!-- CHART CONTAINER -->
+          <div class="bg-white border rounded-xl p-4 shadow-sm">
+            <div class="h-96">
+              <canvas id="bebanChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= SECTION 3: CARIAN GURU ================= -->
+        <div id="section-carian" class="hidden space-y-6">
+          <div class="border-b border-slate-200 pb-3">
+            <h2 class="text-2xl font-extrabold text-blue-950">Carian Profil & Tugasan Guru ASiS</h2>
+            <p class="text-sm text-slate-500">Semak senarai penuh portfolio dan status mata bebanan guru.</p>
+          </div>
+
+          <div class="max-w-xl">
+            <label class="block text-sm font-bold text-slate-700 mb-2">Pilih Guru Untuk Semakan:</label>
+            <div class="flex gap-2">
+              <select id="searchGuruSelect" class="w-full px-4 py-2.5 rounded-lg border-2 border-blue-800/70 focus:outline-none text-slate-800 bg-white">
+                <option value="">-- Pilih Guru --</option>
+              </select>
+              <button onclick="renderGuruProfileCard()" class="bg-blue-900 hover:bg-blue-950 text-white font-bold px-5 py-2.5 rounded-lg text-sm shadow">
+                Cari
+              </button>
+            </div>
+          </div>
+
+          <!-- Profil Display Card -->
+          <div id="guruProfileResult" class="hidden">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- ================= SECTION 4: MUAT TURUN DATA ================= -->
+        <div id="section-muatturun" class="hidden space-y-6">
+          <div class="border-b border-slate-200 pb-3 flex justify-between items-center flex-wrap gap-3">
+            <div>
+              <h2 class="text-2xl font-extrabold text-blue-950">Muat Turun & Cetak Laporan Agihan</h2>
+              <p class="text-sm text-slate-500">Jana data agihan tugas keseluruhan dalam format CSV atau cetak laporan PDF rasmi.</p>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="exportToCSV()" class="bg-blue-900 hover:bg-blue-950 text-white font-bold px-4 py-2 rounded-lg text-sm inline-flex items-center gap-2 shadow">
+                <i class="fa-solid fa-file-csv text-amber-400"></i> Muat Turun CSV
+              </button>
+              <button onclick="handlePrintDocument('all')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-lg text-sm inline-flex items-center gap-2 cursor-pointer shadow">
+                <i class="fa-solid fa-print"></i> Cetak Dokumen
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-sm">
+            <table class="w-full text-left text-sm text-slate-700" id="summaryTable">
+              <thead class="bg-blue-950 text-white text-xs uppercase font-bold tracking-wider">
+                <tr>
+                  <th class="p-3">Bil</th>
+                  <th class="p-3">Nama Guru</th>
+                  <th class="p-3 text-center">Pentadbiran</th>
+                  <th class="p-3 text-center">Kurikulum</th>
+                  <th class="p-3 text-center">HEM</th>
+                  <th class="p-3 text-center">KoKurikulum</th>
+                  <th class="p-3 text-center">Asrama</th>
+                  <th class="p-3 text-center bg-blue-900 text-amber-300">Jumlah Mata</th>
+                  <th class="p-3 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody id="summaryTableBody" class="divide-y divide-slate-200 bg-white">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ================= SECTION 5: SETTING / TETAPAN ================= -->
+        <div id="section-setting" class="hidden space-y-6">
+          <div class="border-b border-slate-200 pb-3 flex justify-between items-center">
+            <div>
+              <h2 class="text-2xl font-extrabold text-blue-950">Tetapan Sistem</h2>
+              <p class="text-sm text-slate-500">Urus senarai guru, pilihan jawatankuasa mengikut bidang, dan mata pemberatan.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="exportFullSystemBackup()" class="text-xs bg-blue-100 hover:bg-blue-200 text-blue-900 font-bold px-3 py-1.5 rounded-lg border border-blue-300 cursor-pointer flex items-center gap-1.5">
+                <i class="fa-solid fa-file-export text-blue-700"></i> Sandaran Data (JSON)
+              </button>
+              <label for="importBackupInput" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold px-3 py-1.5 rounded-lg border border-amber-300 cursor-pointer flex items-center gap-1.5">
+                <i class="fa-solid fa-file-import text-amber-700"></i> Muat Naik Data
+              </label>
+              <input type="file" id="importBackupInput" accept=".json" class="hidden" onchange="importFullSystemBackup(event)">
+              <button onclick="promptResetDefault()" class="text-xs bg-red-100 hover:bg-red-200 text-red-700 font-bold px-3 py-1.5 rounded-lg border border-red-300 cursor-pointer">
+                <i class="fa-solid fa-arrow-rotate-left"></i> Set Semula
+              </button>
+            </div>
+          </div>
+
+          <!-- Modul Pengurusan Tugasan Mengikut Bidang ASiS -->
+          <div class="bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 rounded-2xl p-4 sm:p-5 text-white shadow-md border border-blue-900">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <div>
+                <h3 class="font-extrabold text-base sm:text-lg flex items-center gap-2 text-amber-300">
+                  <i class="fa-solid fa-list-check"></i> Pengurusan Pilihan Tugasan Mengikut Bidang
+                </h3>
+                <p class="text-xs text-blue-200">Ubah, tambah, atau buang senarai pilihan jawatankuasa / tugasan bagi setiap portfolio sekolah.</p>
+              </div>
+              <!-- Pilihan Tab Bidang dalam Setting -->
+              <div class="flex flex-wrap gap-1.5 bg-blue-950/80 p-1.5 rounded-xl border border-blue-800" id="settingBidangTabs">
+                <button type="button" onclick="changeSettingBidang('pentadbiran')" id="settab-pentadbiran" class="px-3 py-1 text-xs font-bold rounded-lg transition">Pentadbiran</button>
+                <button type="button" onclick="changeSettingBidang('kurikulum')" id="settab-kurikulum" class="px-3 py-1 text-xs font-bold rounded-lg transition">Kurikulum</button>
+                <button type="button" onclick="changeSettingBidang('hem')" id="settab-hem" class="px-3 py-1 text-xs font-bold rounded-lg transition">HEM</button>
+                <button type="button" onclick="changeSettingBidang('kokurikulum')" id="settab-kokurikulum" class="px-3 py-1 text-xs font-bold rounded-lg transition">KoKurikulum</button>
+                <button type="button" onclick="changeSettingBidang('asrama')" id="settab-asrama" class="px-3 py-1 text-xs font-bold rounded-lg transition">Asrama</button>
+              </div>
+            </div>
+
+            <!-- Borang Tambah Tugasan Baharu Bagi Bidang Terpilih -->
+            <div class="bg-white text-slate-800 rounded-xl p-3.5 mb-3 shadow-inner">
+              <div class="flex flex-col sm:flex-row gap-2">
+                <div class="flex-1">
+                  <input type="text" id="newTugasanInput" placeholder="Taip nama tugasan / jawatankuasa baharu..." class="w-full px-3.5 py-2 text-sm border-2 border-blue-900/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 font-medium">
+                </div>
+                <button type="button" onclick="addNewTugasanSetting()" class="bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold px-4 py-2 rounded-lg text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow transition flex-shrink-0">
+                  <i class="fa-solid fa-plus"></i> Tambah Tugasan
+                </button>
+              </div>
+            </div>
+
+            <!-- Senarai Tugasan Bidang Aktif -->
+            <div class="bg-white text-slate-800 rounded-xl p-3 shadow">
+              <div class="flex justify-between items-center text-xs font-bold text-slate-500 border-b pb-2 mb-2 px-2">
+                <span id="labelBidangAktifTitle">Senarai Tugasan</span>
+                <span id="labelBidangCount" class="bg-blue-100 text-blue-900 px-2.5 py-0.5 rounded-full font-extrabold border border-blue-300">0 Tugasan</span>
+              </div>
+              <div class="max-h-64 overflow-y-auto divide-y divide-slate-100 px-1" id="settingTugasanListContainer">
+                <!-- Senarai Tugasan dynamically rendered -->
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 1. Urus Senarai Guru -->
+            <div class="bg-slate-50 border rounded-xl p-4">
+              <h3 class="font-bold text-blue-950 text-base mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-user-gear text-blue-800"></i> Pengurusan Senarai Guru ASiS
+              </h3>
+              <div class="flex gap-2 mb-3">
+                <input type="text" id="newGuruInput" placeholder="Nama Guru Baharu..." class="flex-1 px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-700">
+                <button onclick="addNewGuru()" class="bg-blue-900 hover:bg-blue-950 text-white font-bold px-3 py-2 text-xs rounded-lg shadow">
+                  Tambah
+                </button>
+              </div>
+              <div class="max-h-56 overflow-y-auto divide-y divide-slate-200 border rounded-lg bg-white p-2" id="guruSettingList">
+                <!-- List Guru -->
+              </div>
+            </div>
+
+            <!-- 2. Urus Pemberatan Jawatan (Mata) -->
+            <div class="bg-slate-50 border rounded-xl p-4">
+              <div class="flex justify-between items-center mb-3">
+                <h3 class="font-bold text-blue-950 text-base flex items-center gap-2">
+                  <i class="fa-solid fa-scale-balanced text-amber-600"></i> Pengurusan Jawatan & Mata
+                </h3>
+                <span id="jawatanCountBadge" class="text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-full">0 Jawatan</span>
+              </div>
+
+              <!-- Borang Tambah Jawatan Baharu -->
+              <div class="bg-white p-2.5 rounded-lg border border-slate-300 mb-3 shadow-sm">
+                <div class="flex flex-col sm:flex-row gap-2 items-center">
+                  <input type="text" id="newJawatanNameInput" placeholder="Nama Jawatan Baharu (cth: Bendahari Kehormat)..." class="flex-1 w-full px-3 py-1.5 text-xs border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-700">
+                  <div class="flex gap-2 w-full sm:w-auto items-center">
+                    <input type="number" id="newJawatanPointsInput" placeholder="Mata" min="1" max="25" value="3" class="w-20 px-2 py-1.5 text-xs text-center font-bold border rounded-lg bg-amber-50 border-amber-300 focus:outline-none" title="Nilai Mata">
+                    <button type="button" onclick="addNewJawatan()" class="bg-blue-900 hover:bg-blue-950 text-white font-bold px-3 py-1.5 text-xs rounded-lg shadow flex items-center gap-1 flex-shrink-0 cursor-pointer">
+                      <i class="fa-solid fa-plus text-amber-400"></i> Tambah
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Senarai Jawatan & Mata Sedia Ada -->
+              <div class="max-h-64 overflow-y-auto divide-y divide-slate-200 border rounded-lg bg-white p-2" id="jawatanPointsList">
+                <!-- List Jawatan Points -->
+              </div>
+              <button onclick="saveJawatanPoints()" class="mt-3 w-full bg-blue-900 hover:bg-blue-950 text-white font-bold py-2 rounded-lg text-xs shadow cursor-pointer flex items-center justify-center gap-1.5">
+                <i class="fa-regular fa-floppy-disk text-amber-400"></i> Simpan Semua Perubahan Mata
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+
+      <!-- FOOTER KREDIT DENGAN TARIKH KEMAS KINI (SAIZ 8pt) -->
+      <footer class="bg-slate-100 border-t border-slate-200 py-2.5 px-4 text-center">
+        <p class="text-slate-600 font-medium" style="font-size: 8pt; line-height: 1.4;">
+          Disediakan oleh: <strong class="text-blue-950 font-bold">Mohd.Fauzi Sunary</strong>, Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah
+        </p>
+        <p class="text-slate-500 mt-0.5" style="font-size: 7.5pt;">
+          Tarikh Kemas Kini Sistem: <span id="footerTarikhKemaskini" class="font-semibold text-slate-700">-</span>
+        </p>
+      </footer>
+
+    </div>
+
+    <!-- MODAL EDIT NAMA TUGASAN -->
+    <div id="editTugasanModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-200 animate-in fade-in zoom-in duration-150">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 text-lg flex-shrink-0">
+            <i class="fa-solid fa-pen-to-square"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">Kemaskini Nama Tugasan</h3>
+            <p id="editTugasanCategoryLabel" class="text-xs text-blue-800 font-semibold uppercase">Bahagian Pentadbiran</p>
+          </div>
+        </div>
+        
+        <div class="mb-5">
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Tugasan / Jawatankuasa:</label>
+          <input type="text" id="editTugasanInput" class="w-full px-3.5 py-2.5 text-sm border-2 border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700 font-medium text-slate-800">
+          <p class="text-[11px] text-slate-400 mt-1.5">*Nama tugasan pada rekod guru yang sedia ada akan dikemas kini secara automatik.</p>
+        </div>
+
+        <div class="flex justify-end gap-2.5">
+          <button type="button" onclick="closeEditTugasanModal()" class="px-4 py-2 text-sm font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
+            Batal
+          </button>
+          <button type="button" id="btnSaveEditTugasan" class="px-5 py-2 text-sm font-bold rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 shadow transition flex items-center gap-1.5 cursor-pointer">
+            <i class="fa-regular fa-floppy-disk"></i> Simpan Pindaan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL EDIT JAWATAN (NAMA & MATA) -->
+    <div id="editJawatanModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-200 animate-in fade-in zoom-in duration-150">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center text-blue-900 text-lg flex-shrink-0">
+            <i class="fa-solid fa-scale-balanced"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">Kemaskini Maklumat Jawatan</h3>
+            <p class="text-xs text-slate-500 font-semibold">Ubah nama jawatan atau kadar mata pemberatan</p>
+          </div>
+        </div>
+        
+        <div class="space-y-3.5 mb-5">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Jawatan:</label>
+            <input type="text" id="editJawatanNameInput" class="w-full px-3.5 py-2 text-sm border-2 border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700 font-medium text-slate-800">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nilai Mata:</label>
+            <input type="number" id="editJawatanPointInput" min="1" max="30" class="w-28 px-3.5 py-2 text-sm text-center font-bold border-2 border-amber-300 bg-amber-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700 text-slate-800">
+          </div>
+          <p class="text-[11px] text-slate-400 leading-normal">*Tugasan sedia ada yang memegang jawatan ini akan dikemas kini namanya dan mata diselaraskan secara automatik.</p>
+        </div>
+
+        <div class="flex justify-end gap-2.5">
+          <button type="button" onclick="closeEditJawatanModal()" class="px-4 py-2 text-sm font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+            Batal
+          </button>
+          <button type="button" id="btnSaveEditJawatan" class="px-5 py-2 text-sm font-bold rounded-lg bg-blue-900 hover:bg-blue-950 text-white shadow transition flex items-center gap-1.5">
+            <i class="fa-regular fa-floppy-disk text-amber-400"></i> Simpan Jawatan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOM CONFIRMATION MODAL (TIADA PENGGUNAAN CONFIRM/ALERT) -->
+    <div id="confirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-200 animate-in fade-in zoom-in duration-150">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-11 h-11 rounded-full bg-red-100 flex items-center justify-center text-red-600 text-xl flex-shrink-0">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <div>
+            <h3 id="modalTitle" class="text-lg font-bold text-slate-900">Pengesahan Tindakan</h3>
+            <p id="modalDescription" class="text-xs text-slate-500 font-medium">Sila sahkan pilihan anda di bawah</p>
+          </div>
+        </div>
+        
+        <div id="modalMessage" class="text-sm text-slate-600 mb-6 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          Adakah anda pasti?
+        </div>
+
+        <div class="flex justify-end gap-2.5">
+          <button type="button" onclick="closeConfirmModal()" class="px-4 py-2 text-sm font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
+            Batal
+          </button>
+          <button type="button" id="modalBtnConfirm" class="px-5 py-2 text-sm font-bold rounded-lg bg-red-600 hover:bg-red-700 text-white shadow transition flex items-center gap-1.5 cursor-pointer">
+            <i class="fa-solid fa-check"></i> Ya, Teruskan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL PILIHAN CETAKAN ANALISIS KHUSUS -->
+    <div id="customAnalysisModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 border border-slate-200 animate-in fade-in zoom-in duration-150">
+        <div class="flex items-center justify-between border-b pb-3 mb-4">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-900 text-lg">
+              <i class="fa-solid fa-filter"></i>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Pilihan Laporan Analisis Khusus</h3>
+              <p class="text-xs text-slate-500">Pilih jenis tapisan analisis yang ingin dicetak atau dieksport.</p>
+            </div>
+          </div>
+          <button onclick="closeCustomAnalysisModal()" class="text-slate-400 hover:text-slate-700 text-xl leading-none">&times;</button>
+        </div>
+
+        <div class="space-y-4 text-sm">
+          <!-- Pilihan 1: Tapis Mengikut Kategori Status Beban -->
+          <div class="p-3.5 bg-slate-50 border rounded-xl">
+            <label class="block font-bold text-slate-800 text-xs uppercase mb-1.5 flex items-center gap-1.5">
+              <i class="fa-solid fa-layer-group text-blue-900"></i> Laporan Mengikut Status Beban:
+            </label>
+            <div class="flex gap-2">
+              <select id="filterStatusAnalysisSelect" class="flex-1 px-3 py-2 text-xs border rounded-lg bg-white focus:ring-1 focus:ring-blue-700 focus:outline-none font-medium">
+                <option value="Tinggi">Guru Beban Tinggi / Berat (> 28 Mata)</option>
+                <option value="Optimum">Guru Beban Optimum (21 - 28 Mata)</option>
+                <option value="Seimbang">Guru Beban Seimbang (10 - 20 Mata)</option>
+                <option value="Rendah">Guru Beban Ringan (< 10 Mata)</option>
+              </select>
+              <button type="button" onclick="executeFilterStatusPrint()" class="bg-blue-900 hover:bg-blue-950 text-white font-bold px-3 py-2 rounded-lg text-xs shadow flex items-center gap-1">
+                <i class="fa-solid fa-print text-amber-400"></i> Cetak
+              </button>
+            </div>
+          </div>
+
+          <!-- Pilihan 2: Tapis Mengikut Bidang Khusus -->
+          <div class="p-3.5 bg-slate-50 border rounded-xl">
+            <label class="block font-bold text-slate-800 text-xs uppercase mb-1.5 flex items-center gap-1.5">
+              <i class="fa-solid fa-briefcase text-blue-900"></i> Laporan Agihan Mengikut Bidang Sahaja:
+            </label>
+            <div class="flex gap-2">
+              <select id="filterBidangAnalysisSelect" class="flex-1 px-3 py-2 text-xs border rounded-lg bg-white focus:ring-1 focus:ring-blue-700 focus:outline-none font-medium">
+                <option value="pentadbiran">Bahagian Pentadbiran</option>
+                <option value="kurikulum">Bahagian Kurikulum</option>
+                <option value="hem">Bahagian Hal Ehwal Murid (HEM)</option>
+                <option value="kokurikulum">Bahagian KoKurikulum</option>
+                <option value="asrama">Bahagian Asrama</option>
+              </select>
+              <button type="button" onclick="executeFilterBidangPrint()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-2 rounded-lg text-xs shadow flex items-center gap-1">
+                <i class="fa-solid fa-print"></i> Cetak
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-5 pt-3 border-t flex justify-end">
+          <button type="button" onclick="closeCustomAnalysisModal()" class="px-4 py-2 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700">
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL CETAKAN RASMI (PRINT PREVIEW MODAL DENGAN FALLBACK) -->
+    <div id="printModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 hidden">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-slate-200">
+        <!-- Header Modal Cetak ASiS Theme -->
+        <div class="bg-blue-950 text-white px-5 py-3.5 flex justify-between items-center flex-shrink-0 border-b-2 border-amber-400">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-print text-amber-400 text-lg"></i>
+            <h3 id="printModalTitle" class="font-bold text-base">Pratonton Dokumen Cetakan & PDF</h3>
+          </div>
+          <button onclick="closePrintModal()" class="text-slate-300 hover:text-white text-xl px-2 py-1 transition">&times;</button>
+        </div>
+
+        <!-- Toolbar Tindakan Cetak -->
+        <div class="bg-slate-100 p-3 border-b flex flex-wrap justify-between items-center gap-2 flex-shrink-0">
+          <p class="text-xs text-slate-600 font-medium">
+            <i class="fa-solid fa-circle-check text-blue-700 mr-1"></i> Format A4 rasmi. Sila pilih kaedah cetakan:
+          </p>
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- 1. Jana & Muat Turun PDF Fizikal Terus -->
+            <button onclick="downloadDirectPDF()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-3.5 py-1.5 rounded-lg text-xs inline-flex items-center gap-1.5 shadow transition">
+              <i class="fa-solid fa-file-pdf"></i> Muat Turun Fail PDF (.pdf)
+            </button>
+            <!-- 2. Buka Paparan Cetak Tanpa Sekatan di Tab Baharu -->
+            <button onclick="openPrintInNewTab()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-3 py-1.5 rounded-lg text-xs inline-flex items-center gap-1.5 shadow transition">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Tab Cetakan Bebas
+            </button>
+            <!-- 3. Cetak Terus ke Printer Fizikal -->
+            <button id="btnDirectPrinter" onclick="executeBrowserPrint()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-1.5 rounded-lg text-xs inline-flex items-center gap-1.5 shadow transition cursor-pointer">
+              <i class="fa-solid fa-print"></i> Cetak ke Printer Sekarang
+            </button>
+          </div>
+        </div>
+
+        <!-- Kandungan Kertas Dokumen (Scrollable) -->
+        <div class="p-4 sm:p-6 overflow-y-auto bg-slate-100/60 flex-1 flex justify-center">
+          <div id="printableArea" class="bg-white w-full max-w-[210mm] p-6 sm:p-10 shadow-md border border-slate-300 text-slate-900 font-sans text-xs sm:text-sm">
+            <!-- Dokumen rasmi dijana secara automatik di sini -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTIFICATION TOAST BOX -->
+    <div id="toastMessage" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 transform translate-y-24 opacity-0 transition duration-300 pointer-events-none">
+      <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+      <span id="toastText" class="text-sm font-semibold">Tindakan Berjaya!</span>
+    </div>
+
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // DATA DEFAULT AWAL SISTEM
+    const DEFAULT_DATA = {
+      senaraiGuru: [
+        "EN. AHMAD RAZALI BIN ISMAIL",
+        "PN. SITI NORAINI BINTI MUSA",
+        "EN. MOHD FADZIL BIN OTHMAN",
+        "PN. NORAZLINA BINTI HASHIM",
+        "EN. TAN CHEE KEONG",
+        "PN. KAVITHA A/P SUBRAMANIAM",
+        "CIK NURUL HUDA BINTI DAUD",
+        "EN. WAN MOHD ZAMRI BIN WAN ALI"
+      ],
+      jawatanMata: {
+        "Ketua Warden": 6,
+        "Penolong Ketua Warden": 5,
+        "Warden Asrama": 5,
+        "Penyelaras / Ketua": 5,
+        "Penolong Penyelaras": 4,
+        "Setiausaha": 4,
+        "Penolong Setiausaha": 3,
+        "Bendahari": 3,
+        "Ahli Jawatankuasa (AJK)": 2,
+        "Juruaudit": 2,
+        "Guru Penasihat": 3,
+        "Jurulatih / Pengadil": 4,
+        "Guru Bertugas Asrama": 3
+      },
+      tugasanPortfolio: {
+        pentadbiran: [
+          "JK Pengurusan Sekolah",
+          "JK Kewangan & Akaun Sekolah",
+          "JK Pengurusan Aset & Stok (JKPAK)",
+          "JK Latihan Dalam Perkhidmatan (LDP)",
+          "JK SKPM Kualiti",
+          "JK Maklumat Sekolah & Data (JPMS)",
+          "JK Bilik-Bilik Khas",
+          "JK Protokol & Majlis Rasmi"
+        ],
+        kurikulum: [
+          "Panitia Bahasa Melayu",
+          "Panitia Bahasa Inggeris",
+          "Panitia Matematik",
+          "Panitia Sains",
+          "Panitia Pendidikan Islam",
+          "JK Pentaksiran & Peperiksaan (SAPS / PBD)",
+          "JK Jadual Waktu & MMI",
+          "JK Pusat Sumber Sekolah (PSS)",
+          "JK STEM & Inovasi",
+          "JK Pemulihan Khas"
+        ],
+        hem: [
+          "JK Disiplin & Pengawas",
+          "JK Bimbingan & Kaunseling",
+          "JK Kebajikan Murid (BAP / KWAMP)",
+          "JK Skim Pinjaman Buku Teks (SPBT)",
+          "JK Keselamatan & Kebersihan (3K)",
+          "JK Kantin Sekolah",
+          "JK Rancangan Makanan Tambahan (RMT)",
+          "JK Pendaftaran Murid & APDM"
+        ],
+        kokurikulum: [
+          "Kelab Bahasa & Budaya",
+          "Kelab Robotik & STEM",
+          "Kelab Doktor Muda",
+          "Pasukan Pengakap",
+          "Kadet Remaja Sekolah (KRS)",
+          "Persatuan Bulan Sabit Merah (BSMM)",
+          "Kelab Bola Sepak & Futsal",
+          "Kelab Bola Jaring",
+          "Kelab Badminton",
+          "JK Sukan Tahunan Sekolah",
+          "JK Pembangunan Bakat & Ko-Akademik"
+        ],
+        asrama: [
+          "Pengurusan Warden & Disiplin Asrama",
+          "JK Pengurusan Dewan Makan Asrama",
+          "JK Kebersihan, Keceriaan & 3K Asrama",
+          "JK Program Kerohanian & Moral Asrama",
+          "JK Sukan, Riadah & Rekreasi Asrama",
+          "JK Kelas Bimbingan & Akademik Asrama (Prep)",
+          "JK Pendaftaran, Penempatan & Data Asrama",
+          "JK Kesihatan & Kebajikan Murid Asrama"
+        ]
+      },
+      // Rekod Agihan: { "Nama Guru": { pentadbiran: [], kurikulum: [], hem: [], kokurikulum: [], asrama: [] } }
+      agihanTugas: {}
+    };
+
+    // Global state
+    let state = {
+      activeTab: "pentadbiran", // pentadbiran, kurikulum, hem, kokurikulum, asrama, graf, carian, muatturun, setting
+      settingActiveBidang: "pentadbiran", // Portfolio aktif di dalam panel Tetapan Tugasan
+      selectedGuru: "",
+      senaraiGuru: [],
+      jawatanMata: {},
+      tugasanPortfolio: {},
+      agihanTugas: {},
+      tarikhKemaskini: ""
+    };
+
+    let editingTaskContext = {
+      bidang: "",
+      oldTaskName: ""
+    };
+
+    let editingJawatanContext = {
+      oldJawatanName: ""
+    };
+
+    let chartInstance = null;
+    let currentPrintHTMLContent = "";
+    let currentPrintDocTitle = "Dokumen_Tugas_Guru";
+
+    // Load data from LocalStorage
+    function initApp() {
+      const stored = localStorage.getItem("SPTG_DATA");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          state.senaraiGuru = parsed.senaraiGuru || DEFAULT_DATA.senaraiGuru;
+          state.jawatanMata = parsed.jawatanMata || DEFAULT_DATA.jawatanMata;
+          state.tugasanPortfolio = parsed.tugasanPortfolio || DEFAULT_DATA.tugasanPortfolio;
+          if (!state.tugasanPortfolio.asrama) {
+            state.tugasanPortfolio.asrama = [...DEFAULT_DATA.tugasanPortfolio.asrama];
+          }
+          state.agihanTugas = parsed.agihanTugas || {};
+          state.tarikhKemaskini = parsed.tarikhKemaskini || new Date().toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' });
+        } catch(e) {
+          loadDefaultData();
+        }
+      } else {
+        loadDefaultData();
+      }
+
+      // Pastikan setiap guru mempunyai struktur asas jika tiada
+      state.senaraiGuru.forEach(g => {
+        if (!state.agihanTugas[g]) {
+          state.agihanTugas[g] = { pentadbiran: [], kurikulum: [], hem: [], kokurikulum: [], asrama: [] };
+        } else if (!state.agihanTugas[g].asrama) {
+          state.agihanTugas[g].asrama = [];
+        }
+      });
+
+      // Sample data jika baru pertama kali buka
+      seedInitialAssignmentsIfNeeded();
+
+      populateGuruDropdowns();
+      updateNavTabsAppearance();
+      renderCurrentForm();
+      updateFooterTimestamp();
+    }
+
+    function loadDefaultData() {
+      state.senaraiGuru = [...DEFAULT_DATA.senaraiGuru];
+      state.jawatanMata = {...DEFAULT_DATA.jawatanMata};
+      state.tugasanPortfolio = JSON.parse(JSON.stringify(DEFAULT_DATA.tugasanPortfolio));
+      state.agihanTugas = {};
+      state.tarikhKemaskini = new Date().toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    function seedInitialAssignmentsIfNeeded() {
+      const g0 = state.senaraiGuru[0];
+      const g1 = state.senaraiGuru[1];
+      const g2 = state.senaraiGuru[2];
+      if (g0 && state.agihanTugas[g0] && state.agihanTugas[g0].pentadbiran.length === 0) {
+        state.agihanTugas[g0].pentadbiran = [
+          { tugasan: "JK SKPM Kualiti", jawatan: "Penyelaras / Ketua", mata: 5 },
+          { tugasan: "JK Kewangan & Akaun Sekolah", jawatan: "Juruaudit", mata: 2 }
+        ];
+        state.agihanTugas[g0].kurikulum = [
+          { tugasan: "Panitia Sains", jawatan: "Penyelaras / Ketua", mata: 5 },
+          { tugasan: "JK STEM & Inovasi", jawatan: "Setiausaha", mata: 4 }
+        ];
+        state.agihanTugas[g0].kokurikulum = [
+          { tugasan: "Pasukan Pengakap", jawatan: "Guru Penasihat", mata: 3 }
+        ];
+      }
+      if (g1 && state.agihanTugas[g1] && state.agihanTugas[g1].pentadbiran.length === 0) {
+        state.agihanTugas[g1].pentadbiran = [
+          { tugasan: "JK Latihan Dalam Perkhidmatan (LDP)", jawatan: "Setiausaha", mata: 4 }
+        ];
+        state.agihanTugas[g1].hem = [
+          { tugasan: "JK Disiplin & Pengawas", jawatan: "Penyelaras / Ketua", mata: 5 },
+          { tugasan: "JK Rancangan Makanan Tambahan (RMT)", jawatan: "Ahli Jawatankuasa (AJK)", mata: 2 }
+        ];
+      }
+      if (g2 && state.agihanTugas[g2] && (!state.agihanTugas[g2].asrama || state.agihanTugas[g2].asrama.length === 0)) {
+        state.agihanTugas[g2].asrama = [
+          { tugasan: "Pengurusan Warden & Disiplin Asrama", jawatan: "Ketua Warden", mata: 6 },
+          { tugasan: "JK Pengurusan Dewan Makan Asrama", jawatan: "Penyelaras / Ketua", mata: 5 }
+        ];
+      }
+      saveToStorage();
+    }
+
+    function saveToStorage() {
+      state.tarikhKemaskini = new Date().toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const dataToSave = {
+        senaraiGuru: state.senaraiGuru,
+        jawatanMata: state.jawatanMata,
+        tugasanPortfolio: state.tugasanPortfolio,
+        agihanTugas: state.agihanTugas,
+        tarikhKemaskini: state.tarikhKemaskini
+      };
+      localStorage.setItem("SPTG_DATA", JSON.stringify(dataToSave));
+      updateFooterTimestamp();
+    }
+
+    function updateFooterTimestamp() {
+      const footerEl = document.getElementById("footerTarikhKemaskini");
+      if (footerEl) {
+        footerEl.textContent = state.tarikhKemaskini || new Date().toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' });
+      }
+    }
+
+    // Tab Navigation
+    function switchTab(tabKey) {
+      state.activeTab = tabKey;
+      updateNavTabsAppearance();
+
+      const isDutyPortfolio = ["pentadbiran", "kurikulum", "hem", "kokurikulum", "asrama"].includes(tabKey);
+
+      document.getElementById("section-form").classList.toggle("hidden", !isDutyPortfolio);
+      document.getElementById("section-graf").classList.toggle("hidden", tabKey !== "graf");
+      document.getElementById("section-carian").classList.toggle("hidden", tabKey !== "carian");
+      document.getElementById("section-muatturun").classList.toggle("hidden", tabKey !== "muatturun");
+      document.getElementById("section-setting").classList.toggle("hidden", tabKey !== "setting");
+
+      if (isDutyPortfolio) {
+        const titles = {
+          pentadbiran: "Bahagian Pentadbiran",
+          kurikulum: "Bahagian Kurikulum",
+          hem: "Bahagian Hal Ehwal Murid (HEM)",
+          kokurikulum: "Bahagian KoKurikulum",
+          asrama: "Bahagian Asrama"
+        };
+        document.getElementById("sectionTitle").textContent = titles[tabKey];
+        renderCurrentForm();
+      } else if (tabKey === "graf") {
+        renderAnalysisChart();
+      } else if (tabKey === "carian") {
+        populateCarianSelect();
+      } else if (tabKey === "muatturun") {
+        renderSummaryTable();
+      } else if (tabKey === "setting") {
+        renderSettingPanel();
+      }
+    }
+
+    function updateNavTabsAppearance() {
+      const allTabs = ["pentadbiran", "kurikulum", "hem", "kokurikulum", "asrama", "graf", "carian", "muatturun", "setting"];
+      allTabs.forEach(t => {
+        const el = document.getElementById("tab-" + t);
+        if (!el) return;
+        if (state.activeTab === t) {
+          el.className = "tab-btn px-4 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 bg-[#0c2340] text-amber-300 shadow-md border-b-2 border-amber-400";
+        } else {
+          el.className = "tab-btn px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 bg-transparent text-blue-950 hover:bg-blue-100/70 transition";
+        }
+      });
+    }
+
+    // Populate Guru Dropdown
+    function populateGuruDropdowns() {
+      const select = document.getElementById("selectGuru");
+      select.innerHTML = `<option value="">-- Sila Pilih Nama Guru --</option>`;
+      state.senaraiGuru.forEach(guru => {
+        const opt = document.createElement("option");
+        opt.value = guru;
+        opt.textContent = guru;
+        select.appendChild(opt);
+      });
+
+      if (!state.selectedGuru && state.senaraiGuru.length > 0) {
+        state.selectedGuru = state.senaraiGuru[0];
+      }
+      select.value = state.selectedGuru;
+    }
+
+    function onSelectGuruChange() {
+      state.selectedGuru = document.getElementById("selectGuru").value;
+      renderCurrentForm();
+    }
+
+    // Render Tugas Form Rows for the active portfolio
+    function renderCurrentForm() {
+      const container = document.getElementById("tasksContainer");
+      container.innerHTML = "";
+
+      const currentGuru = state.selectedGuru;
+      updateScoreBadge();
+
+      if (!currentGuru) {
+        container.innerHTML = `
+          <div class="p-6 text-center text-slate-500 font-medium">
+            <i class="fa-solid fa-arrow-pointer text-emerald-700 text-2xl mb-2"></i>
+            <p>Sila pilih nama guru di atas untuk menguruskan tugasan portfolio.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Pastikan struktur wujud
+      if (!state.agihanTugas[currentGuru]) {
+        state.agihanTugas[currentGuru] = { pentadbiran: [], kurikulum: [], hem: [], kokurikulum: [], asrama: [] };
+      }
+      if (!state.agihanTugas[currentGuru][state.activeTab]) {
+        state.agihanTugas[currentGuru][state.activeTab] = [];
+      }
+      const dutyList = state.agihanTugas[currentGuru][state.activeTab] || [];
+
+      if (dutyList.length === 0) {
+        // Paparkan 1 baris kosong lalai
+        addNewTaskRow();
+      } else {
+        dutyList.forEach((item, index) => {
+          addTaskRowElement(item.tugasan, item.jawatan, item.mata);
+        });
+      }
+      updateScoreBadge();
+    }
+
+    // Add empty new row
+    function addNewTaskRow() {
+      addTaskRowElement("", "", 0);
+    }
+
+    // Create Row DOM exactly matching ASiS Theme
+    function addTaskRowElement(selectedTugasan = "", selectedJawatan = "", points = 0) {
+      const container = document.getElementById("tasksContainer");
+      const rowIndex = container.children.length;
+
+      const currentCategory = state.activeTab;
+      const tugasOptions = state.tugasanPortfolio[currentCategory] || [];
+      const jawatanOptions = Object.keys(state.jawatanMata);
+
+      const rowDiv = document.createElement("div");
+      rowDiv.className = "task-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end bg-white p-3 rounded-lg border border-blue-200/80 shadow-sm transition hover:border-blue-500";
+
+      // Options for Tugasan
+      let tugasOptionsHTML = `<option value="">-- Pilih Tugasan --</option>`;
+      tugasOptions.forEach(t => {
+        const isSel = (t === selectedTugasan) ? "selected" : "";
+        tugasOptionsHTML += `<option value="${t}" ${isSel}>${t}</option>`;
+      });
+
+      // Options for Jawatan
+      let jawatanOptionsHTML = `<option value="">-- Pilih Jawatan --</option>`;
+      jawatanOptions.forEach(j => {
+        const isSel = (j === selectedJawatan) ? "selected" : "";
+        jawatanOptionsHTML += `<option value="${j}" ${isSel}>${j}</option>`;
+      });
+
+      rowDiv.innerHTML = `
+        <!-- Tugasan Bahagian -->
+        <div class="md:col-span-5">
+          <label class="block text-blue-950 font-bold mb-1 text-xs sm:text-sm">Tugasan Bahagian</label>
+          <select class="task-select w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-800 text-sm bg-white">
+            ${tugasOptionsHTML}
+          </select>
+        </div>
+
+        <!-- Jawatan -->
+        <div class="md:col-span-4">
+          <label class="block text-blue-950 font-bold mb-1 text-xs sm:text-sm">Jawatan</label>
+          <select onchange="onJawatanRowChange(this)" class="jawatan-select w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-800 text-sm bg-white">
+            ${jawatanOptionsHTML}
+          </select>
+        </div>
+
+        <!-- Mata -->
+        <div class="md:col-span-2">
+          <label class="block text-blue-950 font-bold mb-1 text-xs sm:text-sm text-center">Mata</label>
+          <input type="number" readonly value="${points}" class="points-input w-full px-3 py-2 rounded-lg border border-amber-300 bg-amber-50 text-center font-bold text-slate-800 text-sm focus:outline-none shadow-inner">
+        </div>
+
+        <!-- Butang Padam Merah -->
+        <div class="md:col-span-1 flex justify-center">
+          <button type="button" onclick="removeTaskRow(this)" title="Padam Tugasan" class="w-10 h-10 flex items-center justify-center rounded-lg border border-red-300 bg-red-50 hover:bg-red-500 hover:text-white text-red-600 transition duration-150">
+            <i class="fa-regular fa-trash-can"></i>
+          </button>
+        </div>
+      `;
+
+      container.appendChild(rowDiv);
+    }
+
+    // On jawatan changed -> update Mata based on points lookup
+    function onJawatanRowChange(selectElement) {
+      const row = selectElement.closest(".task-row");
+      const jawatan = selectElement.value;
+      const pointsInput = row.querySelector(".points-input");
+      const pts = state.jawatanMata[jawatan] || 0;
+      pointsInput.value = pts;
+      calculateFormTotalScores();
+    }
+
+    // Remove row
+    function removeTaskRow(buttonElement) {
+      const row = buttonElement.closest(".task-row");
+      row.remove();
+      calculateFormTotalScores();
+    }
+
+    // Kira skor masa nyata dalam form
+    function calculateFormTotalScores() {
+      const rows = document.querySelectorAll("#tasksContainer .task-row");
+      let currentCategorySum = 0;
+      rows.forEach(r => {
+        const val = parseInt(r.querySelector(".points-input").value) || 0;
+        currentCategorySum += val;
+      });
+
+      document.getElementById("labelMataBahagian").textContent = currentCategorySum;
+
+      // Jumlah keseluruhan semua portfolio guru ini
+      const guru = state.selectedGuru;
+      if (!guru || !state.agihanTugas[guru]) {
+        document.getElementById("labelJumlahMata").textContent = currentCategorySum;
+        return;
+      }
+
+      let grandTotal = 0;
+      ["pentadbiran", "kurikulum", "hem", "kokurikulum", "asrama"].forEach(cat => {
+        if (cat === state.activeTab) {
+          grandTotal += currentCategorySum;
+        } else {
+          (state.agihanTugas[guru][cat] || []).forEach(it => {
+            grandTotal += (parseInt(it.mata) || 0);
+          });
+        }
+      });
+
+      document.getElementById("labelJumlahMata").textContent = grandTotal;
+    }
+
+    // Update label skor guru dari memori
+    function updateScoreBadge() {
+      const guru = state.selectedGuru;
+      if (!guru || !state.agihanTugas[guru]) {
+        document.getElementById("labelMataBahagian").textContent = "0";
+        document.getElementById("labelJumlahMata").textContent = "0";
+        return;
+      }
+      const curList = state.agihanTugas[guru][state.activeTab] || [];
+      const partSum = curList.reduce((acc, curr) => acc + (parseInt(curr.mata) || 0), 0);
+      document.getElementById("labelMataBahagian").textContent = partSum;
+
+      let grandTotal = 0;
+      ["pentadbiran", "kurikulum", "hem", "kokurikulum", "asrama"].forEach(cat => {
+        (state.agihanTugas[guru][cat] || []).forEach(it => {
+          grandTotal += (parseInt(it.mata) || 0);
+        });
+      });
+      document.getElementById("labelJumlahMata").textContent = grandTotal;
+    }
+
+    // SIMPAN PERUBAHAN
+    function saveCurrentDuties() {
+      const guru = state.selectedGuru;
+      if (!guru) {
+        showToast("Sila pilih nama guru terlebih dahulu!", "error");
+        return;
+      }
+
+      const rows = document.querySelectorAll("#tasksContainer .task-row");
+      const dutyArr = [];
+
+      rows.forEach(r => {
+        const tugasan = r.querySelector(".task-select").value.trim();
+        const jawatan = r.querySelector(".jawatan-select").value.trim();
+        const mata = parseInt(r.querySelector(".points-input").value) || 0;
+
+        if (tugasan && jawatan) {
+          dutyArr.push({ tugasan, jawatan, mata });
+        }
+      });
+
+      if (!state.agihanTugas[guru]) {
+        state.agihanTugas[guru] = { pentadbiran: [], kurikulum: [], hem: [], kokurikulum: [], asrama: [] };
+      }
+
+      state.agihanTugas[guru][state.activeTab] = dutyArr;
+      saveToStorage();
+      updateScoreBadge();
+
+      // Segarkan semua bahagian analisis secara proaktif
+      syncAllAnalyticsAndViews();
+
+      showToast(`Tugasan ${state.activeTab.toUpperCase()} bagi ${guru} berjaya disimpan!`, "success");
+    }
+
+    // Fungsi Penyelarasan Menyeluruh bagi Semua Paparan & Analisis
+    function syncAllAnalyticsAndViews() {
+      // 1. Jika carta graf telah diinisialisasi atau sedang di tab graf, kemaskini serta-merta
+      if (chartInstance || state.activeTab === "graf") {
+        renderAnalysisChart();
+      }
+      // 2. Jika jadual muat turun wujud, kemaskini
+      const tbody = document.getElementById("summaryTableBody");
+      if (tbody && !document.getElementById("section-muatturun").classList.contains("hidden")) {
+        renderSummaryTable();
+      }
+      // 3. Jika profil carian sedang dipaparkan, kemaskini
+      const profileResult = document.getElementById("guruProfileResult");
+      if (profileResult && !profileResult.classList.contains("hidden")) {
+        renderGuruProfileCard();
+      }
+    }
+
+    // KEMASKINI (Reset / Refresh)
+    function refreshCurrentForm() {
+      renderCurrentForm();
+      showToast("Data borang dikemaskini.", "info");
+    }
+
+    // ================= ANALISIS GRAF =================
+    function calculateTeacherTotals() {
+      const list = [];
+      state.senaraiGuru.forEach(guru => {
+        const record = state.agihanTugas[guru] || {};
+        const p = (record.pentadbiran || []).reduce((a, b) => a + (b.mata || 0), 0);
+        const k = (record.kurikulum || []).reduce((a, b) => a + (b.mata || 0), 0);
+        const h = (record.hem || []).reduce((a, b) => a + (b.mata || 0), 0);
+        const ko = (record.kokurikulum || []).reduce((a, b) => a + (b.mata || 0), 0);
+        const asr = (record.asrama || []).reduce((a, b) => a + (b.mata || 0), 0);
+        const total = p + k + h + ko + asr;
+
+        let status = "Seimbang";
+        let color = "#16a34a"; // green
+        if (total < 10) {
+          status = "Rendah";
+          color = "#2563eb"; // blue
+        } else if (total > 28) {
+          status = "Tinggi";
+          color = "#dc2626"; // red
+        } else if (total > 20) {
+          status = "Optimum";
+          color = "#d97706"; // amber
+        }
+
+        list.push({ guru, p, k, h, ko, asr, total, status, color });
+      });
+      return list;
+    }
+
+    function renderAnalysisChart() {
+      const data = calculateTeacherTotals();
+      
+      // Update Statistik Atas
+      const scores = data.map(d => d.total);
+      const totalTeachers = data.length;
+      const sumScores = scores.reduce((a, b) => a + b, 0);
+      const avg = totalTeachers > 0 ? (sumScores / totalTeachers).toFixed(1) : 0;
+      const max = scores.length > 0 ? Math.max(...scores) : 0;
+      const min = scores.length > 0 ? Math.min(...scores) : 0;
+
+      document.getElementById("statTotalGuru").textContent = totalTeachers;
+      document.getElementById("statPurataMata").textContent = avg;
+      document.getElementById("statMaxMata").textContent = max;
+      document.getElementById("statMinMata").textContent = min;
+
+      const labels = data.map(d => {
+        // Nama ringkas jika panjang
+        const parts = d.guru.split(" ");
+        return parts.length > 3 ? parts.slice(0, 3).join(" ") + "..." : d.guru;
+      });
+
+      const ctx = document.getElementById("bebanChart").getContext("2d");
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Pentadbiran',
+              data: data.map(d => d.p),
+              backgroundColor: '#0c2340' // ASiS Deep Navy
+            },
+            {
+              label: 'Kurikulum',
+              data: data.map(d => d.k),
+              backgroundColor: '#1d4ed8' // ASiS Royal Blue
+            },
+            {
+              label: 'HEM',
+              data: data.map(d => d.h),
+              backgroundColor: '#d97706' // ASiS Warm Gold
+            },
+            {
+              label: 'KoKurikulum',
+              data: data.map(d => d.ko),
+              backgroundColor: '#e11d48' // Crimson Red
+            },
+            {
+              label: 'Asrama',
+              data: data.map(d => d.asr),
+              backgroundColor: '#3b82f6' // Sky Blue
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            // Pastikan animasi cepat siap untuk membolehkan pengekstrakan imej segera
+            duration: 500
+          },
+          scales: {
+            x: {
+              stacked: true,
+              ticks: { font: { size: 10, family: 'Plus Jakarta Sans' }, maxRotation: 45, minRotation: 25 }
+            },
+            y: {
+              stacked: true,
+              beginAtZero: true,
+              title: { display: true, text: 'Jumlah Mata Pemberatan' }
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: { font: { family: 'Plus Jakarta Sans', weight: 'bold' } }
+            },
+            tooltip: {
+              callbacks: {
+                footer: (tooltipItems) => {
+                  let total = 0;
+                  tooltipItems.forEach(item => {
+                    total += item.parsed.y;
+                  });
+                  return 'Jumlah Keseluruhan: ' + total + ' Mata';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // ================= FUNGSI CETAKAN & EKSPORT ANALISIS GRAF =================
+    function openCustomAnalysisModal() {
+      document.getElementById("customAnalysisModal").classList.remove("hidden");
+    }
+
+    function closeCustomAnalysisModal() {
+      document.getElementById("customAnalysisModal").classList.add("hidden");
+    }
+
+    function executeFilterStatusPrint() {
+      const status = document.getElementById("filterStatusAnalysisSelect").value;
+      closeCustomAnalysisModal();
+      handlePrintAnalysis("status", status);
+    }
+
+    function executeFilterBidangPrint() {
+      const bidang = document.getElementById("filterBidangAnalysisSelect").value;
+      closeCustomAnalysisModal();
+      handlePrintAnalysis("bidang", bidang);
+    }
+
+    // Muat turun terus imej carta graf ke PNG
+    function downloadChartAsPNG() {
+      if (!chartInstance) {
+        showToast("Sila buka tab Analisis Graf terlebih dahulu.", "error");
+        return;
+      }
+      const imageURI = chartInstance.toBase64Image();
+      const link = document.createElement("a");
+      link.href = imageURI;
+      link.download = `Graf_Analisis_Pemberatan_Tugas_${new Date().toISOString().slice(0, 10)}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("Imej graf berjaya dimuat turun (PNG)!", "success");
+    }
+
+    // Pengendali Penjanaan Laporan Dokumen Analisis Khusus
+    function handlePrintAnalysis(type = 'full', filterParam = '') {
+      const area = document.getElementById("printableArea");
+      const titleModal = document.getElementById("printModalTitle");
+      const tarikhCetak = new Date().toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const tarikhKemaskini = state.tarikhKemaskini || tarikhCetak;
+      const data = calculateTeacherTotals();
+
+      // Statistik Asas
+      const scores = data.map(d => d.total);
+      const totalTeachers = data.length;
+      const sumScores = scores.reduce((a, b) => a + b, 0);
+      const avg = totalTeachers > 0 ? (sumScores / totalTeachers).toFixed(1) : 0;
+      const max = scores.length > 0 ? Math.max(...scores) : 0;
+      const min = scores.length > 0 ? Math.min(...scores) : 0;
+
+      // Dapatkan imej graf jika carta telah dijana
+      let chartImageHTML = "";
+      if (chartInstance) {
+        try {
+          const chartBase64 = chartInstance.toBase64Image();
+          chartImageHTML = `
+            <div class="my-4 border border-slate-300 rounded-lg p-3 bg-white text-center">
+              <h4 class="text-xs font-bold text-slate-700 uppercase mb-2">Carta Visual Beban Tugas Guru (Chart Overview)</h4>
+              <img src="${chartBase64}" alt="Graf Analisis Beban Guru" class="max-h-64 mx-auto w-full object-contain">
+            </div>
+          `;
+        } catch (e) {
+          console.warn("Gagal mendapatkan imej graf:", e);
+        }
+      }
+
+      if (type === 'full') {
+        // LAPORAN ANALISIS PENUH EKSEKUTIF (GRAF + JADUAL KESELURUHAN + RINGKASAN KPI)
+        titleModal.textContent = "Laporan Analisis Eksekutif & Pemberatan Tugas Guru";
+        currentPrintDocTitle = `Laporan_Analisis_Eksekutif_${new Date().toISOString().slice(0, 10)}`;
+
+        const countTinggi = data.filter(d => d.total > 28).length;
+        const countOptimum = data.filter(d => d.total >= 21 && d.total <= 28).length;
+        const countSeimbang = data.filter(d => d.total >= 10 && d.total <= 20).length;
+        const countRendah = data.filter(d => d.total < 10).length;
+        const peratusSeimbang = totalTeachers > 0 ? (((countSeimbang + countOptimum) / totalTeachers) * 100).toFixed(0) : 0;
+
+        let tableRows = data.map((r, idx) => `
+          <tr class="border-b border-slate-200">
+            <td class="py-1 px-1.5 text-center font-medium">${idx + 1}</td>
+            <td class="py-1 px-2 font-bold text-slate-900">${r.guru}</td>
+            <td class="py-1 px-1 text-center">${r.p}</td>
+            <td class="py-1 px-1 text-center">${r.k}</td>
+            <td class="py-1 px-1 text-center">${r.h}</td>
+            <td class="py-1 px-1 text-center">${r.ko}</td>
+            <td class="py-1 px-1 text-center">${r.asr}</td>
+            <td class="py-1 px-1.5 text-center font-black text-emerald-900 bg-emerald-50/60">${r.total}</td>
+            <td class="py-1 px-1.5 text-center font-bold text-[10px]">${r.status}</td>
+          </tr>
+        `).join('');
+
+        area.innerHTML = `
+          <div class="border-b-2 border-blue-900 pb-3 mb-3 text-center">
+            <!-- Header Surat / Laporan Rasmi Tanpa Logo -->
+            <h1 class="text-xs sm:text-sm font-black uppercase tracking-wider text-blue-950">KEMENTERIAN PENDIDIKAN MALAYSIA</h1>
+            <h2 class="text-sm sm:text-base font-black uppercase tracking-wider text-slate-900">SEKOLAH MENENGAH SAINS ALAM SHAH</h2>
+            <h3 class="text-xs sm:text-sm font-extrabold uppercase text-amber-700 mt-1">LAPORAN ANALISIS EKSEKUTIF PEMBERATAN TUGAS GURU</h3>
+            <p class="text-[11px] text-slate-600 mt-0.5">Penilaian Bebanan Tugas Guru Merentasi Portfolio Pentadbiran, Kurikulum, HEM, KoKurikulum & Asrama</p>
+            <div class="flex justify-between items-center text-[10px] text-slate-500 mt-2 px-1 border-t border-slate-200 pt-1">
+              <span><strong>Tarikh Kemas Kini:</strong> ${tarikhKemaskini}</span>
+              <span><strong>Tarikh & Masa Cetakan:</strong> ${tarikhCetak}</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-4 gap-2 mb-3 text-center text-xs">
+            <div class="p-2 border border-slate-300 rounded bg-slate-50">
+              <span class="block text-[10px] text-slate-500 font-bold uppercase">Jumlah Guru</span>
+              <span class="font-black text-slate-900 text-sm">${totalTeachers} Orang</span>
+            </div>
+            <div class="p-2 border border-slate-300 rounded bg-slate-50">
+              <span class="block text-[10px] text-slate-500 font-bold uppercase">Purata Beban</span>
+              <span class="font-black text-blue-900 text-sm">${avg} Mata</span>
+            </div>
+            <div class="p-2 border border-slate-300 rounded bg-slate-50">
+              <span class="block text-[10px] text-slate-500 font-bold uppercase">Kadar Keseimbangan</span>
+              <span class="font-black text-blue-950 text-sm">${peratusSeimbang}% Selesa</span>
+            </div>
+            <div class="p-2 border border-slate-300 rounded bg-slate-50">
+              <span class="block text-[10px] text-slate-500 font-bold uppercase">Julat Mata (Min-Max)</span>
+              <span class="font-black text-slate-800 text-sm">${min} - ${max} Mata</span>
+            </div>
+          </div>
+
+          <!-- Carta Visual Dimasukkan Terus ke Dokumen Rasmi -->
+          ${chartImageHTML}
+
+          <!-- Jadual Analisis Mata Penuh -->
+          <div class="mt-3">
+            <h4 class="text-xs font-bold text-slate-800 uppercase mb-1 flex items-center justify-between">
+              <span>Perincian Pemberatan Guru Sesi Semasa</span>
+              <span class="text-[10px] text-slate-500 font-normal">Tarikh Cetakan: ${tarikhCetak}</span>
+            </h4>
+            <table class="w-full border border-slate-300 text-[11px]">
+              <thead class="bg-blue-950 text-white font-bold text-[10px] uppercase">
+                <tr>
+                  <th class="py-1.5 px-1.5 text-center w-7">Bil</th>
+                  <th class="py-1.5 px-2 text-left">Nama Guru</th>
+                  <th class="py-1.5 px-1 text-center w-10">Tadbir</th>
+                  <th class="py-1.5 px-1 text-center w-10">Kuri</th>
+                  <th class="py-1.5 px-1 text-center w-10">HEM</th>
+                  <th class="py-1.5 px-1 text-center w-10">Koko</th>
+                  <th class="py-1.5 px-1 text-center w-10">Asrama</th>
+                  <th class="py-1.5 px-1.5 text-center w-12 bg-blue-900 text-amber-300">Jumlah</th>
+                  <th class="py-1.5 px-1.5 text-center w-16">Status</th>
+                </tr>
+              </thead>
+              <tbody>${tableRows}</tbody>
+            </table>
+          </div>
+
+          <!-- Ringkasan Status Guru -->
+          <div class="mt-3 bg-slate-50 border border-slate-300 rounded p-2.5 text-[11px]">
+            <span class="font-bold text-slate-800 block mb-1">Rumusan Kategori Agihan Beban:</span>
+            <div class="grid grid-cols-4 gap-2 text-center">
+              <div><span class="text-blue-700 font-bold">Beban Ringan (&lt;10):</span> ${countRendah} guru</div>
+              <div><span class="text-emerald-700 font-bold">Seimbang (10-20):</span> ${countSeimbang} guru</div>
+              <div><span class="text-amber-700 font-bold">Optimum (21-28):</span> ${countOptimum} guru</div>
+              <div><span class="text-red-700 font-bold">Tinggi (&gt;28):</span> ${countTinggi} guru</div>
+            </div>
+          </div>
+
+          <!-- Ruangan Tandatangan Pentadbir Sekolah -->
+          <div class="mt-6 pt-3 flex justify-between items-center text-xs border-t border-slate-300">
+            <div>
+              <p class="font-bold text-slate-800">Disediakan Oleh:</p>
+              <div class="h-10"></div>
+              <p class="font-bold text-slate-900">MOHD.FAUZI SUNARY</p>
+              <p class="text-slate-600 text-[11px]">Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah</p>
+            </div>
+            <div>
+              <p class="font-bold text-slate-800">Disahkan Oleh:</p>
+              <div class="h-10"></div>
+              <p class="font-bold text-slate-900">Pengetua / Guru Besar</p>
+              <p class="text-slate-600 text-[11px]">SM Sains Alam Shah</p>
+            </div>
+          </div>
+
+          <!-- Footer Kredit Cetakan (Saiz 8pt) -->
+          <div class="mt-6 pt-2 border-t border-slate-200 flex justify-between items-center text-slate-500" style="font-size: 8pt;">
+            <span>Disediakan oleh: <strong>Mohd.Fauzi Sunary</strong>, Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah</span>
+            <span>Kemaskini: ${tarikhKemaskini} | Cetakan: ${tarikhCetak}</span>
+          </div>
+        `;
+
+      } else if (type === 'status') {
+        // LAPORAN MENGIKUT STATUS BEBAN (TINGGI / SEIMBANG / RENDAH / OPTIMUM)
+        titleModal.textContent = `Laporan Guru Kategori Beban: ${filterParam.toUpperCase()}`;
+        currentPrintDocTitle = `Laporan_Guru_Status_${filterParam}_${new Date().toISOString().slice(0, 10)}`;
+
+        const filtered = data.filter(d => d.status.toLowerCase() === filterParam.toLowerCase());
+
+        let tableRows = "";
+        if (filtered.length === 0) {
+          tableRows = `<tr><td colspan="6" class="p-4 text-center text-slate-500 italic">Tiada guru dalam kategori status "${filterParam}".</td></tr>`;
+        } else {
+          tableRows = filtered.map((r, idx) => `
+            <tr class="border-b border-slate-200">
+              <td class="py-1.5 px-2 text-center font-medium">${idx + 1}</td>
+              <td class="py-1.5 px-2 font-bold text-slate-900">${r.guru}</td>
+              <td class="py-1.5 px-2 text-center">${r.p + r.k + r.h + r.ko + r.asr - r.asr}</td>
+              <td class="py-1.5 px-2 text-center">${r.asr}</td>
+              <td class="py-1.5 px-2 text-center font-black text-emerald-900 bg-emerald-50">${r.total}</td>
+              <td class="py-1.5 px-2 text-center font-bold text-xs">${r.status}</td>
+            </tr>
+          `).join('');
+        }
+
+        area.innerHTML = `
+          <div class="text-center border-b-2 border-blue-900 pb-3 mb-4">
+            <h1 class="text-sm sm:text-base font-black uppercase text-blue-950">SEKOLAH MENENGAH SAINS ALAM SHAH</h1>
+            <h2 class="text-xs sm:text-sm font-extrabold uppercase text-slate-800">LAPORAN KHUSUS STATUS BEBAN TUGAS GURU: ${filterParam.toUpperCase()}</h2>
+            <div class="flex justify-between items-center text-[10px] text-slate-500 mt-2 px-1 border-t border-slate-200 pt-1">
+              <span><strong>Tarikh Kemas Kini:</strong> ${tarikhKemaskini}</span>
+              <span><strong>Tarikh & Masa Cetakan:</strong> ${tarikhCetak}</span>
+              <span>Bilangan Guru: ${filtered.length} Orang</span>
+            </div>
+          </div>
+
+          <table class="w-full border border-slate-300 text-xs mb-4">
+            <thead class="bg-blue-950 text-white uppercase text-[10px]">
+              <tr>
+                <th class="py-2 px-2 text-center w-8">Bil</th>
+                <th class="py-2 px-2 text-left">Nama Guru</th>
+                <th class="py-2 px-2 text-center w-28">Mata Tugas Sekolah</th>
+                <th class="py-2 px-2 text-center w-24">Mata Asrama</th>
+                <th class="py-2 px-2 text-center w-24 bg-blue-900 text-amber-300">Jumlah Mata</th>
+                <th class="py-2 px-2 text-center w-24">Status</th>
+              </tr>
+            </thead>
+            <tbody>${tableRows}</tbody>
+          </table>
+
+          <div class="p-3 bg-amber-50 border border-amber-300 rounded text-xs text-slate-800">
+            <p class="font-bold text-amber-900 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Tindakan Pentadbiran & Syor:</p>
+            <p class="text-slate-600">
+              ${filterParam === 'Tinggi' ? 'Guru-guru dalam senarai ini disyorkan untuk diselaraskan semula beban tugas bagi mengurangkan komitmen jawatankuasa berlebihan demi kesejahteraan emosi dan tumpuan PdP.' :
+                filterParam === 'Rendah' ? 'Guru-guru dalam senarai ini mempunyai kapasiti ruang tugasan yang mencukupi untuk diberikan portfolio tambahan atau peranan bimbingan sekolah.' :
+                'Agihan tugasan berada dalam tahap kawalan yang seimbang dan wajar dikekalkan.'}
+            </p>
+          </div>
+
+          <div class="mt-8 pt-4 flex justify-between items-center text-xs border-t border-slate-300">
+            <div>
+              <p class="font-bold text-slate-800">Disediakan Oleh:</p>
+              <div class="h-10"></div>
+              <p class="font-bold text-slate-900">MOHD.FAUZI SUNARY</p>
+              <p class="text-slate-600 text-[11px]">Guru Penolong Kanan Pentadbiran</p>
+            </div>
+            <div>
+              <p class="font-bold text-slate-800">Disahkan Oleh:</p>
+              <div class="h-10"></div>
+              <p class="font-bold text-slate-900">Pengetua / Guru Besar</p>
+            </div>
+          </div>
+
+          <!-- Footer Kredit Cetakan (Saiz 8pt) -->
+          <div class="mt-6 pt-2 border-t border-slate-200 flex justify-between items-center text-slate-500" style="font-size: 8pt;">
+            <span>Disediakan oleh: <strong>Mohd.Fauzi Sunary</strong>, Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah</span>
+            <span>Kemaskini: ${tarikhKemaskini} | Cetakan: ${tarikhCetak}</span>
+          </div>
+        `;
+
+      } else if (type === 'bidang') {
+        // LAPORAN PERBANDINGAN SATU BIDANG SAHAJA
+        const labelBidang = {
+          pentadbiran: "Bahagian Pentadbiran",
+          kurikulum: "Bahagian Kurikulum",
+          hem: "Bahagian Hal Ehwal Murid (HEM)",
+          kokurikulum: "Bahagian KoKurikulum",
+          asrama: "Bahagian Asrama"
+        }[filterParam] || filterParam;
+
+        titleModal.textContent = `Analisis Agihan: ${labelBidang}`;
+        currentPrintDocTitle = `Analisis_Bidang_${filterParam}_${new Date().toISOString().slice(0, 10)}`;
+
+        // Senaraikan perincian tugasan bagi bidang tersebut bagi setiap guru
+        let tableRows = data.map((r, idx) => {
+          const teacherDutyList = (state.agihanTugas[r.guru] && state.agihanTugas[r.guru][filterParam]) || [];
+          const tugasDesc = teacherDutyList.length > 0 
+            ? teacherDutyList.map(t => `${t.tugasan} (${t.jawatan})`).join(", ")
+            : `<span class="text-slate-400 italic">Tiada tugas dalam portfolio ini</span>`;
+          
+          const pts = r[filterParam === 'pentadbiran' ? 'p' : filterParam === 'kurikulum' ? 'k' : filterParam === 'hem' ? 'h' : filterParam === 'kokurikulum' ? 'ko' : 'asr'];
+
+          return `
+            <tr class="border-b border-slate-200">
+              <td class="py-1.5 px-2 text-center font-medium">${idx + 1}</td>
+              <td class="py-1.5 px-2 font-bold text-slate-900 whitespace-nowrap">${r.guru}</td>
+              <td class="py-1.5 px-2 text-slate-700 text-xs">${tugasDesc}</td>
+              <td class="py-1.5 px-2 text-center font-bold text-emerald-900 bg-emerald-50">${pts}</td>
+            </tr>
+          `;
+        }).join('');
+
+        area.innerHTML = `
+          <div class="text-center border-b-2 border-blue-900 pb-3 mb-4">
+            <h1 class="text-sm sm:text-base font-black uppercase text-blue-950">SEKOLAH MENENGAH SAINS ALAM SHAH</h1>
+            <h2 class="text-xs sm:text-sm font-extrabold uppercase text-slate-800">LAPORAN ANALISIS AGIHAN TUGAS KHUSUS: ${labelBidang.toUpperCase()}</h2>
+            <div class="flex justify-between items-center text-[10px] text-slate-500 mt-2 px-1 border-t border-slate-200 pt-1">
+              <span><strong>Tarikh Kemas Kini:</strong> ${tarikhKemaskini}</span>
+              <span><strong>Tarikh & Masa Cetakan:</strong> ${tarikhCetak}</span>
+            </div>
+          </div>
+
+          <table class="w-full border border-slate-300 text-xs mb-4">
+            <thead class="bg-blue-950 text-white uppercase text-[10px]">
+              <tr>
+                <th class="py-2 px-2 text-center w-8">Bil</th>
+                <th class="py-2 px-2 text-left w-48">Nama Guru</th>
+                <th class="py-2 px-2 text-left">Senarai Tugas & Jawatan</th>
+                <th class="py-2 px-2 text-center w-20 bg-blue-900 text-amber-300">Mata Bidang</th>
+              </tr>
+            </thead>
+            <tbody>${tableRows}</tbody>
+          </table>
+
+          <div class="mt-8 pt-4 flex justify-between items-center text-xs border-t border-slate-300">
+            <div>
+              <p class="font-bold text-slate-800">Disediakan Oleh:</p>
+              <div class="h-10"></div>
+              <p class="font-bold text-slate-900">MOHD.FAUZI SUNARY</p>
+              <p class="text-slate-600 text-[11px]">Guru Penolong Kanan Pentadbiran</p>
+            </div>
+            <div>
+              <p class="font-bold text-slate-800">Disahkan Oleh:</p>
+              <div class="h-10"></div>
+              <p class="font-bold text-slate-900">Pengetua / Guru Besar</p>
+            </div>
+          </div>
+
+          <!-- Footer Kredit Cetakan (Saiz 8pt) -->
+          <div class="mt-6 pt-2 border-t border-slate-200 flex justify-between items-center text-slate-500" style="font-size: 8pt;">
+            <span>Disediakan oleh: <strong>Mohd.Fauzi Sunary</strong>, Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah</span>
+            <span>Kemaskini: ${tarikhKemaskini} | Cetakan: ${tarikhCetak}</span>
+          </div>
+        `;
+      }
+
+      currentPrintHTMLContent = area.innerHTML;
+      document.getElementById("printModal").classList.remove("hidden");
+    }
+
+    // ================= CARIAN GURU =================
+    function populateCarianSelect() {
+      const select = document.getElementById("searchGuruSelect");
+      select.innerHTML = `<option value="">-- Pilih Guru --</option>`;
+      state.senaraiGuru.forEach(g => {
+        const opt = document.createElement("option");
+        opt.value = g;
+        opt.textContent = g;
+        select.appendChild(opt);
+      });
+    }
+
+    function renderGuruProfileCard() {
+      const guru = document.getElementById("searchGuruSelect").value;
+      const resContainer = document.getElementById("guruProfileResult");
+
+      if (!guru) {
+        showToast("Sila pilih guru untuk dicari.", "error");
+        return;
+      }
+
+      resContainer.classList.remove("hidden");
+      const record = state.agihanTugas[guru] || { pentadbiran: [], kurikulum: [], hem: [], kokurikulum: [], asrama: [] };
+
+      const calcPart = (list) => (list || []).reduce((a, b) => a + (b.mata || 0), 0);
+      const pScore = calcPart(record.pentadbiran);
+      const kScore = calcPart(record.kurikulum);
+      const hScore = calcPart(record.hem);
+      const koScore = calcPart(record.kokurikulum);
+      const asrScore = calcPart(record.asrama);
+      const totalScore = pScore + kScore + hScore + koScore + asrScore;
+
+      let badgeBg = "bg-green-100 text-green-800 border-green-300";
+      let statusText = "Seimbang (Selesa)";
+      if (totalScore < 10) {
+        badgeBg = "bg-blue-100 text-blue-800 border-blue-300";
+        statusText = "Beban Ringan (Boleh Ditambah)";
+      } else if (totalScore > 28) {
+        badgeBg = "bg-red-100 text-red-800 border-red-300";
+        statusText = "Beban Terlalu Berat (Perlu Dikurangkan)";
+      } else if (totalScore > 20) {
+        badgeBg = "bg-amber-100 text-amber-800 border-amber-300";
+        statusText = "Optimum (Maksimum)";
+      }
+
+      const buildRows = (list) => {
+        if (!list || list.length === 0) return `<p class="text-xs text-slate-400 italic">Tiada tugasan didaftarkan.</p>`;
+        return list.map(item => `
+          <div class="flex justify-between items-center text-xs py-1.5 border-b border-slate-100 last:border-0">
+            <div>
+              <span class="font-bold text-slate-700">${item.tugasan}</span>
+              <span class="text-slate-500">(${item.jawatan})</span>
+            </div>
+            <span class="font-extrabold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">${item.mata} Mata</span>
+          </div>
+        `).join("");
+      };
+
+      resContainer.innerHTML = `
+        <div class="bg-gradient-to-br from-slate-50 via-blue-50/20 to-amber-50/20 border-2 border-blue-900/30 rounded-2xl p-5 shadow-lg space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-blue-900">Profil & Rekod Tugas ASiS</span>
+              <h3 class="text-xl sm:text-2xl font-black text-slate-900">${guru}</h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="handlePrintDocument('single', '${guru.replace(/'/g, "\\'")}')" class="bg-blue-950 hover:bg-blue-900 text-white font-bold px-3 py-2 rounded-xl text-xs inline-flex items-center gap-1.5 shadow">
+                <i class="fa-solid fa-print text-amber-400"></i> Cetak Surat Tugas
+              </button>
+              <span class="px-3 py-1 text-xs font-extrabold rounded-full border ${badgeBg}">${statusText}</span>
+              <div class="bg-blue-950 text-white px-4 py-2 rounded-xl text-center shadow border border-blue-900">
+                <span class="text-xs block text-amber-300 font-bold uppercase">Mata Penuh</span>
+                <span class="text-2xl font-black">${totalScore}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Pentadbiran -->
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+              <div class="flex justify-between items-center border-b pb-2 mb-2">
+                <span class="font-bold text-sm text-blue-950"><i class="fa-solid fa-table-cells-large text-blue-800 mr-1.5"></i> Pentadbiran</span>
+                <span class="text-xs font-extrabold text-blue-800">${pScore} Mata</span>
+              </div>
+              <div>${buildRows(record.pentadbiran)}</div>
+            </div>
+
+            <!-- Kurikulum -->
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+              <div class="flex justify-between items-center border-b pb-2 mb-2">
+                <span class="font-bold text-sm text-blue-800"><i class="fa-solid fa-book-open text-blue-600 mr-1.5"></i> Kurikulum</span>
+                <span class="text-xs font-extrabold text-blue-700">${kScore} Mata</span>
+              </div>
+              <div>${buildRows(record.kurikulum)}</div>
+            </div>
+
+            <!-- HEM -->
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+              <div class="flex justify-between items-center border-b pb-2 mb-2">
+                <span class="font-bold text-sm text-amber-800"><i class="fa-solid fa-users text-amber-600 mr-1.5"></i> Hal Ehwal Murid (HEM)</span>
+                <span class="text-xs font-extrabold text-amber-700">${hScore} Mata</span>
+              </div>
+              <div>${buildRows(record.hem)}</div>
+            </div>
+
+            <!-- KoKurikulum -->
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+              <div class="flex justify-between items-center border-b pb-2 mb-2">
+                <span class="font-bold text-sm text-red-800"><i class="fa-solid fa-trophy text-red-600 mr-1.5"></i> KoKurikulum</span>
+                <span class="text-xs font-extrabold text-red-700">${koScore} Mata</span>
+              </div>
+              <div>${buildRows(record.kokurikulum)}</div>
+            </div>
+
+            <!-- Asrama -->
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm md:col-span-2 lg:col-span-1">
+              <div class="flex justify-between items-center border-b pb-2 mb-2">
+                <span class="font-bold text-sm text-sky-900"><i class="fa-solid fa-bed text-sky-700 mr-1.5"></i> Asrama</span>
+                <span class="text-xs font-extrabold text-sky-800">${asrScore} Mata</span>
+              </div>
+              <div>${buildRows(record.asrama)}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ================= MUAT TURUN DATA & JADUAL =================
+    function renderSummaryTable() {
+      const tbody = document.getElementById("summaryTableBody");
+      tbody.innerHTML = "";
+
+      const data = calculateTeacherTotals();
+      data.forEach((row, i) => {
+        let badge = `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800">Seimbang</span>`;
+        if (row.total < 10) badge = `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">Rendah</span>`;
+        else if (row.total > 28) badge = `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800">Tinggi</span>`;
+        else if (row.total > 20) badge = `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800">Optimum</span>`;
+
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50 transition";
+        tr.innerHTML = `
+          <td class="p-3 font-semibold text-slate-500">${i + 1}</td>
+          <td class="p-3 font-bold text-slate-800">${row.guru}</td>
+          <td class="p-3 text-center">${row.p}</td>
+          <td class="p-3 text-center">${row.k}</td>
+          <td class="p-3 text-center">${row.h}</td>
+          <td class="p-3 text-center">${row.ko}</td>
+          <td class="p-3 text-center">${row.asr}</td>
+          <td class="p-3 text-center font-black text-emerald-800 bg-emerald-50">${row.total}</td>
+          <td class="p-3 text-center">${badge}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function exportToCSV() {
+      const data = calculateTeacherTotals();
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Bil,Nama Guru,Pentadbiran,Kurikulum,HEM,KoKurikulum,Asrama,Jumlah Mata,Status\n";
+
+      data.forEach((r, idx) => {
+        csvContent += `${idx + 1},"${r.guru}",${r.p},${r.k},${r.h},${r.ko},${r.asr},${r.total},${r.status}\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Analisis_Pemberatan_Tugas_Guru_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showToast("Fail CSV berjaya dimuat turun!", "success");
+    }
+
+    // ================= TETAPAN / SETTING =================
+    function renderSettingPanel() {
+      // 0. Tab & Senarai Tugasan Fleksibel Mengikut Bidang
+      renderSettingBidangTugasan();
+
+      // 1. Senarai Guru
+      const guruListEl = document.getElementById("guruSettingList");
+      guruListEl.innerHTML = "";
+
+      if (state.senaraiGuru.length === 0) {
+        guruListEl.innerHTML = `<div class="p-4 text-center text-xs text-slate-400">Tiada guru dalam senarai. Sila tambah guru baharu di atas.</div>`;
+      } else {
+        state.senaraiGuru.forEach((g, idx) => {
+          const item = document.createElement("div");
+          item.className = "flex justify-between items-center py-2 px-2 text-xs hover:bg-slate-50 rounded-lg transition";
+          
+          const labelSpan = document.createElement("span");
+          labelSpan.className = "font-semibold text-slate-800 break-words pr-2";
+          labelSpan.textContent = `${idx + 1}. ${g}`;
+
+          const deleteBtn = document.createElement("button");
+          deleteBtn.type = "button";
+          deleteBtn.className = "text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 transition flex-shrink-0 cursor-pointer";
+          deleteBtn.title = `Padam ${g}`;
+          deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can text-sm"></i>`;
+          
+          // Menggunakan EventListener selamat (tiada isu quotes atau inline JS)
+          deleteBtn.addEventListener("click", () => {
+            promptDeleteGuru(g);
+          });
+
+          item.appendChild(labelSpan);
+          item.appendChild(deleteBtn);
+          guruListEl.appendChild(item);
+        });
+      }
+
+      // 2. Mata Jawatan
+      renderJawatanSettingList();
+    }
+
+    // Paparkan senarai jawatan lengkap dengan butang edit dan padam
+    function renderJawatanSettingList() {
+      const ptsListEl = document.getElementById("jawatanPointsList");
+      const countBadge = document.getElementById("jawatanCountBadge");
+      if (!ptsListEl) return;
+
+      const jawatanEntries = Object.entries(state.jawatanMata);
+      if (countBadge) {
+        countBadge.textContent = `${jawatanEntries.length} Jawatan`;
+      }
+
+      ptsListEl.innerHTML = "";
+
+      if (jawatanEntries.length === 0) {
+        ptsListEl.innerHTML = `<div class="p-3 text-center text-xs text-slate-400 italic">Tiada jawatan didaftarkan. Sila tambah jawatan baharu di atas.</div>`;
+        return;
+      }
+
+      jawatanEntries.forEach(([jawatan, points]) => {
+        const item = document.createElement("div");
+        item.className = "flex justify-between items-center py-2 px-1 text-xs hover:bg-slate-50 transition rounded-lg group";
+
+        const leftCol = document.createElement("div");
+        leftCol.className = "flex items-center gap-2 flex-1 pr-2";
+        leftCol.innerHTML = `
+          <span class="font-bold text-slate-800 break-words">${jawatan}</span>
+        `;
+
+        const rightCol = document.createElement("div");
+        rightCol.className = "flex items-center gap-2 flex-shrink-0";
+
+        // Input mata yang boleh diedit secara langsung
+        const pointInput = document.createElement("input");
+        pointInput.type = "number";
+        pointInput.min = "1";
+        pointInput.max = "30";
+        pointInput.value = points;
+        pointInput.setAttribute("data-jawatan", jawatan);
+        pointInput.className = "jawatan-point-input w-14 px-2 py-1 text-center font-bold border rounded border-amber-300 bg-amber-50 focus:outline-none text-slate-800";
+        pointInput.title = `Ubah mata bagi ${jawatan}`;
+
+        // Butang Edit Nama Jawatan
+        const editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.className = "text-amber-600 hover:text-amber-800 p-1.5 rounded hover:bg-amber-100 transition cursor-pointer";
+        editBtn.title = `Edit maklumat jawatan ${jawatan}`;
+        editBtn.innerHTML = `<i class="fa-solid fa-pen-to-square"></i>`;
+        editBtn.addEventListener("click", () => {
+          openEditJawatanModal(jawatan, points);
+        });
+
+        // Butang Padam Jawatan
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "text-red-500 hover:text-red-700 p-1.5 rounded hover:bg-red-100 transition cursor-pointer";
+        deleteBtn.title = `Padam jawatan ${jawatan}`;
+        deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can"></i>`;
+        deleteBtn.addEventListener("click", () => {
+          promptDeleteJawatan(jawatan);
+        });
+
+        rightCol.appendChild(pointInput);
+        rightCol.appendChild(editBtn);
+        rightCol.appendChild(deleteBtn);
+
+        item.appendChild(leftCol);
+        item.appendChild(rightCol);
+        ptsListEl.appendChild(item);
+      });
+    }
+
+    // Tambah Jawatan Baharu
+    function addNewJawatan() {
+      const nameInput = document.getElementById("newJawatanNameInput");
+      const pointsInput = document.getElementById("newJawatanPointsInput");
+
+      const name = nameInput.value.trim();
+      const points = parseInt(pointsInput.value) || 0;
+
+      if (!name) {
+        showToast("Sila masukkan nama jawatan baharu.", "error");
+        return;
+      }
+
+      if (points <= 0) {
+        showToast("Sila masukkan nilai mata yang sah (sekurang-kurangnya 1).", "error");
+        return;
+      }
+
+      // Semak duplikasi jawatan
+      const exists = Object.keys(state.jawatanMata).some(j => j.toLowerCase() === name.toLowerCase());
+      if (exists) {
+        showToast("Jawatan ini sudah wujud dalam senarai!", "error");
+        return;
+      }
+
+      state.jawatanMata[name] = points;
+      saveToStorage();
+
+      nameInput.value = "";
+      pointsInput.value = "3";
+
+      renderJawatanSettingList();
+      renderCurrentForm(); // Kemaskini dropdown borang jika sedang dibuka
+      showToast(`Jawatan "${name}" (${points} mata) berjaya ditambah.`, "success");
+    }
+
+    // Modal Edit Jawatan
+    function openEditJawatanModal(jawatanName, currentPoints) {
+      editingJawatanContext = { oldJawatanName: jawatanName };
+
+      const nameInput = document.getElementById("editJawatanNameInput");
+      const ptInput = document.getElementById("editJawatanPointInput");
+
+      nameInput.value = jawatanName;
+      ptInput.value = currentPoints;
+
+      const saveBtn = document.getElementById("btnSaveEditJawatan");
+      saveBtn.onclick = executeSaveEditedJawatan;
+
+      document.getElementById("editJawatanModal").classList.remove("hidden");
+      nameInput.focus();
+    }
+
+    function closeEditJawatanModal() {
+      document.getElementById("editJawatanModal").classList.add("hidden");
+      editingJawatanContext = { oldJawatanName: "" };
+    }
+
+    function executeSaveEditedJawatan() {
+      const { oldJawatanName } = editingJawatanContext;
+      const newName = document.getElementById("editJawatanNameInput").value.trim();
+      const newPoints = parseInt(document.getElementById("editJawatanPointInput").value) || 0;
+
+      if (!newName) {
+        showToast("Nama jawatan tidak boleh dibiarkan kosong.", "error");
+        return;
+      }
+
+      if (newPoints <= 0) {
+        showToast("Nilai mata mestilah sekurang-kurangnya 1.", "error");
+        return;
+      }
+
+      // Semak jika nama bertindih dengan jawatan lain
+      const duplicate = Object.keys(state.jawatanMata).some(
+        j => j.toLowerCase() === newName.toLowerCase() && j.toLowerCase() !== oldJawatanName.toLowerCase()
+      );
+      if (duplicate) {
+        showToast("Nama jawatan ini sudah wujud dalam senarai!", "error");
+        return;
+      }
+
+      // 1. Kemas kini objek jawatanMata (buang kunci lama jika tukar nama)
+      if (newName !== oldJawatanName) {
+        delete state.jawatanMata[oldJawatanName];
+      }
+      state.jawatanMata[newName] = newPoints;
+
+      // 2. Selaras rekod tugas semua guru yang menggunakan jawatan ini
+      Object.keys(state.agihanTugas).forEach(guru => {
+        ["pentadbiran", "kurikulum", "hem", "kokurikulum", "asrama"].forEach(bidang => {
+          const list = (state.agihanTugas[guru] && state.agihanTugas[guru][bidang]) || [];
+          list.forEach(duty => {
+            if (duty.jawatan === oldJawatanName) {
+              duty.jawatan = newName;
+              duty.mata = newPoints;
+            } else if (duty.jawatan === newName) {
+              duty.mata = newPoints;
+            }
+          });
+        });
+      });
+
+      saveToStorage();
+      closeEditJawatanModal();
+      renderJawatanSettingList();
+      renderCurrentForm();
+
+      // Segarkan semua bahagian analisis
+      syncAllAnalyticsAndViews();
+
+      showToast(`Jawatan "${newName}" berjaya dikemaskini.`, "success");
+    }
+
+    // Padam Jawatan
+    function promptDeleteJawatan(jawatanName) {
+      openConfirmModal(
+        "Padam Pilihan Jawatan",
+        "Tindakan memadam jawatan daripada senarai",
+        `Adakah anda pasti ingin memadam jawatan <strong>"${jawatanName}"</strong>?<br><span class="text-xs text-red-600 mt-1 block font-medium">*Jawatan ini tidak lagi akan muncul dalam pilihan dropdown. Sebarang tugasan guru sedia ada dengan jawatan ini akan diselaraskan matanya.</span>`,
+        "Ya, Padam Jawatan",
+        () => {
+          executeDeleteJawatan(jawatanName);
+        }
+      );
+    }
+
+    function executeDeleteJawatan(jawatanName) {
+      if (state.jawatanMata[jawatanName] !== undefined) {
+        delete state.jawatanMata[jawatanName];
+      }
+
+      // Selaras mata rekod guru yang menggunakan jawatan yang dipadam kepada 0
+      Object.keys(state.agihanTugas).forEach(guru => {
+        ["pentadbiran", "kurikulum", "hem", "kokurikulum", "asrama"].forEach(bidang => {
+          const list = (state.agihanTugas[guru] && state.agihanTugas[guru][bidang]) || [];
+          list.forEach(duty => {
+            if (duty.jawatan === jawatanName) {
+              duty.mata = 0;
+            }
+          });
+        });
+      });
+
+      saveToStorage();
+      renderJawatanSettingList();
+      renderCurrentForm();
+
+      // Segarkan semua bahagian analisis
+      syncAllAnalyticsAndViews();
+
+      showToast(`Jawatan "${jawatanName}" berjaya dipadam.`, "success");
+    }
+
+    // PENGURUSAN TUGASAN SETTING (PILIH BIDANG, TAMBAH, EDIT, PADAM)
+    function changeSettingBidang(bidangKey) {
+      state.settingActiveBidang = bidangKey;
+      renderSettingBidangTugasan();
+    }
+
+    function renderSettingBidangTugasan() {
+      const activeBidang = state.settingActiveBidang || "pentadbiran";
+      const bidangKeys = ["pentadbiran", "kurikulum", "hem", "kokurikulum", "asrama"];
+      
+      const bidangLabels = {
+        pentadbiran: "Bahagian Pentadbiran",
+        kurikulum: "Bahagian Kurikulum",
+        hem: "Bahagian Hal Ehwal Murid (HEM)",
+        kokurikulum: "Bahagian KoKurikulum",
+        asrama: "Bahagian Asrama"
+      };
+
+      // Kemaskini gaya butang tab bidang dalam setting
+      bidangKeys.forEach(k => {
+        const btn = document.getElementById(`settab-${k}`);
+        if (!btn) return;
+        if (k === activeBidang) {
+          btn.className = "px-3 py-1 text-xs font-extrabold rounded-lg bg-amber-400 text-slate-950 shadow";
+        } else {
+          btn.className = "px-3 py-1 text-xs font-semibold rounded-lg bg-emerald-900/50 hover:bg-emerald-800 text-emerald-100 transition";
+        }
+      });
+
+      const listContainer = document.getElementById("settingTugasanListContainer");
+      if (!listContainer) return;
+
+      const currentTasks = state.tugasanPortfolio[activeBidang] || [];
+      document.getElementById("labelBidangAktifTitle").textContent = `Senarai Tugasan / Jawatankuasa (${bidangLabels[activeBidang]})`;
+      document.getElementById("labelBidangCount").textContent = `${currentTasks.length} Tugasan`;
+
+      listContainer.innerHTML = "";
+
+      if (currentTasks.length === 0) {
+        listContainer.innerHTML = `<div class="p-4 text-center text-xs text-slate-400 italic">Tiada tugasan didaftarkan untuk bahagian ini. Tambah menggunakan borang di atas.</div>`;
+        return;
+      }
+
+      currentTasks.forEach((tugasName, index) => {
+        const itemRow = document.createElement("div");
+        itemRow.className = "flex items-center justify-between py-2.5 px-2 hover:bg-slate-50 transition rounded-lg group";
+
+        const textSpan = document.createElement("span");
+        textSpan.className = "text-xs font-semibold text-slate-800 pr-2 break-words flex-1";
+        textSpan.innerHTML = `<span class="text-emerald-700 font-bold mr-1.5">${index + 1}.</span> ${tugasName}`;
+
+        const actionsDiv = document.createElement("div");
+        actionsDiv.className = "flex items-center gap-1 flex-shrink-0";
+
+        // Butang Edit
+        const editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.className = "text-amber-600 hover:text-amber-800 p-1.5 rounded-lg hover:bg-amber-50 transition text-xs flex items-center gap-1 font-semibold";
+        editBtn.title = `Edit nama tugasan "${tugasName}"`;
+        editBtn.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> <span class="hidden sm:inline">Edit</span>`;
+        editBtn.addEventListener("click", () => {
+          openEditTugasanModal(activeBidang, tugasName);
+        });
+
+        // Butang Padam
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 transition text-xs flex items-center gap-1 font-semibold";
+        deleteBtn.title = `Padam tugasan "${tugasName}"`;
+        deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can"></i> <span class="hidden sm:inline">Padam</span>`;
+        deleteBtn.addEventListener("click", () => {
+          promptDeleteTugasan(activeBidang, tugasName);
+        });
+
+        actionsDiv.appendChild(editBtn);
+        actionsDiv.appendChild(deleteBtn);
+
+        itemRow.appendChild(textSpan);
+        itemRow.appendChild(actionsDiv);
+        listContainer.appendChild(itemRow);
+      });
+    }
+
+    function addNewTugasanSetting() {
+      const activeBidang = state.settingActiveBidang || "pentadbiran";
+      const input = document.getElementById("newTugasanInput");
+      const newTask = input.value.trim();
+
+      if (!newTask) {
+        showToast("Sila masukkan nama tugasan / jawatankuasa terlebih dahulu.", "error");
+        return;
+      }
+
+      if (!state.tugasanPortfolio[activeBidang]) {
+        state.tugasanPortfolio[activeBidang] = [];
+      }
+
+      // Elak duplikasi nama dalam bidang yang sama
+      const exists = state.tugasanPortfolio[activeBidang].some(t => t.toLowerCase() === newTask.toLowerCase());
+      if (exists) {
+        showToast("Tugasan ini telah wujud dalam bahagian tersebut!", "error");
+        return;
+      }
+
+      state.tugasanPortfolio[activeBidang].push(newTask);
+      saveToStorage();
+      input.value = "";
+
+      renderSettingBidangTugasan();
+      // Kemaskini borang aktif jika pengguna sedang membuka tab yang sama
+      if (state.activeTab === activeBidang) {
+        renderCurrentForm();
+      }
+      showToast(`Tugasan "${newTask}" berjaya ditambah ke ${activeBidang.toUpperCase()}.`, "success");
+    }
+
+    // Modal Edit Tugasan
+    function openEditTugasanModal(bidang, taskName) {
+      editingTaskContext = { bidang, oldTaskName: taskName };
+      const bidangLabels = {
+        pentadbiran: "Bahagian Pentadbiran",
+        kurikulum: "Bahagian Kurikulum",
+        hem: "Bahagian Hal Ehwal Murid (HEM)",
+        kokurikulum: "Bahagian KoKurikulum",
+        asrama: "Bahagian Asrama"
+      };
+
+      document.getElementById("editTugasanCategoryLabel").textContent = bidangLabels[bidang] || bidang;
+      const input = document.getElementById("editTugasanInput");
+      input.value = taskName;
+
+      const saveBtn = document.getElementById("btnSaveEditTugasan");
+      saveBtn.onclick = executeSaveEditedTugasan;
+
+      document.getElementById("editTugasanModal").classList.remove("hidden");
+      input.focus();
+    }
+
+    function closeEditTugasanModal() {
+      document.getElementById("editTugasanModal").classList.add("hidden");
+      editingTaskContext = { bidang: "", oldTaskName: "" };
+    }
+
+    function executeSaveEditedTugasan() {
+      const { bidang, oldTaskName } = editingTaskContext;
+      const input = document.getElementById("editTugasanInput");
+      const updatedName = input.value.trim();
+
+      if (!updatedName) {
+        showToast("Nama tugasan tidak boleh dibiarkan kosong.", "error");
+        return;
+      }
+
+      if (updatedName === oldTaskName) {
+        closeEditTugasanModal();
+        return;
+      }
+
+      // Semak jika nama baharu bertindih dengan tugasan lain
+      const duplicate = (state.tugasanPortfolio[bidang] || []).some(
+        t => t.toLowerCase() === updatedName.toLowerCase() && t.toLowerCase() !== oldTaskName.toLowerCase()
+      );
+      if (duplicate) {
+        showToast("Nama tugasan ini sudah wujud dalam bahagian ini!", "error");
+        return;
+      }
+
+      // 1. Kemaskini senarai tugasan portfolio
+      const idx = (state.tugasanPortfolio[bidang] || []).indexOf(oldTaskName);
+      if (idx !== -1) {
+        state.tugasanPortfolio[bidang][idx] = updatedName;
+      }
+
+      // 2. Kemaskini rekod agihan guru sedia ada yang menggunakan nama tugasan lama
+      Object.keys(state.agihanTugas).forEach(guru => {
+        const dutyList = (state.agihanTugas[guru] && state.agihanTugas[guru][bidang]) || [];
+        dutyList.forEach(duty => {
+          if (duty.tugasan === oldTaskName) {
+            duty.tugasan = updatedName;
+          }
+        });
+      });
+
+      saveToStorage();
+      closeEditTugasanModal();
+      renderSettingBidangTugasan();
+
+      // Kemaskini borang aktif sekiranya sedang berada di tab berkenaan
+      if (state.activeTab === bidang) {
+        renderCurrentForm();
+      }
+
+      syncAllAnalyticsAndViews();
+
+      showToast(`Nama tugasan berjaya dikemaskini kepada "${updatedName}".`, "success");
+    }
+
+    // Pengesahan & Pemadaman Tugasan
+    function promptDeleteTugasan(bidang, taskName) {
+      openConfirmModal(
+        "Padam Pilihan Tugasan",
+        `Tindakan memadam tugasan daripada ${bidang.toUpperCase()}`,
+        `Adakah anda pasti ingin memadam <strong>"${taskName}"</strong> daripada senarai pilihan bahagian ${bidang.toUpperCase()}?<br><span class="text-xs text-amber-700 mt-1 block font-medium">*Sebarang rekod sedia ada guru bagi jawatankuasa ini akan diselaraskan.</span>`,
+        "Ya, Padam Tugasan",
+        () => {
+          executeDeleteTugasan(bidang, taskName);
+        }
+      );
+    }
+
+    function executeDeleteTugasan(bidang, taskName) {
+      // 1. Buang dari senarai portfolio
+      if (state.tugasanPortfolio[bidang]) {
+        state.tugasanPortfolio[bidang] = state.tugasanPortfolio[bidang].filter(t => t !== taskName);
+      }
+
+      // 2. Selaras rekod guru (buang tugasan ini daripada rekod guru jika ada)
+      Object.keys(state.agihanTugas).forEach(guru => {
+        if (state.agihanTugas[guru] && state.agihanTugas[guru][bidang]) {
+          state.agihanTugas[guru][bidang] = state.agihanTugas[guru][bidang].filter(d => d.tugasan !== taskName);
+        }
+      });
+
+      saveToStorage();
+      renderSettingBidangTugasan();
+
+      if (state.activeTab === bidang) {
+        renderCurrentForm();
+      }
+
+      syncAllAnalyticsAndViews();
+
+      showToast(`Tugasan "${taskName}" berjaya dipadam.`, "success");
+    }
+
+    function addNewGuru() {
+      const input = document.getElementById("newGuruInput");
+      const name = input.value.trim().toUpperCase();
+      if (!name) {
+        showToast("Sila masukkan nama guru baharu.", "error");
+        return;
+      }
+      if (state.senaraiGuru.includes(name)) {
+        showToast("Nama guru ini sudah wujud dalam senarai!", "error");
+        return;
+      }
+      state.senaraiGuru.push(name);
+      state.agihanTugas[name] = { pentadbiran: [], kurikulum: [], hem: [], kokurikulum: [], asrama: [] };
+      saveToStorage();
+      input.value = "";
+      populateGuruDropdowns();
+      populateCarianSelect();
+      renderSettingPanel();
+      showToast(`Guru "${name}" berjaya ditambah.`, "success");
+    }
+
+    // Modal Confirmation Dialog Handling
+    let onModalConfirmAction = null;
+
+    function openConfirmModal(title, description, message, confirmBtnText, onConfirm) {
+      const modal = document.getElementById("confirmModal");
+      const titleEl = document.getElementById("modalTitle");
+      const descEl = document.getElementById("modalDescription");
+      const msgEl = document.getElementById("modalMessage");
+      const confirmBtn = document.getElementById("modalBtnConfirm");
+
+      if (titleEl) titleEl.textContent = title;
+      if (descEl) descEl.textContent = description;
+      if (msgEl) msgEl.innerHTML = message;
+      if (confirmBtn) confirmBtn.textContent = confirmBtnText;
+
+      onModalConfirmAction = onConfirm;
+      if (modal) modal.classList.remove("hidden");
+    }
+
+    function closeConfirmModal() {
+      const modal = document.getElementById("confirmModal");
+      if (modal) modal.classList.add("hidden");
+      onModalConfirmAction = null;
+    }
+
+    const modalBtnConfirmEl = document.getElementById("modalBtnConfirm");
+    if (modalBtnConfirmEl) {
+      modalBtnConfirmEl.addEventListener("click", () => {
+        if (typeof onModalConfirmAction === "function") {
+          onModalConfirmAction();
+        }
+        closeConfirmModal();
+      });
+    }
+
+    // PENGESAHAN & PEMADAMAN GURU SECARA LENGKAP
+    function promptDeleteGuru(teacherName) {
+      openConfirmModal(
+        "Padam Rekod Guru",
+        "Tindakan ini tidak boleh dikembalikan.",
+        `Adakah anda pasti ingin memadam <strong>"${teacherName}"</strong>?<br><span class="text-xs text-red-600 mt-1 block font-medium">*Semua agihan tugas dan mata berkaitan guru ini akan turut dihapuskan serta-merta.</span>`,
+        "Ya, Padam Guru Ini",
+        () => {
+          executeDeleteGuru(teacherName);
+        }
+      );
+    }
+
+    function executeDeleteGuru(teacherName) {
+      // 1. Padam daripada senarai guru
+      state.senaraiGuru = state.senaraiGuru.filter(g => g !== teacherName);
+
+      // 2. Padam rekod agihan tugas guru dari memori
+      if (state.agihanTugas[teacherName]) {
+        delete state.agihanTugas[teacherName];
+      }
+
+      // 3. Kemaskini guru terpilih jika yang dipadam sedang aktif
+      if (state.selectedGuru === teacherName) {
+        state.selectedGuru = state.senaraiGuru.length > 0 ? state.senaraiGuru[0] : "";
+      }
+
+      // 4. Simpan ke storan tempatan (localStorage)
+      saveToStorage();
+
+      // 5. Kemas kini semua paparan dan dropdown yang berkaitan
+      populateGuruDropdowns();
+      populateCarianSelect();
+      renderSettingPanel();
+      renderCurrentForm();
+
+      syncAllAnalyticsAndViews();
+
+      showToast(`Guru "${teacherName}" dan seluruh rekod tugasan berjaya dipadamkan.`, "success");
+    }
+
+    // PENGESAHAN RESET DEFAULT
+    function promptResetDefault() {
+      openConfirmModal(
+        "Tetapkan Semula Data",
+        "Kembalikan ke konfigurasi asal",
+        "Adakah anda pasti ingin menetapkan semula ke semua data sampel asal? Semua rekod baharu anda akan dipadam.",
+        "Set Semula",
+        () => {
+          localStorage.removeItem("SPTG_DATA");
+          loadDefaultData();
+          initApp();
+          renderSettingPanel();
+          showToast("Sistem telah diset semula ke konfigurasi asal.", "info");
+        }
+      );
+    }
+
+    // FUNGSI SANDARAN & MUAT NAIK DATA PENUH (BACKUP & RESTORE)
+    function exportFullSystemBackup() {
+      const dataToSave = {
+        senaraiGuru: state.senaraiGuru,
+        jawatanMata: state.jawatanMata,
+        tugasanPortfolio: state.tugasanPortfolio,
+        agihanTugas: state.agihanTugas,
+        tarikhKemaskini: state.tarikhKemaskini || new Date().toLocaleDateString('ms-MY')
+      };
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToSave, null, 2));
+      const downloadAnchor = document.createElement("a");
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `SPTG_Backup_ASiS_${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+
+      showToast("Fail sandaran sistem (JSON) berjaya dimuat turun!", "success");
+    }
+
+    function importFullSystemBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (imported.senaraiGuru && imported.jawatanMata && imported.tugasanPortfolio && imported.agihanTugas) {
+            state.senaraiGuru = imported.senaraiGuru;
+            state.jawatanMata = imported.jawatanMata;
+            state.tugasanPortfolio = imported.tugasanPortfolio;
+            state.agihanTugas = imported.agihanTugas;
+            state.tarikhKemaskini = new Date().toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            
+            saveToStorage();
+            populateGuruDropdowns();
+            populateCarianSelect();
+            renderSettingPanel();
+            renderCurrentForm();
+            syncAllAnalyticsAndViews();
+
+            showToast("Data sistem berjaya dimuat naik dan disegerakkan!", "success");
+          } else {
+            showToast("Format fail sandaran tidak sah!", "error");
+          }
+        } catch (err) {
+          showToast("Gagal membaca fail JSON. Sila periksa fail.", "error");
+        }
+        event.target.value = "";
+      };
+      reader.readAsText(file);
+    }
+
+    function saveJawatanPoints() {
+      const inputs = document.querySelectorAll(".jawatan-point-input");
+      inputs.forEach(inp => {
+        const jawatan = inp.getAttribute("data-jawatan");
+        const val = parseInt(inp.value) || 0;
+        state.jawatanMata[jawatan] = val;
+      });
+
+      // Kemas kini semula mata pada semua rekod tugasan guru yang memegang jawatan tersebut
+      Object.keys(state.agihanTugas).forEach(guru => {
+        ["pentadbiran", "kurikulum", "hem", "kokurikulum", "asrama"].forEach(bidang => {
+          const list = (state.agihanTugas[guru] && state.agihanTugas[guru][bidang]) || [];
+          list.forEach(duty => {
+            if (state.jawatanMata[duty.jawatan] !== undefined) {
+              duty.mata = state.jawatanMata[duty.jawatan];
+            }
+          });
+        });
+      });
+
+      saveToStorage();
+      renderCurrentForm();
+      syncAllAnalyticsAndViews();
+
+      showToast("Mata pemberatan jawatan berjaya diselaraskan ke semua rekod guru!", "success");
+    }
+
+    // ================= FUNGSI CETAKAN DOKUMEN RASMI =================
+    function handlePrintDocument(type = 'all', specificGuru = '') {
+      const area = document.getElementById("printableArea");
+      const titleModal = document.getElementById("printModalTitle");
+      const tarikhCetak = new Date().toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const tarikhKemaskini = state.tarikhKemaskini || tarikhCetak;
+
+      if (type === 'single' && specificGuru) {
+        // Cetak Surat Penyerahan Tugas Individu Guru
+        titleModal.textContent = `Surat Agihan Tugas - ${specificGuru}`;
+        currentPrintDocTitle = `Surat_Tugas_${specificGuru.replace(/[^a-zA-Z0-9]/g, '_')}`;
+        const record = state.agihanTugas[specificGuru] || { pentadbiran: [], kurikulum: [], hem: [], kokurikulum: [], asrama: [] };
+        
+        const getListHTML = (list) => {
+          if (!list || list.length === 0) return `<tr><td colspan="4" class="text-slate-400 italic py-1.5 text-center">Tiada tugasan didaftarkan</td></tr>`;
+          return list.map((item, idx) => `
+            <tr class="border-b border-slate-200">
+              <td class="py-1 px-2 text-center text-xs font-medium text-slate-500">${idx + 1}</td>
+              <td class="py-1 px-2 text-xs font-semibold text-slate-800">${item.tugasan}</td>
+              <td class="py-1 px-2 text-xs text-slate-700">${item.jawatan}</td>
+              <td class="py-1 px-2 text-xs text-center font-bold text-emerald-900">${item.mata}</td>
+            </tr>
+          `).join('');
+        };
+
+        const calcPart = (list) => (list || []).reduce((a, b) => a + (b.mata || 0), 0);
+        const pScore = calcPart(record.pentadbiran);
+        const kScore = calcPart(record.kurikulum);
+        const hScore = calcPart(record.hem);
+        const koScore = calcPart(record.kokurikulum);
+        const asrScore = calcPart(record.asrama);
+        const total = pScore + kScore + hScore + koScore + asrScore;
+
+        area.innerHTML = `
+          <div class="border-b-2 border-blue-900 pb-4 mb-4 text-center">
+            <!-- Header Surat Rasmi Tanpa Logo -->
+            <h1 class="text-xs sm:text-sm font-black uppercase tracking-wider text-blue-950">KEMENTERIAN PENDIDIKAN MALAYSIA</h1>
+            <h2 class="text-base sm:text-lg font-black uppercase tracking-wider text-slate-900">SEKOLAH MENENGAH SAINS ALAM SHAH</h2>
+            <p class="text-xs font-semibold text-slate-600">Dokumen Agihan & Pemantauan Beban Tugas Rasmi</p>
+            <h3 class="text-xs sm:text-sm font-extrabold uppercase text-amber-700 mt-1">SURAT PENYERAHAN & PEMBERATAN TUGAS GURU SESI SEMASA</h3>
+            <div class="flex justify-between items-center text-[10px] text-slate-500 mt-2 px-1 border-t border-slate-200 pt-1">
+              <span><strong>Tarikh Kemas Kini:</strong> ${tarikhKemaskini}</span>
+              <span><strong>Tarikh & Masa Cetakan:</strong> ${tarikhCetak}</span>
+            </div>
+          </div>
+
+          <div class="mb-4 bg-slate-50 p-3 rounded border border-slate-300">
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div><span class="font-bold text-slate-600">NAMA GURU:</span> <span class="font-black text-slate-900">${specificGuru}</span></div>
+              <div class="text-right"><span class="font-bold text-slate-600">STATUS BEBAN:</span> <span class="font-bold text-emerald-800">${total > 28 ? 'Tinggi' : total > 20 ? 'Optimum' : total >= 10 ? 'Seimbang' : 'Rendah'}</span></div>
+              <div><span class="font-bold text-slate-600">PENEMPATAN:</span> <span class="font-medium text-slate-800">SM Sains Alam Shah</span></div>
+              <div class="text-right"><span class="font-bold text-slate-600">JUMLAH MATA:</span> <span class="font-black text-emerald-800 text-sm">${total} MATA</span></div>
+            </div>
+          </div>
+
+          <!-- Jadual Perincian Setiap Bahagian -->
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between items-center bg-emerald-800 text-white px-2.5 py-1 text-xs font-bold rounded-t">
+                <span>1. BAHAGIAN PENTADBIRAN</span>
+                <span>Subjumlah: ${pScore} Mata</span>
+              </div>
+              <table class="w-full border border-t-0 border-slate-300">
+                <thead class="bg-slate-100 text-[10px] text-slate-600 uppercase">
+                  <tr><th class="py-1 px-2 w-8">Bil</th><th class="py-1 px-2 text-left">Nama Jawatankuasa / Tugasan</th><th class="py-1 px-2 text-left">Jawatan</th><th class="py-1 px-2 text-center w-16">Mata</th></tr>
+                </thead>
+                <tbody>${getListHTML(record.pentadbiran)}</tbody>
+              </table>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center bg-blue-800 text-white px-2.5 py-1 text-xs font-bold rounded-t">
+                <span>2. BAHAGIAN KURIKULUM</span>
+                <span>Subjumlah: ${kScore} Mata</span>
+              </div>
+              <table class="w-full border border-t-0 border-slate-300">
+                <thead class="bg-slate-100 text-[10px] text-slate-600 uppercase">
+                  <tr><th class="py-1 px-2 w-8">Bil</th><th class="py-1 px-2 text-left">Nama Jawatankuasa / Tugasan</th><th class="py-1 px-2 text-left">Jawatan</th><th class="py-1 px-2 text-center w-16">Mata</th></tr>
+                </thead>
+                <tbody>${getListHTML(record.kurikulum)}</tbody>
+              </table>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center bg-amber-800 text-white px-2.5 py-1 text-xs font-bold rounded-t">
+                <span>3. BAHAGIAN HAL EHWAL MURID (HEM)</span>
+                <span>Subjumlah: ${hScore} Mata</span>
+              </div>
+              <table class="w-full border border-t-0 border-slate-300">
+                <thead class="bg-slate-100 text-[10px] text-slate-600 uppercase">
+                  <tr><th class="py-1 px-2 w-8">Bil</th><th class="py-1 px-2 text-left">Nama Jawatankuasa / Tugasan</th><th class="py-1 px-2 text-left">Jawatan</th><th class="py-1 px-2 text-center w-16">Mata</th></tr>
+                </thead>
+                <tbody>${getListHTML(record.hem)}</tbody>
+              </table>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center bg-purple-800 text-white px-2.5 py-1 text-xs font-bold rounded-t">
+                <span>4. BAHAGIAN KOKURIKULUM</span>
+                <span>Subjumlah: ${koScore} Mata</span>
+              </div>
+              <table class="w-full border border-t-0 border-slate-300">
+                <thead class="bg-slate-100 text-[10px] text-slate-600 uppercase">
+                  <tr><th class="py-1 px-2 w-8">Bil</th><th class="py-1 px-2 text-left">Nama Jawatankuasa / Tugasan</th><th class="py-1 px-2 text-left">Jawatan</th><th class="py-1 px-2 text-center w-16">Mata</th></tr>
+                </thead>
+                <tbody>${getListHTML(record.kokurikulum)}</tbody>
+              </table>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center bg-amber-900 text-white px-2.5 py-1 text-xs font-bold rounded-t">
+                <span>5. BAHAGIAN ASRAMA</span>
+                <span>Subjumlah: ${asrScore} Mata</span>
+              </div>
+              <table class="w-full border border-t-0 border-slate-300">
+                <thead class="bg-slate-100 text-[10px] text-slate-600 uppercase">
+                  <tr><th class="py-1 px-2 w-8">Bil</th><th class="py-1 px-2 text-left">Nama Jawatankuasa / Tugasan</th><th class="py-1 px-2 text-left">Jawatan</th><th class="py-1 px-2 text-center w-16">Mata</th></tr>
+                </thead>
+                <tbody>${getListHTML(record.asrama)}</tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Pengesahan Guru & Pentadbir -->
+          <div class="mt-8 pt-6 grid grid-cols-2 gap-10 text-xs">
+            <div>
+              <p class="font-bold text-slate-700">Disediakan Oleh:</p>
+              <div class="h-12"></div>
+              <p class="border-t border-slate-400 font-bold text-slate-900 pt-1">MOHD.FAUZI SUNARY</p>
+              <p class="text-slate-600 text-[11px]">Guru Penolong Kanan Pentadbiran</p>
+            </div>
+            <div>
+              <p class="font-bold text-slate-700">Perakuan Penerimaan Tugas:</p>
+              <div class="h-12"></div>
+              <p class="border-t border-slate-400 font-bold text-slate-900 pt-1">${specificGuru}</p>
+              <p class="text-slate-500 text-[11px]">Tarikh: .......................................</p>
+            </div>
+          </div>
+
+          <!-- Footer Kredit Cetakan (Saiz 8pt) -->
+          <div class="mt-6 pt-2 border-t border-slate-200 flex justify-between items-center text-slate-500" style="font-size: 8pt;">
+            <span>Disediakan oleh: <strong>Mohd.Fauzi Sunary</strong>, Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah</span>
+            <span>Kemaskini: ${tarikhKemaskini} | Cetakan: ${tarikhCetak}</span>
+          </div>
+        `;
+      } else {
+        // Cetak Laporan Keseluruhan Agihan Tugas
+        titleModal.textContent = "Laporan Analisis Pemberatan Tugas Keseluruhan Guru";
+        currentPrintDocTitle = `Laporan_Pemberatan_Tugas_Keseluruhan_${new Date().toISOString().slice(0, 10)}`;
+        const data = calculateTeacherTotals();
+        
+        let rowsHTML = "";
+        data.forEach((r, idx) => {
+          rowsHTML += `
+            <tr class="border-b border-slate-200">
+              <td class="py-1.5 px-2 text-center font-medium">${idx + 1}</td>
+              <td class="py-1.5 px-2 font-bold text-slate-900">${r.guru}</td>
+              <td class="py-1.5 px-2 text-center">${r.p}</td>
+              <td class="py-1.5 px-2 text-center">${r.k}</td>
+              <td class="py-1.5 px-2 text-center">${r.h}</td>
+              <td class="py-1.5 px-2 text-center">${r.ko}</td>
+              <td class="py-1.5 px-2 text-center">${r.asr}</td>
+              <td class="py-1.5 px-2 text-center font-extrabold text-emerald-900 bg-emerald-50/60">${r.total}</td>
+              <td class="py-1.5 px-2 text-center font-bold text-[10px]">${r.status}</td>
+            </tr>
+          `;
+        });
+
+        area.innerHTML = `
+          <div class="border-b-2 border-blue-900 pb-4 mb-4 text-center">
+            <h1 class="text-xs sm:text-sm font-black uppercase tracking-wider text-blue-950">KEMENTERIAN PENDIDIKAN MALAYSIA</h1>
+            <h2 class="text-base sm:text-lg font-black uppercase tracking-wider text-slate-900">SEKOLAH MENENGAH SAINS ALAM SHAH</h2>
+            <h3 class="text-xs sm:text-sm font-extrabold uppercase text-amber-700 mt-1">LAPORAN ANALISIS PEMBERATAN TUGAS GURU KESELURUHAN</h3>
+            <div class="flex justify-between items-center text-[10px] text-slate-500 mt-2 px-1 border-t border-slate-200 pt-1">
+              <span><strong>Tarikh Kemas Kini:</strong> ${tarikhKemaskini}</span>
+              <span><strong>Tarikh & Masa Cetakan:</strong> ${tarikhCetak}</span>
+            </div>
+          </div>
+
+          <table class="w-full border border-slate-300 text-xs">
+            <thead class="bg-blue-950 text-white font-bold text-[10px] uppercase">
+              <tr>
+                <th class="py-2 px-2 text-center w-8">Bil</th>
+                <th class="py-2 px-2 text-left">Nama Guru</th>
+                <th class="py-2 px-2 text-center w-12">Pentadbiran</th>
+                <th class="py-2 px-2 text-center w-12">Kurikulum</th>
+                <th class="py-2 px-2 text-center w-12">HEM</th>
+                <th class="py-2 px-2 text-center w-12">KoKurikulum</th>
+                <th class="py-2 px-2 text-center w-12">Asrama</th>
+                <th class="py-2 px-2 text-center w-14 bg-blue-900 text-amber-300">Jumlah Mata</th>
+                <th class="py-2 px-2 text-center w-16">Status</th>
+              </tr>
+            </thead>
+            <tbody>${rowsHTML}</tbody>
+          </table>
+
+          <div class="mt-8 pt-4 flex justify-between items-center text-xs border-t border-slate-300">
+            <div>
+              <p class="font-bold text-slate-800">Disediakan Oleh:</p>
+              <div class="h-10"></div>
+              <p class="font-bold text-slate-900">MOHD.FAUZI SUNARY</p>
+              <p class="text-slate-600 text-[11px]">Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah</p>
+            </div>
+            <div class="text-right">
+              <p class="font-bold text-slate-800">Disahkan Oleh:</p>
+              <div class="h-10"></div>
+              <p class="font-bold text-slate-900">Pengetua / Guru Besar</p>
+              <p class="text-slate-600 text-[11px]">SM Sains Alam Shah</p>
+            </div>
+          </div>
+
+          <!-- Footer Kredit Cetakan (Saiz 8pt) -->
+          <div class="mt-6 pt-2 border-t border-slate-200 flex justify-between items-center text-slate-500" style="font-size: 8pt;">
+            <span>Disediakan oleh: <strong>Mohd.Fauzi Sunary</strong>, Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah</span>
+            <span>Kemaskini: ${tarikhKemaskini} | Cetakan: ${tarikhCetak}</span>
+          </div>
+        `;
+      }
+
+      currentPrintHTMLContent = area.innerHTML;
+      document.getElementById("printModal").classList.remove("hidden");
+    }
+
+    function closePrintModal() {
+      document.getElementById("printModal").classList.add("hidden");
+    }
+
+    // KAEDAH 1: JANA & MUAT TURUN PDF ASLI SECARA TERUS (HTML2PDF)
+    function downloadDirectPDF() {
+      const element = document.getElementById("printableArea");
+      if (!element) return;
+
+      showToast("Sedang menjana fail PDF... Sila tunggu.", "info");
+
+      const opt = {
+        margin:       [10, 10, 10, 10],
+        filename:     `${currentPrintDocTitle}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      if (window.html2pdf) {
+        html2pdf().set(opt).from(element).save().then(() => {
+          showToast("Fail PDF berjaya dimuat turun ke peranti anda!", "success");
+        }).catch((err) => {
+          console.error(err);
+          // Sandaran jika terdapat sebarang isu canvas
+          downloadPrintableHTML();
+        });
+      } else {
+        downloadPrintableHTML();
+      }
+    }
+
+    // KAEDAH 2: BUKA HALAMAN CETAK DI TAB BEBAS DENGAN BLOB URL (ELAK BLOCKED BY SANDBOX)
+    function openPrintInNewTab() {
+      const printContents = document.getElementById("printableArea").innerHTML;
+      const fullDoc = `
+        <!DOCTYPE html>
+        <html lang="ms">
+        <head>
+          <meta charset="UTF-8">
+          <title>${currentPrintDocTitle}</title>
+          <script src="https://cdn.tailwindcss.com"><\/script>
+          <style>
+            @page { size: A4 portrait; margin: 12mm; }
+            body { 
+              background-color: #f8fafc; 
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+              padding: 20px 0;
+            }
+            .paper {
+              background: white;
+              max-width: 210mm;
+              margin: 0 auto;
+              padding: 30px;
+              box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+              border: 1px solid #e2e8f0;
+            }
+            @media print {
+              body { background: white; padding: 0; }
+              .paper { box-shadow: none; border: 0; padding: 0; }
+              .no-print { display: none !important; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="no-print max-w-[210mm] mx-auto mb-4 flex justify-between items-center bg-emerald-900 text-white p-3 rounded-lg shadow">
+            <span class="text-sm font-bold">Halaman Cetakan Sedia Cetak</span>
+            <button onclick="window.print()" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-extrabold px-4 py-2 rounded text-sm shadow cursor-pointer">
+              🖨️ Cetak / Simpan PDF Sekarang
+            </button>
+          </div>
+          <div class="paper">
+            ${printContents}
+          </div>
+          <script>
+            window.onload = function() {
+              setTimeout(function() { window.print(); }, 400);
+            };
+          <\/script>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob([fullDoc], { type: "text/html;charset=utf-8" });
+      const blobUrl = URL.createObjectURL(blob);
+      const newWin = window.open(blobUrl, "_blank");
+      
+      if (!newWin) {
+        // Jika pop-up disekat oleh pelayar, gunakan butang muat turun PDF terus
+        downloadDirectPDF();
+      }
+    }
+
+    // KAEDAH 3: PENCETAKAN LANGSUNG TEGUH (DIRECT DOM-MOUNT PRINTING ENGINE)
+    function executeBrowserPrint() {
+      const printableElement = document.getElementById("printableArea");
+      if (!printableElement) return;
+
+      const printBtn = document.getElementById("btnDirectPrinter");
+      const originalBtnHTML = printBtn ? printBtn.innerHTML : "";
+      if (printBtn) {
+        printBtn.disabled = true;
+        printBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Membuka Printer...`;
+      }
+
+      showToast("Menghubungkan ke sistem pencetak...", "info");
+
+      // 1. Buang elemen isolasi lama jika wujud
+      let existingMount = document.getElementById("isolatedPrintMount");
+      if (existingMount) {
+        existingMount.remove();
+      }
+
+      // 2. Cipta elemen pelekap cetakan langsung dalam document.body
+      const mountDiv = document.createElement("div");
+      mountDiv.id = "isolatedPrintMount";
+      mountDiv.className = "hidden"; // Disorok dalam paparan skrin biasa, dipaparkan oleh @media print
+      mountDiv.innerHTML = printableElement.innerHTML;
+      document.body.appendChild(mountDiv);
+
+      // Simpan tajuk asal untuk dipulihkan kemudian
+      const originalTitle = document.title;
+      document.title = currentPrintDocTitle || "Dokumen_Agihan_Tugas";
+
+      // 3. Picu cetakan terus melalui window.print() utama
+      setTimeout(() => {
+        try {
+          window.focus();
+          window.print();
+        } catch (err) {
+          console.warn("window.print() disekat oleh persekitaran pelayar:", err);
+          // Sandaran ke kaedah tab bebas Blob
+          openPrintInNewTab();
+        } finally {
+          // Pulihkan semula tajuk dan bersihkan elemen pelekap
+          setTimeout(() => {
+            document.title = originalTitle;
+            if (mountDiv && mountDiv.parentNode) {
+              mountDiv.parentNode.removeChild(mountDiv);
+            }
+            if (printBtn) {
+              printBtn.disabled = false;
+              printBtn.innerHTML = originalBtnHTML;
+            }
+          }, 600);
+        }
+      }, 250);
+    }
+
+    // Pilihan alternatif muat turun HTML
+    function downloadPrintableHTML() {
+      const printContents = document.getElementById("printableArea").innerHTML;
+      const fullDoc = `
+        <!DOCTYPE html>
+        <html lang="ms">
+        <head>
+          <meta charset="UTF-8">
+          <title>${currentPrintDocTitle}</title>
+          <script src="https://cdn.tailwindcss.com"><\/script>
+          <style>
+            body { margin: 20mm; font-family: sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            @media print { @page { size: A4; margin: 10mm; } }
+          </style>
+        </head>
+        <body onload="window.print()">
+          <div class="max-w-4xl mx-auto">
+            ${printContents}
+          </div>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob([fullDoc], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${currentPrintDocTitle}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("Dokumen cetakan berjaya disimpan!", "success");
+    }
+
+    // TOAST NOTIFICATION
+    function showToast(text, type = "success") {
+      const toast = document.getElementById("toastMessage");
+      const toastText = document.getElementById("toastText");
+      const toastIcon = document.getElementById("toastIcon");
+
+      toastText.textContent = text;
+      if (type === "success") {
+        toastIcon.className = "fa-solid fa-circle-check text-emerald-400 text-lg";
+      } else if (type === "error") {
+        toastIcon.className = "fa-solid fa-circle-exclamation text-red-400 text-lg";
+      } else {
+        toastIcon.className = "fa-solid fa-circle-info text-blue-400 text-lg";
+      }
+
+      toast.classList.remove("translate-y-24", "opacity-0");
+      setTimeout(() => {
+        toast.classList.add("translate-y-24", "opacity-0");
+      }, 3000);
+    }
+
+    // ON LOAD
+    window.onload = function() {
+      initApp();
+    };
+  </script>
+</body>
+</html>
