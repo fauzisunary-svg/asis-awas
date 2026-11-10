@@ -41,7 +41,6 @@
 
     /* ================= GAYA CETAKAN LANGSUNG (@MEDIA PRINT) ================= */
     @media print {
-      /* Sembunyikan semua elemen aplikasi utama & modal semasa mencetak */
       body > *:not(#isolatedPrintMount) {
         display: none !important;
       }
@@ -52,7 +51,6 @@
         padding: 0 !important;
       }
 
-      /* Paparkan hanya kawasan pelekap cetak rasmi */
       #isolatedPrintMount {
         display: block !important;
         position: static !important;
@@ -76,13 +74,182 @@
 </head>
 <body class="min-h-screen text-slate-800 pb-12">
 
+  <!-- ================= AUTH OVERLAY / LOGIN & REGISTER MODAL ================= -->
+  <div id="authModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200">
+      <!-- Modal Header -->
+      <div class="header-banner p-6 text-white text-center relative">
+        <div class="inline-flex items-center gap-1.5 px-3 py-0.5 bg-blue-950/80 border border-amber-400/50 rounded-full text-[10px] font-bold text-amber-300 uppercase tracking-widest mb-1 shadow-inner">
+          <i class="fa-solid fa-shield-halved"></i> Keselamatan Standard KPM
+        </div>
+        <h2 class="text-xl font-extrabold uppercase tracking-wide">Kawalan Akses Pengguna</h2>
+        <p class="text-xs text-amber-200 mt-0.5">Sistem Pemberatan Tugas Guru - ASiS</p>
+      </div>
+
+      <!-- Auth Tabs (Log Masuk vs Daftar) -->
+      <div class="flex border-b border-slate-200 bg-slate-50 text-xs font-bold text-slate-600">
+        <button type="button" id="tabBtnLogin" onclick="switchAuthMode('login')" class="flex-1 py-3 border-b-2 border-blue-900 text-blue-950 bg-white flex items-center justify-center gap-2">
+          <i class="fa-solid fa-right-to-bracket text-blue-800"></i> Log Masuk
+        </button>
+        <button type="button" id="tabBtnRegister" onclick="switchAuthMode('register')" class="flex-1 py-3 border-b-2 border-transparent hover:text-blue-900 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-user-plus text-amber-600"></i> Daftar Akaun Baharu
+        </button>
+      </div>
+
+      <!-- Form Container -->
+      <div class="p-6">
+        <!-- 1. BORANG LOG MASUK -->
+        <form id="formLogin" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">ID Pengguna / Emel</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                <i class="fa-solid fa-user"></i>
+              </span>
+              <input type="text" id="loginUsername" required placeholder="Masukkan ID pengguna berdaftar" class="w-full pl-9 pr-3 py-2.5 text-sm border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-900 font-medium">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Kata Laluan</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                <i class="fa-solid fa-lock"></i>
+              </span>
+              <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full pl-9 pr-10 py-2.5 text-sm border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-900 font-medium">
+              <button type="button" onclick="togglePasswordVisibility('loginPassword', this)" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-slate-500 flex items-center gap-1.5 pt-1">
+            <i class="fa-solid fa-circle-info text-blue-800"></i>
+            <span>Log masuk dipantau dan direkodkan ke dalam Jejak Audit Sistem.</span>
+          </div>
+
+          <button type="submit" class="w-full bg-blue-950 hover:bg-blue-900 text-white font-bold py-2.5 rounded-xl text-sm shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-shield-check text-amber-400"></i> Masuk ke Sistem
+          </button>
+        </form>
+
+        <!-- 2. BORANG DAFTAR PENGGUNA -->
+        <form id="formRegister" onsubmit="handleRegisterSubmit(event)" class="space-y-3.5 hidden">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Penuh Pengguna</label>
+            <input type="text" id="regFullName" required placeholder="Contoh: Cikgu Noraini binti Musa" class="w-full px-3 py-2 text-sm border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-900 font-medium">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">ID Pengguna (Username)</label>
+            <input type="text" id="regUsername" required placeholder="Contoh: noraini" class="w-full px-3 py-2 text-sm border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-900 font-medium">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Kata Laluan (Standard Keselamatan)</label>
+            <div class="relative">
+              <input type="password" id="regPassword" oninput="checkPasswordStrength(this.value)" required placeholder="Min 8 aksara, simbol & nombor" class="w-full pr-10 pl-3 py-2 text-sm border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-900 font-medium">
+              <button type="button" onclick="togglePasswordVisibility('regPassword', this)" class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+            <!-- Strength meter -->
+            <div class="w-full bg-slate-200 h-1.5 rounded-full mt-1.5 overflow-hidden">
+              <div id="passwordStrengthBar" class="h-full bg-red-500 w-0 transition-all duration-300"></div>
+            </div>
+            <p id="passwordStrengthText" class="text-[10px] text-slate-500 mt-1">Min 8 aksara: Huruf Besar, Huruf Kecil, Nombor & Simbol (!@#$).</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Sahkan Kata Laluan</label>
+            <input type="password" id="regPasswordConfirm" required placeholder="Ulang kata laluan" class="w-full px-3 py-2 text-sm border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-900 font-medium">
+          </div>
+
+          <div class="p-2.5 bg-amber-50 border border-amber-300 rounded-xl text-[10px] text-amber-900">
+            <i class="fa-solid fa-shield-halved mr-1"></i> Pengguna baharu didaftarkan sebagai <strong>Guru / Editor</strong> dan tertakluk pada kawalan Super Admin.
+          </div>
+
+          <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold py-2.5 rounded-xl text-sm shadow transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-user-check"></i> Daftar & Rekod Akaun
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL PENGESAHAN LOG KELUAR PINTAR (SMART LOGOUT CONFIRMATION) -->
+  <div id="logoutModal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200">
+      <div class="bg-gradient-to-r from-blue-950 to-slate-900 p-5 text-white flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center text-xl flex-shrink-0 font-black shadow-md">
+          <i class="fa-solid fa-shield-cat"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-extrabold text-white">Peringatan Sebelum Log Keluar</h3>
+          <p class="text-xs text-amber-300 font-medium">Pastikan data penting anda telah disimpan dengan selamat</p>
+        </div>
+      </div>
+
+      <div class="p-6 space-y-4 text-xs sm:text-sm text-slate-700">
+        <div class="bg-amber-50 border-2 border-amber-300/80 rounded-2xl p-4 text-amber-950 space-y-2">
+          <div class="font-extrabold flex items-center gap-2 text-amber-900 text-sm">
+            <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> Semakan Keselamatan Sesi:
+          </div>
+          <ul class="list-disc list-inside space-y-1 text-xs text-amber-900 font-medium pl-1">
+            <li>Pastikan sebarang pindaan pada borang tugasan telah ditekan butang <strong>"Simpan"</strong>.</li>
+            <li>Disyorkan untuk memuat turun salinan sandaran terkini fail <strong>JSON (.json)</strong> bagi mengelakkan kehilangan data jika anda bertukar peranti.</li>
+            <li>Sesi aktif anda akan diputuskan dan direkodkan ke dalam Jejak Audit Sistem.</li>
+          </ul>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <span>Pengguna Semasa: <strong id="logoutUserLabel" class="text-blue-950">-</strong></span>
+          <span id="logoutTimestampLabel" class="font-mono text-[11px]">-</span>
+        </div>
+      </div>
+
+      <div class="bg-slate-100 p-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2.5">
+        <button type="button" onclick="exportFullSystemBackup()" class="bg-blue-100 hover:bg-blue-200 text-blue-900 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 border border-blue-300 transition">
+          <i class="fa-solid fa-download text-blue-700"></i> Muat Turun Sandaran (JSON) Dahulu
+        </button>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="closeLogoutModal()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-white hover:bg-slate-200 text-slate-700 border border-slate-300 transition">
+            Batal
+          </button>
+          <button type="button" onclick="confirmExecuteLogout()" class="px-4 py-2 text-xs font-bold rounded-xl bg-red-600 hover:bg-red-700 text-white shadow transition flex items-center gap-1.5">
+            <i class="fa-solid fa-right-from-bracket"></i> Ya, Log Keluar Sekarang
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Main Container -->
   <div class="max-w-7xl mx-auto p-2 sm:p-4 md:p-6">
     
     <!-- Outer Card Wrapper matching ASiS Royal Blue & Gold frame -->
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-blue-900/60">
       
-      <!-- HEADER BANNER ASiS THEME (KEMAS TANPA LOGO) -->
+      <!-- TOP STATUS BAR: MAKLUMAT PENGGUNA & KAWALAN SUPER ADMIN -->
+      <div class="bg-slate-900 text-slate-300 text-xs px-4 py-2 flex flex-wrap justify-between items-center border-b border-blue-950 gap-2">
+        <div class="flex items-center gap-2">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Log Masuk:</span>
+          <span id="currentUserBadge" class="font-bold text-amber-300 bg-blue-950 px-2.5 py-0.5 rounded border border-amber-400/40">Super Admin (Mohd.Fauzi Sunary)</span>
+          <span id="currentRoleBadge" class="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-amber-400 text-slate-950">SUPER ADMIN</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span id="systemLockIndicator" class="text-[11px] font-semibold text-emerald-300 flex items-center gap-1">
+            <i class="fa-solid fa-lock-open text-emerald-400"></i> Mod Pindaan: Dibenarkan
+          </span>
+          <!-- Butang Log Keluar Menonjol -->
+          <button onclick="promptUserLogout()" class="bg-red-600/90 hover:bg-red-600 text-white font-bold px-3 py-1 rounded-lg text-xs shadow transition flex items-center gap-1.5 cursor-pointer">
+            <i class="fa-solid fa-power-off"></i> Log Keluar
+          </button>
+        </div>
+      </div>
+
+      <!-- HEADER BANNER ASiS THEME -->
       <header class="header-banner py-6 px-4 sm:px-8 text-white relative text-center">
         <div class="max-w-3xl mx-auto">
           <div class="inline-flex items-center gap-2 px-3.5 py-1 bg-blue-950/80 border border-amber-400/60 rounded-full text-[11px] font-bold text-amber-300 uppercase tracking-widest mb-2 shadow-inner">
@@ -155,7 +322,7 @@
               </select>
             </div>
 
-            <!-- KAD JUMLAH MATA (ASIS GOLD & BLUE) -->
+            <!-- KAD JUMLAH MATA -->
             <div class="lg:col-span-4">
               <div class="bg-gradient-to-r from-amber-50 to-amber-100/70 border-2 border-amber-400 rounded-lg p-2.5 text-center flex items-center justify-center gap-2 shadow-sm">
                 <span class="text-slate-700 font-bold text-sm sm:text-base">Mata Bahagian:</span>
@@ -175,7 +342,7 @@
 
             <!-- BUTANG TAMBAH TUGASAN -->
             <div class="mt-4">
-              <button type="button" onclick="addNewTaskRow()" class="bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold px-4 py-2 rounded-lg shadow inline-flex items-center gap-2 text-sm transition">
+              <button type="button" id="btnAddNewTaskRow" onclick="addNewTaskRow()" class="bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold px-4 py-2 rounded-lg shadow inline-flex items-center gap-2 text-sm transition">
                 <i class="fa-solid fa-circle-plus text-blue-950"></i> Tambah Tugasan
               </button>
             </div>
@@ -183,7 +350,7 @@
 
           <!-- BUTANG TINDAKAN (SIMPAN & KEMASKINI) -->
           <div class="flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-slate-100">
-            <button type="button" onclick="saveCurrentDuties()" class="bg-blue-900 hover:bg-blue-950 text-white font-bold px-6 py-2.5 rounded-lg shadow-md inline-flex items-center gap-2 transition duration-150 border border-blue-700">
+            <button type="button" id="btnSaveDuties" onclick="saveCurrentDuties()" class="bg-blue-900 hover:bg-blue-950 text-white font-bold px-6 py-2.5 rounded-lg shadow-md inline-flex items-center gap-2 transition duration-150 border border-blue-700">
               <i class="fa-regular fa-square-check text-amber-400"></i> Simpan
             </button>
             <button type="button" onclick="refreshCurrentForm()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-6 py-2.5 rounded-lg shadow inline-flex items-center gap-2 transition duration-150">
@@ -216,15 +383,12 @@
               <p class="text-xs text-blue-200">Jana dan cetak analisis rasmi mengikut format eksekutif ASiS atau portfolio tertentu.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <!-- Butang 1: Cetak Laporan Analisis Penuh -->
               <button onclick="handlePrintAnalysis('full')" class="bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold px-3.5 py-2 rounded-lg text-xs inline-flex items-center gap-1.5 shadow transition cursor-pointer">
                 <i class="fa-solid fa-file-invoice"></i> Cetak Analisis Penuh
               </button>
-              <!-- Butang 2: Modal Pilihan Laporan Khusus -->
               <button onclick="openCustomAnalysisModal()" class="bg-blue-800 hover:bg-blue-700 text-white font-bold px-3.5 py-2 rounded-lg text-xs inline-flex items-center gap-1.5 shadow transition cursor-pointer border border-blue-600">
                 <i class="fa-solid fa-sliders text-amber-400"></i> Cetak Laporan Khusus...
               </button>
-              <!-- Butang 3: Muat Turun Graf sebagai Imej PNG -->
               <button onclick="downloadChartAsPNG()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-3.5 py-2 rounded-lg text-xs inline-flex items-center gap-1.5 shadow transition cursor-pointer">
                 <i class="fa-solid fa-image"></i> Simpan Graf (PNG)
               </button>
@@ -279,9 +443,7 @@
           </div>
 
           <!-- Profil Display Card -->
-          <div id="guruProfileResult" class="hidden">
-            <!-- Populated via JS -->
-          </div>
+          <div id="guruProfileResult" class="hidden"></div>
         </div>
 
         <!-- ================= SECTION 4: MUAT TURUN DATA ================= -->
@@ -316,31 +478,84 @@
                   <th class="p-3 text-center">Status</th>
                 </tr>
               </thead>
-              <tbody id="summaryTableBody" class="divide-y divide-slate-200 bg-white">
-                <!-- Populated via JS -->
-              </tbody>
+              <tbody id="summaryTableBody" class="divide-y divide-slate-200 bg-white"></tbody>
             </table>
           </div>
         </div>
 
         <!-- ================= SECTION 5: SETTING / TETAPAN ================= -->
         <div id="section-setting" class="hidden space-y-6">
-          <div class="border-b border-slate-200 pb-3 flex justify-between items-center">
+          <div class="border-b border-slate-200 pb-3 flex justify-between items-center flex-wrap gap-2">
             <div>
-              <h2 class="text-2xl font-extrabold text-blue-950">Tetapan Sistem</h2>
-              <p class="text-sm text-slate-500">Urus senarai guru, pilihan jawatankuasa mengikut bidang, dan mata pemberatan.</p>
+              <h2 class="text-2xl font-extrabold text-blue-950">Tetapan & Keselamatan Sistem</h2>
+              <p class="text-sm text-slate-500">Urus senarai guru, pilihan tugas, kata laluan dan kawalan keselamatan Super Admin.</p>
             </div>
             <div class="flex items-center gap-2">
               <button onclick="exportFullSystemBackup()" class="text-xs bg-blue-100 hover:bg-blue-200 text-blue-900 font-bold px-3 py-1.5 rounded-lg border border-blue-300 cursor-pointer flex items-center gap-1.5">
                 <i class="fa-solid fa-file-export text-blue-700"></i> Sandaran Data (JSON)
               </button>
-              <label for="importBackupInput" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold px-3 py-1.5 rounded-lg border border-amber-300 cursor-pointer flex items-center gap-1.5">
+              <label for="importBackupInput" id="btnImportBackupLabel" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold px-3 py-1.5 rounded-lg border border-amber-300 cursor-pointer flex items-center gap-1.5">
                 <i class="fa-solid fa-file-import text-amber-700"></i> Muat Naik Data
               </label>
               <input type="file" id="importBackupInput" accept=".json" class="hidden" onchange="importFullSystemBackup(event)">
-              <button onclick="promptResetDefault()" class="text-xs bg-red-100 hover:bg-red-200 text-red-700 font-bold px-3 py-1.5 rounded-lg border border-red-300 cursor-pointer">
+              <button id="btnResetDefaultSetting" onclick="promptResetDefault()" class="text-xs bg-red-100 hover:bg-red-200 text-red-700 font-bold px-3 py-1.5 rounded-lg border border-red-300 cursor-pointer">
                 <i class="fa-solid fa-arrow-rotate-left"></i> Set Semula
               </button>
+            </div>
+          </div>
+
+          <!-- PANEL KAWALAN SUPER ADMIN & LOG AUDIT (EKSKLUSIF) -->
+          <div id="superAdminSecurityPanel" class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 rounded-2xl p-5 text-white shadow-lg border-2 border-amber-400/50">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4 border-b border-blue-800 pb-3">
+              <div>
+                <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-amber-400 text-slate-950">Pusat Kawalan Super Admin</span>
+                <h3 class="text-lg font-black text-amber-300 mt-1 flex items-center gap-2">
+                  <i class="fa-solid fa-user-shield"></i> Pengurusan Pengguna, Hak Akses & Log Audit Terperinci
+                </h3>
+              </div>
+              <div class="flex items-center gap-2">
+                <!-- Toggle Lock Perubahan Sistem -->
+                <button type="button" onclick="toggleSystemLock()" id="btnToggleSystemLock" class="px-3.5 py-1.5 text-xs font-bold rounded-xl transition flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white shadow">
+                  <i class="fa-solid fa-lock-open"></i> Kunci Pindaan Data Asas
+                </button>
+              </div>
+            </div>
+
+            <!-- Grid 2 Bahagian: Senarai Pengguna Berdaftar & Log Aktiviti -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+              <!-- Senarai Pengguna Berdaftar -->
+              <div class="lg:col-span-5 bg-slate-950/70 p-3.5 rounded-xl border border-blue-900">
+                <div class="flex justify-between items-center mb-2.5">
+                  <h4 class="text-xs font-bold text-amber-300 uppercase flex items-center gap-1.5">
+                    <i class="fa-solid fa-users-gear"></i> Senarai Pengguna Berdaftar
+                  </h4>
+                  <span id="registeredUserCountBadge" class="text-[10px] bg-blue-900 text-amber-200 px-2 py-0.5 rounded-full font-bold">1 Pengguna</span>
+                </div>
+                <div class="max-h-56 overflow-y-auto divide-y divide-slate-800 text-xs" id="userManagementListContainer">
+                  <!-- Senarai Pengguna dimasukkan dynamically via JS -->
+                </div>
+              </div>
+
+              <!-- Log Audit & Kawalan Masuk Terperinci -->
+              <div class="lg:col-span-7 bg-slate-950/70 p-3.5 rounded-xl border border-blue-900">
+                <div class="flex justify-between items-center mb-2.5">
+                  <h4 class="text-xs font-bold text-amber-300 uppercase flex items-center gap-1.5">
+                    <i class="fa-solid fa-list-timeline"></i> Rekod Jejak Audit Terperinci (Audit Trail & Activity Log)
+                  </h4>
+                  <div class="flex items-center gap-2">
+                    <button type="button" onclick="exportAuditLogCSV()" class="text-[10px] text-amber-300 hover:text-amber-200 underline font-semibold cursor-pointer">
+                      Eksport Log (CSV)
+                    </button>
+                    <span class="text-slate-600">|</span>
+                    <button type="button" onclick="clearAuditLogPrompt()" class="text-[10px] text-red-300 hover:text-red-200 underline font-semibold cursor-pointer">
+                      Kosongkan Log
+                    </button>
+                  </div>
+                </div>
+                <div class="max-h-56 overflow-y-auto space-y-1.5 text-[11px] font-mono pr-1" id="auditLogContainer">
+                  <!-- Log Rekod Terperinci -->
+                </div>
+              </div>
             </div>
           </div>
 
@@ -353,7 +568,6 @@
                 </h3>
                 <p class="text-xs text-blue-200">Ubah, tambah, atau buang senarai pilihan jawatankuasa / tugasan bagi setiap portfolio sekolah.</p>
               </div>
-              <!-- Pilihan Tab Bidang dalam Setting -->
               <div class="flex flex-wrap gap-1.5 bg-blue-950/80 p-1.5 rounded-xl border border-blue-800" id="settingBidangTabs">
                 <button type="button" onclick="changeSettingBidang('pentadbiran')" id="settab-pentadbiran" class="px-3 py-1 text-xs font-bold rounded-lg transition">Pentadbiran</button>
                 <button type="button" onclick="changeSettingBidang('kurikulum')" id="settab-kurikulum" class="px-3 py-1 text-xs font-bold rounded-lg transition">Kurikulum</button>
@@ -363,13 +577,13 @@
               </div>
             </div>
 
-            <!-- Borang Tambah Tugasan Baharu Bagi Bidang Terpilih -->
+            <!-- Borang Tambah Tugasan Baharu -->
             <div class="bg-white text-slate-800 rounded-xl p-3.5 mb-3 shadow-inner">
               <div class="flex flex-col sm:flex-row gap-2">
                 <div class="flex-1">
                   <input type="text" id="newTugasanInput" placeholder="Taip nama tugasan / jawatankuasa baharu..." class="w-full px-3.5 py-2 text-sm border-2 border-blue-900/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 font-medium">
                 </div>
-                <button type="button" onclick="addNewTugasanSetting()" class="bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold px-4 py-2 rounded-lg text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow transition flex-shrink-0">
+                <button type="button" id="btnAddNewTugasanSetting" onclick="addNewTugasanSetting()" class="bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold px-4 py-2 rounded-lg text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow transition flex-shrink-0">
                   <i class="fa-solid fa-plus"></i> Tambah Tugasan
                 </button>
               </div>
@@ -381,9 +595,7 @@
                 <span id="labelBidangAktifTitle">Senarai Tugasan</span>
                 <span id="labelBidangCount" class="bg-blue-100 text-blue-900 px-2.5 py-0.5 rounded-full font-extrabold border border-blue-300">0 Tugasan</span>
               </div>
-              <div class="max-h-64 overflow-y-auto divide-y divide-slate-100 px-1" id="settingTugasanListContainer">
-                <!-- Senarai Tugasan dynamically rendered -->
-              </div>
+              <div class="max-h-64 overflow-y-auto divide-y divide-slate-100 px-1" id="settingTugasanListContainer"></div>
             </div>
           </div>
 
@@ -395,13 +607,11 @@
               </h3>
               <div class="flex gap-2 mb-3">
                 <input type="text" id="newGuruInput" placeholder="Nama Guru Baharu..." class="flex-1 px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-700">
-                <button onclick="addNewGuru()" class="bg-blue-900 hover:bg-blue-950 text-white font-bold px-3 py-2 text-xs rounded-lg shadow">
+                <button id="btnAddNewGuru" onclick="addNewGuru()" class="bg-blue-900 hover:bg-blue-950 text-white font-bold px-3 py-2 text-xs rounded-lg shadow">
                   Tambah
                 </button>
               </div>
-              <div class="max-h-56 overflow-y-auto divide-y divide-slate-200 border rounded-lg bg-white p-2" id="guruSettingList">
-                <!-- List Guru -->
-              </div>
+              <div class="max-h-56 overflow-y-auto divide-y divide-slate-200 border rounded-lg bg-white p-2" id="guruSettingList"></div>
             </div>
 
             <!-- 2. Urus Pemberatan Jawatan (Mata) -->
@@ -416,21 +626,19 @@
               <!-- Borang Tambah Jawatan Baharu -->
               <div class="bg-white p-2.5 rounded-lg border border-slate-300 mb-3 shadow-sm">
                 <div class="flex flex-col sm:flex-row gap-2 items-center">
-                  <input type="text" id="newJawatanNameInput" placeholder="Nama Jawatan Baharu (cth: Bendahari Kehormat)..." class="flex-1 w-full px-3 py-1.5 text-xs border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-700">
+                  <input type="text" id="newJawatanNameInput" placeholder="Nama Jawatan Baharu..." class="flex-1 w-full px-3 py-1.5 text-xs border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-700">
                   <div class="flex gap-2 w-full sm:w-auto items-center">
                     <input type="number" id="newJawatanPointsInput" placeholder="Mata" min="1" max="25" value="3" class="w-20 px-2 py-1.5 text-xs text-center font-bold border rounded-lg bg-amber-50 border-amber-300 focus:outline-none" title="Nilai Mata">
-                    <button type="button" onclick="addNewJawatan()" class="bg-blue-900 hover:bg-blue-950 text-white font-bold px-3 py-1.5 text-xs rounded-lg shadow flex items-center gap-1 flex-shrink-0 cursor-pointer">
+                    <button type="button" id="btnAddNewJawatan" onclick="addNewJawatan()" class="bg-blue-900 hover:bg-blue-950 text-white font-bold px-3 py-1.5 text-xs rounded-lg shadow flex items-center gap-1 flex-shrink-0 cursor-pointer">
                       <i class="fa-solid fa-plus text-amber-400"></i> Tambah
                     </button>
                   </div>
                 </div>
               </div>
 
-              <!-- Senarai Jawatan & Mata Sedia Ada -->
-              <div class="max-h-64 overflow-y-auto divide-y divide-slate-200 border rounded-lg bg-white p-2" id="jawatanPointsList">
-                <!-- List Jawatan Points -->
-              </div>
-              <button onclick="saveJawatanPoints()" class="mt-3 w-full bg-blue-900 hover:bg-blue-950 text-white font-bold py-2 rounded-lg text-xs shadow cursor-pointer flex items-center justify-center gap-1.5">
+              <!-- Senarai Jawatan & Mata -->
+              <div class="max-h-64 overflow-y-auto divide-y divide-slate-200 border rounded-lg bg-white p-2" id="jawatanPointsList"></div>
+              <button id="btnSaveJawatanPoints" onclick="saveJawatanPoints()" class="mt-3 w-full bg-blue-900 hover:bg-blue-950 text-white font-bold py-2 rounded-lg text-xs shadow cursor-pointer flex items-center justify-center gap-1.5">
                 <i class="fa-regular fa-floppy-disk text-amber-400"></i> Simpan Semua Perubahan Mata
               </button>
             </div>
@@ -503,7 +711,7 @@
             <label class="block text-xs font-bold text-slate-700 mb-1">Nilai Mata:</label>
             <input type="number" id="editJawatanPointInput" min="1" max="30" class="w-28 px-3.5 py-2 text-sm text-center font-bold border-2 border-amber-300 bg-amber-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700 text-slate-800">
           </div>
-          <p class="text-[11px] text-slate-400 leading-normal">*Tugasan sedia ada yang memegang jawatan ini akan dikemas kini namanya dan mata diselaraskan secara automatik.</p>
+          <p class="text-[11px] text-slate-400 leading-normal">*Tugasan sedia ada yang memegang jawatan ini akan dikemas kini secara automatik.</p>
         </div>
 
         <div class="flex justify-end gap-2.5">
@@ -517,7 +725,7 @@
       </div>
     </div>
 
-    <!-- CUSTOM CONFIRMATION MODAL (TIADA PENGGUNAAN CONFIRM/ALERT) -->
+    <!-- CUSTOM CONFIRMATION MODAL -->
     <div id="confirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
       <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-200 animate-in fade-in zoom-in duration-150">
         <div class="flex items-center gap-3 mb-3">
@@ -562,7 +770,6 @@
         </div>
 
         <div class="space-y-4 text-sm">
-          <!-- Pilihan 1: Tapis Mengikut Kategori Status Beban -->
           <div class="p-3.5 bg-slate-50 border rounded-xl">
             <label class="block font-bold text-slate-800 text-xs uppercase mb-1.5 flex items-center gap-1.5">
               <i class="fa-solid fa-layer-group text-blue-900"></i> Laporan Mengikut Status Beban:
@@ -580,7 +787,6 @@
             </div>
           </div>
 
-          <!-- Pilihan 2: Tapis Mengikut Bidang Khusus -->
           <div class="p-3.5 bg-slate-50 border rounded-xl">
             <label class="block font-bold text-slate-800 text-xs uppercase mb-1.5 flex items-center gap-1.5">
               <i class="fa-solid fa-briefcase text-blue-900"></i> Laporan Agihan Mengikut Bidang Sahaja:
@@ -608,10 +814,9 @@
       </div>
     </div>
 
-    <!-- MODAL CETAKAN RASMI (PRINT PREVIEW MODAL DENGAN FALLBACK) -->
+    <!-- MODAL CETAKAN RASMI -->
     <div id="printModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 hidden">
       <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-slate-200">
-        <!-- Header Modal Cetak ASiS Theme -->
         <div class="bg-blue-950 text-white px-5 py-3.5 flex justify-between items-center flex-shrink-0 border-b-2 border-amber-400">
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-print text-amber-400 text-lg"></i>
@@ -620,32 +825,25 @@
           <button onclick="closePrintModal()" class="text-slate-300 hover:text-white text-xl px-2 py-1 transition">&times;</button>
         </div>
 
-        <!-- Toolbar Tindakan Cetak -->
         <div class="bg-slate-100 p-3 border-b flex flex-wrap justify-between items-center gap-2 flex-shrink-0">
           <p class="text-xs text-slate-600 font-medium">
             <i class="fa-solid fa-circle-check text-blue-700 mr-1"></i> Format A4 rasmi. Sila pilih kaedah cetakan:
           </p>
           <div class="flex flex-wrap items-center gap-2">
-            <!-- 1. Jana & Muat Turun PDF Fizikal Terus -->
             <button onclick="downloadDirectPDF()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-3.5 py-1.5 rounded-lg text-xs inline-flex items-center gap-1.5 shadow transition">
               <i class="fa-solid fa-file-pdf"></i> Muat Turun Fail PDF (.pdf)
             </button>
-            <!-- 2. Buka Paparan Cetak Tanpa Sekatan di Tab Baharu -->
-            <button onclick="openPrintInNewTab()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-3 py-1.5 rounded-lg text-xs inline-flex items-center gap-1.5 shadow transition">
+            <button onclick="openPrintInNewTab()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-3.5 py-1.5 rounded-lg text-xs inline-flex items-center gap-1.5 shadow transition">
               <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Tab Cetakan Bebas
             </button>
-            <!-- 3. Cetak Terus ke Printer Fizikal -->
             <button id="btnDirectPrinter" onclick="executeBrowserPrint()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-1.5 rounded-lg text-xs inline-flex items-center gap-1.5 shadow transition cursor-pointer">
               <i class="fa-solid fa-print"></i> Cetak ke Printer Sekarang
             </button>
           </div>
         </div>
 
-        <!-- Kandungan Kertas Dokumen (Scrollable) -->
         <div class="p-4 sm:p-6 overflow-y-auto bg-slate-100/60 flex-1 flex justify-center">
-          <div id="printableArea" class="bg-white w-full max-w-[210mm] p-6 sm:p-10 shadow-md border border-slate-300 text-slate-900 font-sans text-xs sm:text-sm">
-            <!-- Dokumen rasmi dijana secara automatik di sini -->
-          </div>
+          <div id="printableArea" class="bg-white w-full max-w-[210mm] p-6 sm:p-10 shadow-md border border-slate-300 text-slate-900 font-sans text-xs sm:text-sm"></div>
         </div>
       </div>
     </div>
@@ -744,37 +942,194 @@
           "JK Kesihatan & Kebajikan Murid Asrama"
         ]
       },
-      // Rekod Agihan: { "Nama Guru": { pentadbiran: [], kurikulum: [], hem: [], kokurikulum: [], asrama: [] } }
       agihanTugas: {}
     };
 
     // Global state
     let state = {
-      activeTab: "pentadbiran", // pentadbiran, kurikulum, hem, kokurikulum, asrama, graf, carian, muatturun, setting
-      settingActiveBidang: "pentadbiran", // Portfolio aktif di dalam panel Tetapan Tugasan
+      activeTab: "pentadbiran",
+      settingActiveBidang: "pentadbiran",
       selectedGuru: "",
       senaraiGuru: [],
       jawatanMata: {},
       tugasanPortfolio: {},
       agihanTugas: {},
-      tarikhKemaskini: ""
+      tarikhKemaskini: "",
+      // Modul Keselamatan & Pengguna
+      currentUser: null, // Objek pengguna yang sedang log masuk
+      users: [],         // Senarai pengguna berdaftar
+      auditLogs: [],     // Jejak rekod audit aktiviti
+      isSystemLocked: false // Kunci pindaan Super Admin (Hanya Super Admin boleh ubah jika diaktifkan)
     };
 
-    let editingTaskContext = {
-      bidang: "",
-      oldTaskName: ""
-    };
-
-    let editingJawatanContext = {
-      oldJawatanName: ""
-    };
+    let editingTaskContext = { bidang: "", oldTaskName: "" };
+    let editingJawatanContext = { oldJawatanName: "" };
 
     let chartInstance = null;
     let currentPrintHTMLContent = "";
     let currentPrintDocTitle = "Dokumen_Tugas_Guru";
 
-    // Load data from LocalStorage
-    function initApp() {
+    // ================= KESELAMATAN & ENKRIPSI (CRYPTO SHA-256) =================
+    async function hashPassword(password) {
+      const msgBuffer = new TextEncoder().encode(password);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // Standard Keselamatan Kata Laluan (Min 8 aksara, Huruf Besar, Kecil, Nombor & Simbol)
+    function validatePasswordStandard(password) {
+      if (!password || password.length < 8) return false;
+      const hasUpper = /[A-Z]/.test(password);
+      const hasLower = /[a-z]/.test(password);
+      const hasNumber = /[0-9]/.test(password);
+      const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+      return hasUpper && hasLower && hasNumber && hasSpecial;
+    }
+
+    function checkPasswordStrength(password) {
+      const bar = document.getElementById("passwordStrengthBar");
+      const text = document.getElementById("passwordStrengthText");
+      if (!bar || !text) return;
+
+      let score = 0;
+      if (password.length >= 8) score++;
+      if (/[A-Z]/.test(password)) score++;
+      if (/[a-z]/.test(password)) score++;
+      if (/[0-9]/.test(password)) score++;
+      if (/[!@#$%^&*]/.test(password)) score++;
+
+      if (score <= 2) {
+        bar.className = "h-full bg-red-500 w-1/4 transition-all duration-300";
+        text.className = "text-[10px] text-red-600 mt-1 font-semibold";
+        text.textContent = "Tahap: Lemah (Wajib: Huruf besar, nombor & simbol)";
+      } else if (score <= 4) {
+        bar.className = "h-full bg-amber-500 w-3/4 transition-all duration-300";
+        text.className = "text-[10px] text-amber-600 mt-1 font-semibold";
+        text.textContent = "Tahap: Sederhana (Tambah simbol atau panjangkan lagi)";
+      } else {
+        bar.className = "h-full bg-emerald-500 w-full transition-all duration-300";
+        text.className = "text-[10px] text-emerald-600 mt-1 font-bold";
+        text.textContent = "Tahap: Kuat & Memenuhi Standard Keselamatan KPM ✔";
+      }
+    }
+
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      if (input.type === "password") {
+        input.type = "text";
+        btn.innerHTML = `<i class="fa-solid fa-eye-slash text-blue-900"></i>`;
+      } else {
+        input.type = "password";
+        btn.innerHTML = `<i class="fa-solid fa-eye"></i>`;
+      }
+    }
+
+    // ================= PENGURUSAN AUDIT LOG TERPERINCI =================
+    function addAuditLog(action, details, metadata = {}) {
+      const user = state.currentUser ? `${state.currentUser.fullName} [${state.currentUser.role.toUpperCase()}]` : "Sistem";
+      const now = new Date();
+      const timestamp = now.toLocaleDateString('ms-MY', { 
+        day: '2-digit', month: 'short', year: 'numeric', 
+        hour: '2-digit', minute: '2-digit', second: '2-digit' 
+      });
+
+      const logEntry = {
+        id: "LOG-" + Date.now().toString(36) + Math.random().toString(36).substr(2, 4),
+        timestamp,
+        user,
+        userId: state.currentUser ? state.currentUser.id : "SYS",
+        action,
+        details,
+        module: state.activeTab ? state.activeTab.toUpperCase() : "UTAMA",
+        ...metadata
+      };
+
+      state.auditLogs.unshift(logEntry);
+
+      // Hadkan kepada 500 rekod log terperinci
+      if (state.auditLogs.length > 500) {
+        state.auditLogs.pop();
+      }
+
+      saveSecurityToStorage();
+      renderAuditLogsUI();
+    }
+
+    function renderAuditLogsUI() {
+      const container = document.getElementById("auditLogContainer");
+      if (!container) return;
+
+      if (!state.auditLogs || state.auditLogs.length === 0) {
+        container.innerHTML = `<div class="p-4 text-center text-slate-500 text-xs italic">Tiada log aktiviti direkodkan setakat ini.</div>`;
+        return;
+      }
+
+      container.innerHTML = state.auditLogs.map(log => `
+        <div class="py-1.5 px-2.5 border-b border-slate-800/80 hover:bg-slate-900/60 rounded flex flex-col sm:flex-row justify-between items-start gap-1 transition">
+          <div class="flex-1 pr-2">
+            <span class="text-amber-400 font-bold tracking-wider">[${log.action}]</span> 
+            <span class="text-slate-200 leading-relaxed">${log.details}</span>
+          </div>
+          <div class="text-[10px] text-slate-400 whitespace-nowrap flex-shrink-0 flex items-center gap-1.5 self-end sm:self-center">
+            <span class="text-blue-300 font-semibold bg-blue-950/80 px-1.5 py-0.5 rounded border border-blue-800">${log.user}</span>
+            <span>• ${log.timestamp}</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function exportAuditLogCSV() {
+      if (!isSuperAdmin()) {
+        showToast("Hanya Super Admin dibenarkan mengeksport jejak audit!", "error");
+        return;
+      }
+
+      if (!state.auditLogs || state.auditLogs.length === 0) {
+        showToast("Tiada rekod jejak audit untuk dieksport.", "info");
+        return;
+      }
+
+      let csv = "data:text/csv;charset=utf-8,ID Log,Tarikh & Masa,Pengguna,Tindakan,Modul,Perincian Terperinci\n";
+      state.auditLogs.forEach(l => {
+        csv += `"${l.id || '-'}","${l.timestamp}","${l.user}","${l.action}","${l.module || '-'}","${(l.details || '').replace(/"/g, '""')}"\n`;
+      });
+
+      const encodedUri = encodeURI(csv);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Jejak_Audit_SPTG_ASiS_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      addAuditLog("EKSPORT_LOG", "Fail jejak audit terperinci dieksport ke format CSV.");
+      showToast("Fail jejak audit CSV berjaya dimuat turun!", "success");
+    }
+
+    function clearAuditLogPrompt() {
+      if (!isSuperAdmin()) {
+        showToast("Hanya Super Admin dibenarkan mengosongkan log audit!", "error");
+        return;
+      }
+      openConfirmModal(
+        "Kosongkan Log Audit",
+        "Tindakan Pentadbir Super Admin",
+        "Adakah anda pasti ingin mengosongkan keseluruhan rekod jejak audit aktiviti sistem?",
+        "Ya, Kosongkan",
+        () => {
+          state.auditLogs = [];
+          saveSecurityToStorage();
+          renderAuditLogsUI();
+          showToast("Semua rekod jejak audit telah dibersihkan.", "info");
+        }
+      );
+    }
+
+    // ================= INIT APP DENGAN MODUL KESELAMATAN =================
+    async function initApp() {
+      // 1. Muat Data Asas & Keselamatan dari LocalStorage
       const stored = localStorage.getItem("SPTG_DATA");
       if (stored) {
         try {
@@ -794,7 +1149,7 @@
         loadDefaultData();
       }
 
-      // Pastikan setiap guru mempunyai struktur asas jika tiada
+      // Pastikan struktur asas setiap guru wujud
       state.senaraiGuru.forEach(g => {
         if (!state.agihanTugas[g]) {
           state.agihanTugas[g] = { pentadbiran: [], kurikulum: [], hem: [], kokurikulum: [], asrama: [] };
@@ -803,8 +1158,13 @@
         }
       });
 
-      // Sample data jika baru pertama kali buka
       seedInitialAssignmentsIfNeeded();
+
+      // 2. Muat Data Pengguna & Keselamatan
+      await initSecurityState();
+
+      // 3. Semak Sesi Log Masuk Pengguna
+      checkUserSession();
 
       populateGuruDropdowns();
       updateNavTabsAppearance();
@@ -812,6 +1172,380 @@
       updateFooterTimestamp();
     }
 
+    async function initSecurityState() {
+      const storedSec = localStorage.getItem("SPTG_SECURITY");
+      if (storedSec) {
+        try {
+          const parsedSec = JSON.parse(storedSec);
+          state.users = parsedSec.users || [];
+          state.auditLogs = parsedSec.auditLogs || [];
+          state.isSystemLocked = parsedSec.isSystemLocked || false;
+        } catch (e) {
+          state.users = [];
+          state.auditLogs = [];
+        }
+      }
+
+      // Pastikan Akaun Super Admin Kekal Wujud di Latar Belakang (Admin@ASiS2026)
+      const adminExists = state.users.some(u => u.username.toLowerCase() === "admin");
+      if (!adminExists) {
+        const defaultAdminHash = await hashPassword("Admin@ASiS2026");
+        const defaultAdmin = {
+          id: "USR-001",
+          username: "admin",
+          passwordHash: defaultAdminHash,
+          fullName: "Mohd.Fauzi Sunary",
+          role: "superadmin", // superadmin / editor
+          isActive: true,
+          createdDate: new Date().toLocaleDateString('ms-MY')
+        };
+        state.users.unshift(defaultAdmin);
+        saveSecurityToStorage();
+      }
+    }
+
+    function saveSecurityToStorage() {
+      const secData = {
+        users: state.users,
+        auditLogs: state.auditLogs,
+        isSystemLocked: state.isSystemLocked
+      };
+      localStorage.setItem("SPTG_SECURITY", JSON.stringify(secData));
+    }
+
+    function checkUserSession() {
+      const sessionUser = sessionStorage.getItem("SPTG_SESSION_USER");
+      if (sessionUser) {
+        try {
+          state.currentUser = JSON.parse(sessionUser);
+          updateUserTopBar();
+          applyPermissionRules();
+        } catch (e) {
+          promptUserLogin();
+        }
+      } else {
+        // Paparkan modal log masuk jika tiada sesi aktif
+        promptUserLogin();
+      }
+    }
+
+    function promptUserLogin() {
+      const modal = document.getElementById("authModal");
+      if (modal) modal.classList.remove("hidden");
+    }
+
+    function switchAuthMode(mode) {
+      const formLogin = document.getElementById("formLogin");
+      const formRegister = document.getElementById("formRegister");
+      const tabBtnLogin = document.getElementById("tabBtnLogin");
+      const tabBtnRegister = document.getElementById("tabBtnRegister");
+
+      if (mode === "login") {
+        formLogin.classList.remove("hidden");
+        formRegister.classList.add("hidden");
+        tabBtnLogin.className = "flex-1 py-3 border-b-2 border-blue-900 text-blue-950 bg-white flex items-center justify-center gap-2";
+        tabBtnRegister.className = "flex-1 py-3 border-b-2 border-transparent hover:text-blue-900 flex items-center justify-center gap-2";
+      } else {
+        formLogin.classList.add("hidden");
+        formRegister.classList.remove("hidden");
+        tabBtnRegister.className = "flex-1 py-3 border-b-2 border-amber-500 text-slate-950 bg-white flex items-center justify-center gap-2";
+        tabBtnLogin.className = "flex-1 py-3 border-b-2 border-transparent hover:text-blue-900 flex items-center justify-center gap-2";
+      }
+    }
+
+    // Pengendali Log Masuk
+    async function handleLoginSubmit(event) {
+      event.preventDefault();
+      const usernameInput = document.getElementById("loginUsername").value.trim().toLowerCase();
+      const passwordInput = document.getElementById("loginPassword").value;
+
+      if (!usernameInput || !passwordInput) {
+        showToast("Sila lengkapkan ID dan kata laluan.", "error");
+        return;
+      }
+
+      const inputHash = await hashPassword(passwordInput);
+      const user = state.users.find(u => u.username.toLowerCase() === usernameInput);
+
+      if (!user) {
+        addAuditLog("LOGIN_GAGAL", `Percubaan log masuk gagal bagi ID pengguna tidak wujud: "${usernameInput}"`);
+        showToast("ID Pengguna atau Kata Laluan tidak sah!", "error");
+        return;
+      }
+
+      if (!user.isActive) {
+        addAuditLog("LOGIN_DISEKAT", `Pengguna disekat cuba log masuk: "${user.fullName}" (${user.username})`);
+        showToast("Akaun anda telah dinyahaktifkan oleh Super Admin.", "error");
+        return;
+      }
+
+      if (user.passwordHash !== inputHash) {
+        addAuditLog("LOGIN_GAGAL", `Kata laluan salah bagi ID pengguna: "${usernameInput}"`);
+        showToast("ID Pengguna atau Kata Laluan tidak sah!", "error");
+        return;
+      }
+
+      // Log masuk berjaya
+      state.currentUser = user;
+      sessionStorage.setItem("SPTG_SESSION_USER", JSON.stringify(user));
+      document.getElementById("authModal").classList.add("hidden");
+
+      addAuditLog("LOGIN_BERJAYA", `Pengguna ${user.fullName} (${user.role.toUpperCase()}) berjaya log masuk.`);
+      updateUserTopBar();
+      applyPermissionRules();
+      showToast(`Selamat datang, ${user.fullName}!`, "success");
+    }
+
+    // Pengendali Pendaftaran Pengguna Baharu
+    async function handleRegisterSubmit(event) {
+      event.preventDefault();
+      const fullName = document.getElementById("regFullName").value.trim();
+      const username = document.getElementById("regUsername").value.trim().toLowerCase();
+      const password = document.getElementById("regPassword").value;
+      const confirmPassword = document.getElementById("regPasswordConfirm").value;
+
+      if (!fullName || !username || !password) {
+        showToast("Sila isi semua ruangan pendaftaran.", "error");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showToast("Pengesahan kata laluan tidak sepadan!", "error");
+        return;
+      }
+
+      // Semakan Standard Keselamatan Kata Laluan
+      if (!validatePasswordStandard(password)) {
+        showToast("Kata laluan mesti sekurang-kurangnya 8 aksara mengandungi huruf besar, huruf kecil, nombor, dan simbol khas (!@#$)", "error");
+        return;
+      }
+
+      // Semakan Duplikasi Username
+      const exists = state.users.some(u => u.username.toLowerCase() === username);
+      if (exists) {
+        showToast("ID Pengguna ini telah digunakan. Sila pilih ID lain.", "error");
+        return;
+      }
+
+      const passwordHash = await hashPassword(password);
+      const newUser = {
+        id: "USR-" + String(state.users.length + 1).padStart(3, "0"),
+        username: username,
+        passwordHash: passwordHash,
+        fullName: fullName,
+        role: "editor", // Standard User / Guru Editor
+        isActive: true,
+        createdDate: new Date().toLocaleDateString('ms-MY')
+      };
+
+      state.users.push(newUser);
+      saveSecurityToStorage();
+
+      addAuditLog("DAFTAR_PENGGUNA", `Akaun baharu didaftarkan: ${fullName} (${username}) dengan peranan Guru/Editor.`);
+      showToast("Pendaftaran berjaya! Sila log masuk dengan akaun anda.", "success");
+
+      // Reset form & tukar ke login
+      document.getElementById("formRegister").reset();
+      switchAuthMode("login");
+      document.getElementById("loginUsername").value = username;
+    }
+
+    // Peringatan Log Keluar Pintar
+    function promptUserLogout() {
+      const userLabel = document.getElementById("logoutUserLabel");
+      const timestampLabel = document.getElementById("logoutTimestampLabel");
+      const modal = document.getElementById("logoutModal");
+
+      if (userLabel) {
+        userLabel.textContent = state.currentUser ? `${state.currentUser.fullName} (${state.currentUser.role.toUpperCase()})` : "Pengguna Semasa";
+      }
+      if (timestampLabel) {
+        timestampLabel.textContent = new Date().toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit' });
+      }
+
+      if (modal) modal.classList.remove("hidden");
+    }
+
+    function closeLogoutModal() {
+      const modal = document.getElementById("logoutModal");
+      if (modal) modal.classList.add("hidden");
+    }
+
+    function confirmExecuteLogout() {
+      closeLogoutModal();
+      const departingUser = state.currentUser ? state.currentUser.fullName : "Pengguna";
+      addAuditLog("LOG_KELUAR", `Pengguna ${departingUser} telah menamatkan sesi dan log keluar dengan selamat.`);
+      state.currentUser = null;
+      sessionStorage.removeItem("SPTG_SESSION_USER");
+      updateUserTopBar();
+      promptUserLogin();
+      showToast("Anda telah berjaya log keluar dengan selamat.", "info");
+    }
+
+    function isSuperAdmin() {
+      return state.currentUser && state.currentUser.role === "superadmin";
+    }
+
+    function updateUserTopBar() {
+      const userBadge = document.getElementById("currentUserBadge");
+      const roleBadge = document.getElementById("currentRoleBadge");
+      const lockIndicator = document.getElementById("systemLockIndicator");
+
+      if (state.currentUser) {
+        userBadge.textContent = state.currentUser.fullName;
+        if (state.currentUser.role === "superadmin") {
+          roleBadge.className = "text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-amber-400 text-slate-950";
+          roleBadge.textContent = "SUPER ADMIN";
+        } else {
+          roleBadge.className = "text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-blue-700 text-white";
+          roleBadge.textContent = "GURU / EDITOR";
+        }
+      } else {
+        userBadge.textContent = "Tetamu (Belum Log Masuk)";
+        roleBadge.className = "text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-slate-700 text-white";
+        roleBadge.textContent = "TETAMU";
+      }
+
+      if (lockIndicator) {
+        if (state.isSystemLocked) {
+          lockIndicator.innerHTML = `<i class="fa-solid fa-lock text-amber-400"></i> Mod Pindaan: Dikunci oleh Super Admin`;
+          lockIndicator.className = "text-[11px] font-bold text-amber-300 flex items-center gap-1";
+        } else {
+          lockIndicator.innerHTML = `<i class="fa-solid fa-lock-open text-emerald-400"></i> Mod Pindaan: Dibenarkan`;
+          lockIndicator.className = "text-[11px] font-semibold text-emerald-300 flex items-center gap-1";
+        }
+      }
+
+      // Update butang toggle kunci jika dalam tetapan
+      const btnLock = document.getElementById("btnToggleSystemLock");
+      if (btnLock) {
+        if (state.isSystemLocked) {
+          btnLock.innerHTML = `<i class="fa-solid fa-lock text-amber-300"></i> Buka Kunci Pindaan`;
+          btnLock.className = "px-3.5 py-1.5 text-xs font-bold rounded-xl transition flex items-center gap-1.5 bg-amber-600 hover:bg-amber-700 text-white shadow";
+        } else {
+          btnLock.innerHTML = `<i class="fa-solid fa-lock-open"></i> Kunci Pindaan Data Asas`;
+          btnLock.className = "px-3.5 py-1.5 text-xs font-bold rounded-xl transition flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white shadow";
+        }
+      }
+    }
+
+    // Kawalan Akses & Hak Pindaan (Role-Based Permissions)
+    function applyPermissionRules() {
+      const isLockedForEditor = state.isSystemLocked && !isSuperAdmin();
+
+      // Butang-butang kritikal yang dikawal
+      const btnSaveDuties = document.getElementById("btnSaveDuties");
+      const btnAddNewTaskRow = document.getElementById("btnAddNewTaskRow");
+      const btnResetDefault = document.getElementById("btnResetDefaultSetting");
+      const superAdminSecPanel = document.getElementById("superAdminSecurityPanel");
+
+      if (superAdminSecPanel) {
+        superAdminSecPanel.classList.toggle("hidden", !isSuperAdmin());
+      }
+
+      if (isLockedForEditor) {
+        if (btnSaveDuties) btnSaveDuties.classList.add("opacity-50", "cursor-not-allowed");
+        if (btnAddNewTaskRow) btnAddNewTaskRow.classList.add("opacity-50", "cursor-not-allowed");
+        if (btnResetDefault) btnResetDefault.classList.add("hidden");
+      } else {
+        if (btnSaveDuties) btnSaveDuties.classList.remove("opacity-50", "cursor-not-allowed");
+        if (btnAddNewTaskRow) btnAddNewTaskRow.classList.remove("opacity-50", "cursor-not-allowed");
+        if (btnResetDefault) btnResetDefault.classList.remove("hidden");
+      }
+    }
+
+    // Toggle Kunci Pindaan Sistem oleh Super Admin
+    function toggleSystemLock() {
+      if (!isSuperAdmin()) {
+        showToast("Hanya Super Admin dibenarkan mengunci atau membuka sistem!", "error");
+        return;
+      }
+
+      state.isSystemLocked = !state.isSystemLocked;
+      saveSecurityToStorage();
+      updateUserTopBar();
+      applyPermissionRules();
+
+      const statusText = state.isSystemLocked ? "DIKUNCI (Pengguna lain hanya boleh melihat & mencetak)" : "DIBUKA (Pindaan dibenarkan)";
+      addAuditLog("KUNCI_SISTEM", `Mod pindaan data asas ${statusText}.`);
+      showToast(`Status Pindaan Sistem: ${statusText}`, "info");
+    }
+
+    // Render Panel Pengurusan Pengguna (Super Admin)
+    function renderUserManagementList() {
+      const container = document.getElementById("userManagementListContainer");
+      const countBadge = document.getElementById("registeredUserCountBadge");
+      if (!container) return;
+
+      if (countBadge) {
+        countBadge.textContent = `${state.users.length} Pengguna`;
+      }
+
+      container.innerHTML = state.users.map((u, idx) => {
+        const isSelf = state.currentUser && state.currentUser.id === u.id;
+        const isTargetSuper = u.role === "superadmin";
+
+        return `
+          <div class="py-2 flex items-center justify-between gap-2">
+            <div>
+              <div class="font-bold text-slate-100 flex items-center gap-1.5">
+                <span>${u.fullName}</span>
+                ${isTargetSuper ? '<span class="text-[9px] bg-amber-400 text-slate-950 font-black px-1 rounded">SUPER</span>' : '<span class="text-[9px] bg-blue-800 text-blue-200 px-1 rounded">EDITOR</span>'}
+              </div>
+              <div class="text-[10px] text-slate-400">
+                ID: <span class="text-amber-300 font-mono">${u.username}</span> • Didaftar: ${u.createdDate || '-'}
+                ${!u.isActive ? '<span class="text-red-400 font-bold ml-1">(Disekat)</span>' : ''}
+              </div>
+            </div>
+            <div class="flex items-center gap-1">
+              ${!isTargetSuper ? `
+                <button onclick="toggleUserStatus('${u.id}')" title="${u.isActive ? 'Sekat Akses Pengguna' : 'Aktifkan Semula Pengguna'}" class="px-2 py-1 text-[10px] font-bold rounded ${u.isActive ? 'bg-amber-600 hover:bg-amber-500 text-white' : 'bg-emerald-600 hover:bg-emerald-500 text-white'} transition cursor-pointer">
+                  ${u.isActive ? '<i class="fa-solid fa-user-slash"></i> Sekat' : '<i class="fa-solid fa-user-check"></i> Aktifkan'}
+                </button>
+                <button onclick="deleteUserPrompt('${u.id}', '${u.fullName.replace(/'/g, "\\'")}')" title="Padam Akaun Pengguna" class="p-1 text-red-400 hover:text-red-300 transition cursor-pointer">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              ` : `
+                <span class="text-[10px] text-slate-500 italic">Kekal</span>
+              `}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function toggleUserStatus(userId) {
+      if (!isSuperAdmin()) return;
+      const target = state.users.find(u => u.id === userId);
+      if (!target) return;
+
+      target.isActive = !target.isActive;
+      saveSecurityToStorage();
+      renderUserManagementList();
+
+      const actionText = target.isActive ? "diaktifkan semula" : "disekat";
+      addAuditLog("STATUS_PENGGUNA", `Status pengguna ${target.fullName} (${target.username}) ${actionText}.`);
+      showToast(`Akaun ${target.fullName} telah ${actionText}.`, "info");
+    }
+
+    function deleteUserPrompt(userId, userName) {
+      if (!isSuperAdmin()) return;
+      openConfirmModal(
+        "Padam Akaun Pengguna",
+        "Kawalan Keselamatan Super Admin",
+        `Adakah anda pasti ingin memadamkan akaun pengguna <strong>"${userName}"</strong> secara kekal?`,
+        "Ya, Padam Pengguna",
+        () => {
+          state.users = state.users.filter(u => u.id !== userId);
+          saveSecurityToStorage();
+          renderUserManagementList();
+          addAuditLog("PADAM_PENGGUNA", `Akaun pengguna "${userName}" telah dipadam daripada pangkalan data keselamatan.`);
+          showToast(`Akaun "${userName}" berjaya dipadam.`, "success");
+        }
+      );
+    }
+
+    // ================= FUNGSI OPERASI DATA ASAL (DENGAN KAWALAN PERMIT) =================
     function loadDefaultData() {
       state.senaraiGuru = [...DEFAULT_DATA.senaraiGuru];
       state.jawatanMata = {...DEFAULT_DATA.jawatanMata};
@@ -944,7 +1678,7 @@
       renderCurrentForm();
     }
 
-    // Render Tugas Form Rows for the active portfolio
+    // Render Tugas Form Rows for active portfolio
     function renderCurrentForm() {
       const container = document.getElementById("tasksContainer");
       container.innerHTML = "";
@@ -955,14 +1689,13 @@
       if (!currentGuru) {
         container.innerHTML = `
           <div class="p-6 text-center text-slate-500 font-medium">
-            <i class="fa-solid fa-arrow-pointer text-emerald-700 text-2xl mb-2"></i>
+            <i class="fa-solid fa-arrow-pointer text-blue-800 text-2xl mb-2"></i>
             <p>Sila pilih nama guru di atas untuk menguruskan tugasan portfolio.</p>
           </div>
         `;
         return;
       }
 
-      // Pastikan struktur wujud
       if (!state.agihanTugas[currentGuru]) {
         state.agihanTugas[currentGuru] = { pentadbiran: [], kurikulum: [], hem: [], kokurikulum: [], asrama: [] };
       }
@@ -972,25 +1705,26 @@
       const dutyList = state.agihanTugas[currentGuru][state.activeTab] || [];
 
       if (dutyList.length === 0) {
-        // Paparkan 1 baris kosong lalai
         addNewTaskRow();
       } else {
-        dutyList.forEach((item, index) => {
+        dutyList.forEach((item) => {
           addTaskRowElement(item.tugasan, item.jawatan, item.mata);
         });
       }
       updateScoreBadge();
+      applyPermissionRules();
     }
 
-    // Add empty new row
     function addNewTaskRow() {
+      if (state.isSystemLocked && !isSuperAdmin()) {
+        showToast("Sistem sedang dikunci oleh Super Admin. Anda tidak mempunyai hak membuat penambahan.", "error");
+        return;
+      }
       addTaskRowElement("", "", 0);
     }
 
-    // Create Row DOM exactly matching ASiS Theme
     function addTaskRowElement(selectedTugasan = "", selectedJawatan = "", points = 0) {
       const container = document.getElementById("tasksContainer");
-      const rowIndex = container.children.length;
 
       const currentCategory = state.activeTab;
       const tugasOptions = state.tugasanPortfolio[currentCategory] || [];
@@ -999,46 +1733,42 @@
       const rowDiv = document.createElement("div");
       rowDiv.className = "task-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end bg-white p-3 rounded-lg border border-blue-200/80 shadow-sm transition hover:border-blue-500";
 
-      // Options for Tugasan
       let tugasOptionsHTML = `<option value="">-- Pilih Tugasan --</option>`;
       tugasOptions.forEach(t => {
         const isSel = (t === selectedTugasan) ? "selected" : "";
         tugasOptionsHTML += `<option value="${t}" ${isSel}>${t}</option>`;
       });
 
-      // Options for Jawatan
       let jawatanOptionsHTML = `<option value="">-- Pilih Jawatan --</option>`;
       jawatanOptions.forEach(j => {
         const isSel = (j === selectedJawatan) ? "selected" : "";
         jawatanOptionsHTML += `<option value="${j}" ${isSel}>${j}</option>`;
       });
 
+      const isLocked = state.isSystemLocked && !isSuperAdmin();
+
       rowDiv.innerHTML = `
-        <!-- Tugasan Bahagian -->
         <div class="md:col-span-5">
           <label class="block text-blue-950 font-bold mb-1 text-xs sm:text-sm">Tugasan Bahagian</label>
-          <select class="task-select w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-800 text-sm bg-white">
+          <select ${isLocked ? 'disabled' : ''} class="task-select w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-800 text-sm bg-white">
             ${tugasOptionsHTML}
           </select>
         </div>
 
-        <!-- Jawatan -->
         <div class="md:col-span-4">
           <label class="block text-blue-950 font-bold mb-1 text-xs sm:text-sm">Jawatan</label>
-          <select onchange="onJawatanRowChange(this)" class="jawatan-select w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-800 text-sm bg-white">
+          <select ${isLocked ? 'disabled' : ''} onchange="onJawatanRowChange(this)" class="jawatan-select w-full px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-800 text-sm bg-white">
             ${jawatanOptionsHTML}
           </select>
         </div>
 
-        <!-- Mata -->
         <div class="md:col-span-2">
           <label class="block text-blue-950 font-bold mb-1 text-xs sm:text-sm text-center">Mata</label>
           <input type="number" readonly value="${points}" class="points-input w-full px-3 py-2 rounded-lg border border-amber-300 bg-amber-50 text-center font-bold text-slate-800 text-sm focus:outline-none shadow-inner">
         </div>
 
-        <!-- Butang Padam Merah -->
         <div class="md:col-span-1 flex justify-center">
-          <button type="button" onclick="removeTaskRow(this)" title="Padam Tugasan" class="w-10 h-10 flex items-center justify-center rounded-lg border border-red-300 bg-red-50 hover:bg-red-500 hover:text-white text-red-600 transition duration-150">
+          <button type="button" ${isLocked ? 'disabled' : ''} onclick="removeTaskRow(this)" title="Padam Tugasan" class="w-10 h-10 flex items-center justify-center rounded-lg border border-red-300 bg-red-50 hover:bg-red-500 hover:text-white text-red-600 transition duration-150 ${isLocked ? 'opacity-40 cursor-not-allowed' : ''}">
             <i class="fa-regular fa-trash-can"></i>
           </button>
         </div>
@@ -1047,7 +1777,6 @@
       container.appendChild(rowDiv);
     }
 
-    // On jawatan changed -> update Mata based on points lookup
     function onJawatanRowChange(selectElement) {
       const row = selectElement.closest(".task-row");
       const jawatan = selectElement.value;
@@ -1057,14 +1786,16 @@
       calculateFormTotalScores();
     }
 
-    // Remove row
     function removeTaskRow(buttonElement) {
+      if (state.isSystemLocked && !isSuperAdmin()) {
+        showToast("Sistem sedang dikunci oleh Super Admin. Pindaan tidak dibenarkan.", "error");
+        return;
+      }
       const row = buttonElement.closest(".task-row");
       row.remove();
       calculateFormTotalScores();
     }
 
-    // Kira skor masa nyata dalam form
     function calculateFormTotalScores() {
       const rows = document.querySelectorAll("#tasksContainer .task-row");
       let currentCategorySum = 0;
@@ -1075,7 +1806,6 @@
 
       document.getElementById("labelMataBahagian").textContent = currentCategorySum;
 
-      // Jumlah keseluruhan semua portfolio guru ini
       const guru = state.selectedGuru;
       if (!guru || !state.agihanTugas[guru]) {
         document.getElementById("labelJumlahMata").textContent = currentCategorySum;
@@ -1096,7 +1826,6 @@
       document.getElementById("labelJumlahMata").textContent = grandTotal;
     }
 
-    // Update label skor guru dari memori
     function updateScoreBadge() {
       const guru = state.selectedGuru;
       if (!guru || !state.agihanTugas[guru]) {
@@ -1117,8 +1846,13 @@
       document.getElementById("labelJumlahMata").textContent = grandTotal;
     }
 
-    // SIMPAN PERUBAHAN
+    // SIMPAN PERUBAHAN TUGASAN DENGAN LOG AUDIT TERPERINCI
     function saveCurrentDuties() {
+      if (state.isSystemLocked && !isSuperAdmin()) {
+        showToast("Sistem telah dikunci oleh Super Admin. Anda tidak mempunyai kebenaran menyimpan pindaan.", "error");
+        return;
+      }
+
       const guru = state.selectedGuru;
       if (!guru) {
         showToast("Sila pilih nama guru terlebih dahulu!", "error");
@@ -1146,31 +1880,31 @@
       saveToStorage();
       updateScoreBadge();
 
-      // Segarkan semua bahagian analisis secara proaktif
-      syncAllAnalyticsAndViews();
+      // Rekod aktiviti simpan ke Log Audit Terperinci
+      const dutySummary = dutyArr.map(d => `${d.tugasan} (${d.jawatan} - ${d.mata}M)`).join(", ");
+      addAuditLog(
+        "KEMASKINI_TUGAS", 
+        `Guru: "${guru}" | Portfolio: ${state.activeTab.toUpperCase()} (${dutyArr.length} tugasan disimpan). Perincian: [${dutySummary || 'Tiada tugasan'}]`
+      );
 
+      syncAllAnalyticsAndViews();
       showToast(`Tugasan ${state.activeTab.toUpperCase()} bagi ${guru} berjaya disimpan!`, "success");
     }
 
-    // Fungsi Penyelarasan Menyeluruh bagi Semua Paparan & Analisis
     function syncAllAnalyticsAndViews() {
-      // 1. Jika carta graf telah diinisialisasi atau sedang di tab graf, kemaskini serta-merta
       if (chartInstance || state.activeTab === "graf") {
         renderAnalysisChart();
       }
-      // 2. Jika jadual muat turun wujud, kemaskini
       const tbody = document.getElementById("summaryTableBody");
       if (tbody && !document.getElementById("section-muatturun").classList.contains("hidden")) {
         renderSummaryTable();
       }
-      // 3. Jika profil carian sedang dipaparkan, kemaskini
       const profileResult = document.getElementById("guruProfileResult");
       if (profileResult && !profileResult.classList.contains("hidden")) {
         renderGuruProfileCard();
       }
     }
 
-    // KEMASKINI (Reset / Refresh)
     function refreshCurrentForm() {
       renderCurrentForm();
       showToast("Data borang dikemaskini.", "info");
@@ -1189,16 +1923,16 @@
         const total = p + k + h + ko + asr;
 
         let status = "Seimbang";
-        let color = "#16a34a"; // green
+        let color = "#16a34a";
         if (total < 10) {
           status = "Rendah";
-          color = "#2563eb"; // blue
+          color = "#2563eb";
         } else if (total > 28) {
           status = "Tinggi";
-          color = "#dc2626"; // red
+          color = "#dc2626";
         } else if (total > 20) {
           status = "Optimum";
-          color = "#d97706"; // amber
+          color = "#d97706";
         }
 
         list.push({ guru, p, k, h, ko, asr, total, status, color });
@@ -1209,7 +1943,6 @@
     function renderAnalysisChart() {
       const data = calculateTeacherTotals();
       
-      // Update Statistik Atas
       const scores = data.map(d => d.total);
       const totalTeachers = data.length;
       const sumScores = scores.reduce((a, b) => a + b, 0);
@@ -1223,7 +1956,6 @@
       document.getElementById("statMinMata").textContent = min;
 
       const labels = data.map(d => {
-        // Nama ringkas jika panjang
         const parts = d.guru.split(" ");
         return parts.length > 3 ? parts.slice(0, 3).join(" ") + "..." : d.guru;
       });
@@ -1238,40 +1970,17 @@
         data: {
           labels: labels,
           datasets: [
-            {
-              label: 'Pentadbiran',
-              data: data.map(d => d.p),
-              backgroundColor: '#0c2340' // ASiS Deep Navy
-            },
-            {
-              label: 'Kurikulum',
-              data: data.map(d => d.k),
-              backgroundColor: '#1d4ed8' // ASiS Royal Blue
-            },
-            {
-              label: 'HEM',
-              data: data.map(d => d.h),
-              backgroundColor: '#d97706' // ASiS Warm Gold
-            },
-            {
-              label: 'KoKurikulum',
-              data: data.map(d => d.ko),
-              backgroundColor: '#e11d48' // Crimson Red
-            },
-            {
-              label: 'Asrama',
-              data: data.map(d => d.asr),
-              backgroundColor: '#3b82f6' // Sky Blue
-            }
+            { label: 'Pentadbiran', data: data.map(d => d.p), backgroundColor: '#0c2340' },
+            { label: 'Kurikulum', data: data.map(d => d.k), backgroundColor: '#1d4ed8' },
+            { label: 'HEM', data: data.map(d => d.h), backgroundColor: '#d97706' },
+            { label: 'KoKurikulum', data: data.map(d => d.ko), backgroundColor: '#e11d48' },
+            { label: 'Asrama', data: data.map(d => d.asr), backgroundColor: '#3b82f6' }
           ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          animation: {
-            // Pastikan animasi cepat siap untuk membolehkan pengekstrakan imej segera
-            duration: 500
-          },
+          animation: { duration: 500 },
           scales: {
             x: {
               stacked: true,
@@ -1292,9 +2001,7 @@
               callbacks: {
                 footer: (tooltipItems) => {
                   let total = 0;
-                  tooltipItems.forEach(item => {
-                    total += item.parsed.y;
-                  });
+                  tooltipItems.forEach(item => { total += item.parsed.y; });
                   return 'Jumlah Keseluruhan: ' + total + ' Mata';
                 }
               }
@@ -1304,7 +2011,7 @@
       });
     }
 
-    // ================= FUNGSI CETAKAN & EKSPORT ANALISIS GRAF =================
+    // ================= FUNGSI CETAKAN & EKSPORT =================
     function openCustomAnalysisModal() {
       document.getElementById("customAnalysisModal").classList.remove("hidden");
     }
@@ -1325,7 +2032,6 @@
       handlePrintAnalysis("bidang", bidang);
     }
 
-    // Muat turun terus imej carta graf ke PNG
     function downloadChartAsPNG() {
       if (!chartInstance) {
         showToast("Sila buka tab Analisis Graf terlebih dahulu.", "error");
@@ -1338,10 +2044,10 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      addAuditLog("EKSPORT_PNG", "Graf analisis dimuat turun sebagai imej PNG.");
       showToast("Imej graf berjaya dimuat turun (PNG)!", "success");
     }
 
-    // Pengendali Penjanaan Laporan Dokumen Analisis Khusus
     function handlePrintAnalysis(type = 'full', filterParam = '') {
       const area = document.getElementById("printableArea");
       const titleModal = document.getElementById("printModalTitle");
@@ -1349,7 +2055,6 @@
       const tarikhKemaskini = state.tarikhKemaskini || tarikhCetak;
       const data = calculateTeacherTotals();
 
-      // Statistik Asas
       const scores = data.map(d => d.total);
       const totalTeachers = data.length;
       const sumScores = scores.reduce((a, b) => a + b, 0);
@@ -1357,7 +2062,6 @@
       const max = scores.length > 0 ? Math.max(...scores) : 0;
       const min = scores.length > 0 ? Math.min(...scores) : 0;
 
-      // Dapatkan imej graf jika carta telah dijana
       let chartImageHTML = "";
       if (chartInstance) {
         try {
@@ -1369,12 +2073,11 @@
             </div>
           `;
         } catch (e) {
-          console.warn("Gagal mendapatkan imej graf:", e);
+          console.warn("Gagal imej graf:", e);
         }
       }
 
       if (type === 'full') {
-        // LAPORAN ANALISIS PENUH EKSEKUTIF (GRAF + JADUAL KESELURUHAN + RINGKASAN KPI)
         titleModal.textContent = "Laporan Analisis Eksekutif & Pemberatan Tugas Guru";
         currentPrintDocTitle = `Laporan_Analisis_Eksekutif_${new Date().toISOString().slice(0, 10)}`;
 
@@ -1400,7 +2103,6 @@
 
         area.innerHTML = `
           <div class="border-b-2 border-blue-900 pb-3 mb-3 text-center">
-            <!-- Header Surat / Laporan Rasmi Tanpa Logo -->
             <h1 class="text-xs sm:text-sm font-black uppercase tracking-wider text-blue-950">KEMENTERIAN PENDIDIKAN MALAYSIA</h1>
             <h2 class="text-sm sm:text-base font-black uppercase tracking-wider text-slate-900">SEKOLAH MENENGAH SAINS ALAM SHAH</h2>
             <h3 class="text-xs sm:text-sm font-extrabold uppercase text-amber-700 mt-1">LAPORAN ANALISIS EKSEKUTIF PEMBERATAN TUGAS GURU</h3>
@@ -1430,10 +2132,8 @@
             </div>
           </div>
 
-          <!-- Carta Visual Dimasukkan Terus ke Dokumen Rasmi -->
           ${chartImageHTML}
 
-          <!-- Jadual Analisis Mata Penuh -->
           <div class="mt-3">
             <h4 class="text-xs font-bold text-slate-800 uppercase mb-1 flex items-center justify-between">
               <span>Perincian Pemberatan Guru Sesi Semasa</span>
@@ -1457,7 +2157,6 @@
             </table>
           </div>
 
-          <!-- Ringkasan Status Guru -->
           <div class="mt-3 bg-slate-50 border border-slate-300 rounded p-2.5 text-[11px]">
             <span class="font-bold text-slate-800 block mb-1">Rumusan Kategori Agihan Beban:</span>
             <div class="grid grid-cols-4 gap-2 text-center">
@@ -1468,7 +2167,6 @@
             </div>
           </div>
 
-          <!-- Ruangan Tandatangan Pentadbir Sekolah -->
           <div class="mt-6 pt-3 flex justify-between items-center text-xs border-t border-slate-300">
             <div>
               <p class="font-bold text-slate-800">Disediakan Oleh:</p>
@@ -1484,7 +2182,6 @@
             </div>
           </div>
 
-          <!-- Footer Kredit Cetakan (Saiz 8pt) -->
           <div class="mt-6 pt-2 border-t border-slate-200 flex justify-between items-center text-slate-500" style="font-size: 8pt;">
             <span>Disediakan oleh: <strong>Mohd.Fauzi Sunary</strong>, Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah</span>
             <span>Kemaskini: ${tarikhKemaskini} | Cetakan: ${tarikhCetak}</span>
@@ -1492,7 +2189,6 @@
         `;
 
       } else if (type === 'status') {
-        // LAPORAN MENGIKUT STATUS BEBAN (TINGGI / SEIMBANG / RENDAH / OPTIMUM)
         titleModal.textContent = `Laporan Guru Kategori Beban: ${filterParam.toUpperCase()}`;
         currentPrintDocTitle = `Laporan_Guru_Status_${filterParam}_${new Date().toISOString().slice(0, 10)}`;
 
@@ -1539,15 +2235,6 @@
             <tbody>${tableRows}</tbody>
           </table>
 
-          <div class="p-3 bg-amber-50 border border-amber-300 rounded text-xs text-slate-800">
-            <p class="font-bold text-amber-900 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Tindakan Pentadbiran & Syor:</p>
-            <p class="text-slate-600">
-              ${filterParam === 'Tinggi' ? 'Guru-guru dalam senarai ini disyorkan untuk diselaraskan semula beban tugas bagi mengurangkan komitmen jawatankuasa berlebihan demi kesejahteraan emosi dan tumpuan PdP.' :
-                filterParam === 'Rendah' ? 'Guru-guru dalam senarai ini mempunyai kapasiti ruang tugasan yang mencukupi untuk diberikan portfolio tambahan atau peranan bimbingan sekolah.' :
-                'Agihan tugasan berada dalam tahap kawalan yang seimbang dan wajar dikekalkan.'}
-            </p>
-          </div>
-
           <div class="mt-8 pt-4 flex justify-between items-center text-xs border-t border-slate-300">
             <div>
               <p class="font-bold text-slate-800">Disediakan Oleh:</p>
@@ -1562,7 +2249,6 @@
             </div>
           </div>
 
-          <!-- Footer Kredit Cetakan (Saiz 8pt) -->
           <div class="mt-6 pt-2 border-t border-slate-200 flex justify-between items-center text-slate-500" style="font-size: 8pt;">
             <span>Disediakan oleh: <strong>Mohd.Fauzi Sunary</strong>, Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah</span>
             <span>Kemaskini: ${tarikhKemaskini} | Cetakan: ${tarikhCetak}</span>
@@ -1570,7 +2256,6 @@
         `;
 
       } else if (type === 'bidang') {
-        // LAPORAN PERBANDINGAN SATU BIDANG SAHAJA
         const labelBidang = {
           pentadbiran: "Bahagian Pentadbiran",
           kurikulum: "Bahagian Kurikulum",
@@ -1582,7 +2267,6 @@
         titleModal.textContent = `Analisis Agihan: ${labelBidang}`;
         currentPrintDocTitle = `Analisis_Bidang_${filterParam}_${new Date().toISOString().slice(0, 10)}`;
 
-        // Senaraikan perincian tugasan bagi bidang tersebut bagi setiap guru
         let tableRows = data.map((r, idx) => {
           const teacherDutyList = (state.agihanTugas[r.guru] && state.agihanTugas[r.guru][filterParam]) || [];
           const tugasDesc = teacherDutyList.length > 0 
@@ -1637,7 +2321,6 @@
             </div>
           </div>
 
-          <!-- Footer Kredit Cetakan (Saiz 8pt) -->
           <div class="mt-6 pt-2 border-t border-slate-200 flex justify-between items-center text-slate-500" style="font-size: 8pt;">
             <span>Disediakan oleh: <strong>Mohd.Fauzi Sunary</strong>, Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah</span>
             <span>Kemaskini: ${tarikhKemaskini} | Cetakan: ${tarikhCetak}</span>
@@ -1646,6 +2329,7 @@
       }
 
       currentPrintHTMLContent = area.innerHTML;
+      addAuditLog("JANA_LAPORAN_CETAK", `Laporan analisis [${type.toUpperCase()}] dijana untuk pratonton/cetakan.`);
       document.getElementById("printModal").classList.remove("hidden");
     }
 
@@ -1727,7 +2411,6 @@
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- Pentadbiran -->
             <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
               <div class="flex justify-between items-center border-b pb-2 mb-2">
                 <span class="font-bold text-sm text-blue-950"><i class="fa-solid fa-table-cells-large text-blue-800 mr-1.5"></i> Pentadbiran</span>
@@ -1736,7 +2419,6 @@
               <div>${buildRows(record.pentadbiran)}</div>
             </div>
 
-            <!-- Kurikulum -->
             <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
               <div class="flex justify-between items-center border-b pb-2 mb-2">
                 <span class="font-bold text-sm text-blue-800"><i class="fa-solid fa-book-open text-blue-600 mr-1.5"></i> Kurikulum</span>
@@ -1745,7 +2427,6 @@
               <div>${buildRows(record.kurikulum)}</div>
             </div>
 
-            <!-- HEM -->
             <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
               <div class="flex justify-between items-center border-b pb-2 mb-2">
                 <span class="font-bold text-sm text-amber-800"><i class="fa-solid fa-users text-amber-600 mr-1.5"></i> Hal Ehwal Murid (HEM)</span>
@@ -1754,7 +2435,6 @@
               <div>${buildRows(record.hem)}</div>
             </div>
 
-            <!-- KoKurikulum -->
             <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
               <div class="flex justify-between items-center border-b pb-2 mb-2">
                 <span class="font-bold text-sm text-red-800"><i class="fa-solid fa-trophy text-red-600 mr-1.5"></i> KoKurikulum</span>
@@ -1763,7 +2443,6 @@
               <div>${buildRows(record.kokurikulum)}</div>
             </div>
 
-            <!-- Asrama -->
             <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm md:col-span-2 lg:col-span-1">
               <div class="flex justify-between items-center border-b pb-2 mb-2">
                 <span class="font-bold text-sm text-sky-900"><i class="fa-solid fa-bed text-sky-700 mr-1.5"></i> Asrama</span>
@@ -1822,17 +2501,19 @@
       link.click();
       document.body.removeChild(link);
 
+      addAuditLog("EKSPORT_CSV", "Jadual rumusan beban tugas guru dieksport ke format CSV.");
       showToast("Fail CSV berjaya dimuat turun!", "success");
     }
 
     // ================= TETAPAN / SETTING =================
     function renderSettingPanel() {
-      // 0. Tab & Senarai Tugasan Fleksibel Mengikut Bidang
       renderSettingBidangTugasan();
 
-      // 1. Senarai Guru
+      // Senarai Guru
       const guruListEl = document.getElementById("guruSettingList");
       guruListEl.innerHTML = "";
+
+      const isLocked = state.isSystemLocked && !isSuperAdmin();
 
       if (state.senaraiGuru.length === 0) {
         guruListEl.innerHTML = `<div class="p-4 text-center text-xs text-slate-400">Tiada guru dalam senarai. Sila tambah guru baharu di atas.</div>`;
@@ -1847,11 +2528,10 @@
 
           const deleteBtn = document.createElement("button");
           deleteBtn.type = "button";
-          deleteBtn.className = "text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 transition flex-shrink-0 cursor-pointer";
+          deleteBtn.className = `text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 transition flex-shrink-0 cursor-pointer ${isLocked ? 'hidden' : ''}`;
           deleteBtn.title = `Padam ${g}`;
           deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can text-sm"></i>`;
           
-          // Menggunakan EventListener selamat (tiada isu quotes atau inline JS)
           deleteBtn.addEventListener("click", () => {
             promptDeleteGuru(g);
           });
@@ -1862,25 +2542,26 @@
         });
       }
 
-      // 2. Mata Jawatan
       renderJawatanSettingList();
+      renderUserManagementList();
+      renderAuditLogsUI();
+      applyPermissionRules();
     }
 
-    // Paparkan senarai jawatan lengkap dengan butang edit dan padam
     function renderJawatanSettingList() {
       const ptsListEl = document.getElementById("jawatanPointsList");
       const countBadge = document.getElementById("jawatanCountBadge");
       if (!ptsListEl) return;
 
       const jawatanEntries = Object.entries(state.jawatanMata);
-      if (countBadge) {
-        countBadge.textContent = `${jawatanEntries.length} Jawatan`;
-      }
+      if (countBadge) countBadge.textContent = `${jawatanEntries.length} Jawatan`;
 
       ptsListEl.innerHTML = "";
 
+      const isLocked = state.isSystemLocked && !isSuperAdmin();
+
       if (jawatanEntries.length === 0) {
-        ptsListEl.innerHTML = `<div class="p-3 text-center text-xs text-slate-400 italic">Tiada jawatan didaftarkan. Sila tambah jawatan baharu di atas.</div>`;
+        ptsListEl.innerHTML = `<div class="p-3 text-center text-xs text-slate-400 italic">Tiada jawatan didaftarkan.</div>`;
         return;
       }
 
@@ -1890,37 +2571,33 @@
 
         const leftCol = document.createElement("div");
         leftCol.className = "flex items-center gap-2 flex-1 pr-2";
-        leftCol.innerHTML = `
-          <span class="font-bold text-slate-800 break-words">${jawatan}</span>
-        `;
+        leftCol.innerHTML = `<span class="font-bold text-slate-800 break-words">${jawatan}</span>`;
 
         const rightCol = document.createElement("div");
         rightCol.className = "flex items-center gap-2 flex-shrink-0";
 
-        // Input mata yang boleh diedit secara langsung
         const pointInput = document.createElement("input");
         pointInput.type = "number";
         pointInput.min = "1";
         pointInput.max = "30";
         pointInput.value = points;
+        pointInput.disabled = isLocked;
         pointInput.setAttribute("data-jawatan", jawatan);
-        pointInput.className = "jawatan-point-input w-14 px-2 py-1 text-center font-bold border rounded border-amber-300 bg-amber-50 focus:outline-none text-slate-800";
+        pointInput.className = `jawatan-point-input w-14 px-2 py-1 text-center font-bold border rounded border-amber-300 bg-amber-50 focus:outline-none text-slate-800 ${isLocked ? 'opacity-60' : ''}`;
         pointInput.title = `Ubah mata bagi ${jawatan}`;
 
-        // Butang Edit Nama Jawatan
         const editBtn = document.createElement("button");
         editBtn.type = "button";
-        editBtn.className = "text-amber-600 hover:text-amber-800 p-1.5 rounded hover:bg-amber-100 transition cursor-pointer";
+        editBtn.className = `text-amber-600 hover:text-amber-800 p-1.5 rounded hover:bg-amber-100 transition cursor-pointer ${isLocked ? 'hidden' : ''}`;
         editBtn.title = `Edit maklumat jawatan ${jawatan}`;
         editBtn.innerHTML = `<i class="fa-solid fa-pen-to-square"></i>`;
         editBtn.addEventListener("click", () => {
           openEditJawatanModal(jawatan, points);
         });
 
-        // Butang Padam Jawatan
         const deleteBtn = document.createElement("button");
         deleteBtn.type = "button";
-        deleteBtn.className = "text-red-500 hover:text-red-700 p-1.5 rounded hover:bg-red-100 transition cursor-pointer";
+        deleteBtn.className = `text-red-500 hover:text-red-700 p-1.5 rounded hover:bg-red-100 transition cursor-pointer ${isLocked ? 'hidden' : ''}`;
         deleteBtn.title = `Padam jawatan ${jawatan}`;
         deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can"></i>`;
         deleteBtn.addEventListener("click", () => {
@@ -1937,8 +2614,12 @@
       });
     }
 
-    // Tambah Jawatan Baharu
     function addNewJawatan() {
+      if (state.isSystemLocked && !isSuperAdmin()) {
+        showToast("Sistem sedang dikunci oleh Super Admin. Tindakan dihalang.", "error");
+        return;
+      }
+
       const nameInput = document.getElementById("newJawatanNameInput");
       const pointsInput = document.getElementById("newJawatanPointsInput");
 
@@ -1949,13 +2630,11 @@
         showToast("Sila masukkan nama jawatan baharu.", "error");
         return;
       }
-
       if (points <= 0) {
-        showToast("Sila masukkan nilai mata yang sah (sekurang-kurangnya 1).", "error");
+        showToast("Sila masukkan nilai mata yang sah.", "error");
         return;
       }
 
-      // Semak duplikasi jawatan
       const exists = Object.keys(state.jawatanMata).some(j => j.toLowerCase() === name.toLowerCase());
       if (exists) {
         showToast("Jawatan ini sudah wujud dalam senarai!", "error");
@@ -1968,24 +2647,26 @@
       nameInput.value = "";
       pointsInput.value = "3";
 
+      addAuditLog("TAMBAH_JAWATAN", `Jawatan baharu "${name}" (${points} mata) didaftarkan.`);
       renderJawatanSettingList();
-      renderCurrentForm(); // Kemaskini dropdown borang jika sedang dibuka
+      renderCurrentForm();
       showToast(`Jawatan "${name}" (${points} mata) berjaya ditambah.`, "success");
     }
 
-    // Modal Edit Jawatan
     function openEditJawatanModal(jawatanName, currentPoints) {
-      editingJawatanContext = { oldJawatanName: jawatanName };
+      if (state.isSystemLocked && !isSuperAdmin()) {
+        showToast("Sistem dikunci. Pindaan jawatan tidak dibenarkan.", "error");
+        return;
+      }
 
+      editingJawatanContext = { oldJawatanName: jawatanName };
       const nameInput = document.getElementById("editJawatanNameInput");
       const ptInput = document.getElementById("editJawatanPointInput");
 
       nameInput.value = jawatanName;
       ptInput.value = currentPoints;
 
-      const saveBtn = document.getElementById("btnSaveEditJawatan");
-      saveBtn.onclick = executeSaveEditedJawatan;
-
+      document.getElementById("btnSaveEditJawatan").onclick = executeSaveEditedJawatan;
       document.getElementById("editJawatanModal").classList.remove("hidden");
       nameInput.focus();
     }
@@ -2000,32 +2681,16 @@
       const newName = document.getElementById("editJawatanNameInput").value.trim();
       const newPoints = parseInt(document.getElementById("editJawatanPointInput").value) || 0;
 
-      if (!newName) {
-        showToast("Nama jawatan tidak boleh dibiarkan kosong.", "error");
+      if (!newName || newPoints <= 0) {
+        showToast("Sila isi nama jawatan dan mata yang sah.", "error");
         return;
       }
 
-      if (newPoints <= 0) {
-        showToast("Nilai mata mestilah sekurang-kurangnya 1.", "error");
-        return;
-      }
-
-      // Semak jika nama bertindih dengan jawatan lain
-      const duplicate = Object.keys(state.jawatanMata).some(
-        j => j.toLowerCase() === newName.toLowerCase() && j.toLowerCase() !== oldJawatanName.toLowerCase()
-      );
-      if (duplicate) {
-        showToast("Nama jawatan ini sudah wujud dalam senarai!", "error");
-        return;
-      }
-
-      // 1. Kemas kini objek jawatanMata (buang kunci lama jika tukar nama)
       if (newName !== oldJawatanName) {
         delete state.jawatanMata[oldJawatanName];
       }
       state.jawatanMata[newName] = newPoints;
 
-      // 2. Selaras rekod tugas semua guru yang menggunakan jawatan ini
       Object.keys(state.agihanTugas).forEach(guru => {
         ["pentadbiran", "kurikulum", "hem", "kokurikulum", "asrama"].forEach(bidang => {
           const list = (state.agihanTugas[guru] && state.agihanTugas[guru][bidang]) || [];
@@ -2044,19 +2709,22 @@
       closeEditJawatanModal();
       renderJawatanSettingList();
       renderCurrentForm();
-
-      // Segarkan semua bahagian analisis
       syncAllAnalyticsAndViews();
 
+      addAuditLog("EDIT_JAWATAN", `Jawatan "${oldJawatanName}" dikemas kini kepada "${newName}" (${newPoints} mata).`);
       showToast(`Jawatan "${newName}" berjaya dikemaskini.`, "success");
     }
 
-    // Padam Jawatan
     function promptDeleteJawatan(jawatanName) {
+      if (state.isSystemLocked && !isSuperAdmin()) {
+        showToast("Sistem dikunci. Pemadaman jawatan tidak dibenarkan.", "error");
+        return;
+      }
+
       openConfirmModal(
         "Padam Pilihan Jawatan",
         "Tindakan memadam jawatan daripada senarai",
-        `Adakah anda pasti ingin memadam jawatan <strong>"${jawatanName}"</strong>?<br><span class="text-xs text-red-600 mt-1 block font-medium">*Jawatan ini tidak lagi akan muncul dalam pilihan dropdown. Sebarang tugasan guru sedia ada dengan jawatan ini akan diselaraskan matanya.</span>`,
+        `Adakah anda pasti ingin memadam jawatan <strong>"${jawatanName}"</strong>?`,
         "Ya, Padam Jawatan",
         () => {
           executeDeleteJawatan(jawatanName);
@@ -2069,7 +2737,6 @@
         delete state.jawatanMata[jawatanName];
       }
 
-      // Selaras mata rekod guru yang menggunakan jawatan yang dipadam kepada 0
       Object.keys(state.agihanTugas).forEach(guru => {
         ["pentadbiran", "kurikulum", "hem", "kokurikulum", "asrama"].forEach(bidang => {
           const list = (state.agihanTugas[guru] && state.agihanTugas[guru][bidang]) || [];
@@ -2084,14 +2751,12 @@
       saveToStorage();
       renderJawatanSettingList();
       renderCurrentForm();
-
-      // Segarkan semua bahagian analisis
       syncAllAnalyticsAndViews();
 
+      addAuditLog("PADAM_JAWATAN", `Jawatan "${jawatanName}" telah dipadam daripada sistem.`);
       showToast(`Jawatan "${jawatanName}" berjaya dipadam.`, "success");
     }
 
-    // PENGURUSAN TUGASAN SETTING (PILIH BIDANG, TAMBAH, EDIT, PADAM)
     function changeSettingBidang(bidangKey) {
       state.settingActiveBidang = bidangKey;
       renderSettingBidangTugasan();
@@ -2109,14 +2774,13 @@
         asrama: "Bahagian Asrama"
       };
 
-      // Kemaskini gaya butang tab bidang dalam setting
       bidangKeys.forEach(k => {
         const btn = document.getElementById(`settab-${k}`);
         if (!btn) return;
         if (k === activeBidang) {
           btn.className = "px-3 py-1 text-xs font-extrabold rounded-lg bg-amber-400 text-slate-950 shadow";
         } else {
-          btn.className = "px-3 py-1 text-xs font-semibold rounded-lg bg-emerald-900/50 hover:bg-emerald-800 text-emerald-100 transition";
+          btn.className = "px-3 py-1 text-xs font-semibold rounded-lg bg-blue-900/60 hover:bg-blue-800 text-blue-100 transition";
         }
       });
 
@@ -2124,42 +2788,40 @@
       if (!listContainer) return;
 
       const currentTasks = state.tugasanPortfolio[activeBidang] || [];
-      document.getElementById("labelBidangAktifTitle").textContent = `Senarai Tugasan / Jawatankuasa (${bidangLabels[activeBidang]})`;
+      document.getElementById("labelBidangAktifTitle").textContent = `Senarai Tugasan (${bidangLabels[activeBidang]})`;
       document.getElementById("labelBidangCount").textContent = `${currentTasks.length} Tugasan`;
 
       listContainer.innerHTML = "";
 
+      const isLocked = state.isSystemLocked && !isSuperAdmin();
+
       if (currentTasks.length === 0) {
-        listContainer.innerHTML = `<div class="p-4 text-center text-xs text-slate-400 italic">Tiada tugasan didaftarkan untuk bahagian ini. Tambah menggunakan borang di atas.</div>`;
+        listContainer.innerHTML = `<div class="p-4 text-center text-xs text-slate-400 italic">Tiada tugasan didaftarkan untuk bahagian ini.</div>`;
         return;
       }
 
       currentTasks.forEach((tugasName, index) => {
         const itemRow = document.createElement("div");
-        itemRow.className = "flex items-center justify-between py-2.5 px-2 hover:bg-slate-50 transition rounded-lg group";
+        itemRow.className = "flex items-center justify-between py-2 px-2 hover:bg-slate-50 transition rounded-lg group";
 
         const textSpan = document.createElement("span");
         textSpan.className = "text-xs font-semibold text-slate-800 pr-2 break-words flex-1";
-        textSpan.innerHTML = `<span class="text-emerald-700 font-bold mr-1.5">${index + 1}.</span> ${tugasName}`;
+        textSpan.innerHTML = `<span class="text-blue-800 font-bold mr-1.5">${index + 1}.</span> ${tugasName}`;
 
         const actionsDiv = document.createElement("div");
-        actionsDiv.className = "flex items-center gap-1 flex-shrink-0";
+        actionsDiv.className = `flex items-center gap-1 flex-shrink-0 ${isLocked ? 'hidden' : ''}`;
 
-        // Butang Edit
         const editBtn = document.createElement("button");
         editBtn.type = "button";
         editBtn.className = "text-amber-600 hover:text-amber-800 p-1.5 rounded-lg hover:bg-amber-50 transition text-xs flex items-center gap-1 font-semibold";
-        editBtn.title = `Edit nama tugasan "${tugasName}"`;
         editBtn.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> <span class="hidden sm:inline">Edit</span>`;
         editBtn.addEventListener("click", () => {
           openEditTugasanModal(activeBidang, tugasName);
         });
 
-        // Butang Padam
         const deleteBtn = document.createElement("button");
         deleteBtn.type = "button";
         deleteBtn.className = "text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 transition text-xs flex items-center gap-1 font-semibold";
-        deleteBtn.title = `Padam tugasan "${tugasName}"`;
         deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can"></i> <span class="hidden sm:inline">Padam</span>`;
         deleteBtn.addEventListener("click", () => {
           promptDeleteTugasan(activeBidang, tugasName);
@@ -2175,12 +2837,17 @@
     }
 
     function addNewTugasanSetting() {
+      if (state.isSystemLocked && !isSuperAdmin()) {
+        showToast("Sistem dikunci oleh Super Admin. Tindakan dihalang.", "error");
+        return;
+      }
+
       const activeBidang = state.settingActiveBidang || "pentadbiran";
       const input = document.getElementById("newTugasanInput");
       const newTask = input.value.trim();
 
       if (!newTask) {
-        showToast("Sila masukkan nama tugasan / jawatankuasa terlebih dahulu.", "error");
+        showToast("Sila masukkan nama tugasan / jawatankuasa.", "error");
         return;
       }
 
@@ -2188,7 +2855,6 @@
         state.tugasanPortfolio[activeBidang] = [];
       }
 
-      // Elak duplikasi nama dalam bidang yang sama
       const exists = state.tugasanPortfolio[activeBidang].some(t => t.toLowerCase() === newTask.toLowerCase());
       if (exists) {
         showToast("Tugasan ini telah wujud dalam bahagian tersebut!", "error");
@@ -2199,16 +2865,18 @@
       saveToStorage();
       input.value = "";
 
+      addAuditLog("TAMBAH_TUGASAN", `Tugasan "${newTask}" ditambah ke portfolio ${activeBidang.toUpperCase()}.`);
       renderSettingBidangTugasan();
-      // Kemaskini borang aktif jika pengguna sedang membuka tab yang sama
-      if (state.activeTab === activeBidang) {
-        renderCurrentForm();
-      }
-      showToast(`Tugasan "${newTask}" berjaya ditambah ke ${activeBidang.toUpperCase()}.`, "success");
+      if (state.activeTab === activeBidang) renderCurrentForm();
+      showToast(`Tugasan "${newTask}" berjaya ditambah.`, "success");
     }
 
-    // Modal Edit Tugasan
     function openEditTugasanModal(bidang, taskName) {
+      if (state.isSystemLocked && !isSuperAdmin()) {
+        showToast("Sistem dikunci. Pindaan tugasan tidak dibenarkan.", "error");
+        return;
+      }
+
       editingTaskContext = { bidang, oldTaskName: taskName };
       const bidangLabels = {
         pentadbiran: "Bahagian Pentadbiran",
@@ -2222,9 +2890,7 @@
       const input = document.getElementById("editTugasanInput");
       input.value = taskName;
 
-      const saveBtn = document.getElementById("btnSaveEditTugasan");
-      saveBtn.onclick = executeSaveEditedTugasan;
-
+      document.getElementById("btnSaveEditTugasan").onclick = executeSaveEditedTugasan;
       document.getElementById("editTugasanModal").classList.remove("hidden");
       input.focus();
     }
@@ -2249,22 +2915,11 @@
         return;
       }
 
-      // Semak jika nama baharu bertindih dengan tugasan lain
-      const duplicate = (state.tugasanPortfolio[bidang] || []).some(
-        t => t.toLowerCase() === updatedName.toLowerCase() && t.toLowerCase() !== oldTaskName.toLowerCase()
-      );
-      if (duplicate) {
-        showToast("Nama tugasan ini sudah wujud dalam bahagian ini!", "error");
-        return;
-      }
-
-      // 1. Kemaskini senarai tugasan portfolio
       const idx = (state.tugasanPortfolio[bidang] || []).indexOf(oldTaskName);
       if (idx !== -1) {
         state.tugasanPortfolio[bidang][idx] = updatedName;
       }
 
-      // 2. Kemaskini rekod agihan guru sedia ada yang menggunakan nama tugasan lama
       Object.keys(state.agihanTugas).forEach(guru => {
         const dutyList = (state.agihanTugas[guru] && state.agihanTugas[guru][bidang]) || [];
         dutyList.forEach(duty => {
@@ -2278,22 +2933,23 @@
       closeEditTugasanModal();
       renderSettingBidangTugasan();
 
-      // Kemaskini borang aktif sekiranya sedang berada di tab berkenaan
-      if (state.activeTab === bidang) {
-        renderCurrentForm();
-      }
-
+      if (state.activeTab === bidang) renderCurrentForm();
       syncAllAnalyticsAndViews();
 
-      showToast(`Nama tugasan berjaya dikemaskini kepada "${updatedName}".`, "success");
+      addAuditLog("EDIT_TUGASAN", `Tugasan "${oldTaskName}" dikemas kini kepada "${updatedName}" (${bidang.toUpperCase()}).`);
+      showToast(`Nama tugasan berjaya dikemaskini.`, "success");
     }
 
-    // Pengesahan & Pemadaman Tugasan
     function promptDeleteTugasan(bidang, taskName) {
+      if (state.isSystemLocked && !isSuperAdmin()) {
+        showToast("Sistem dikunci. Pemadaman tugasan tidak dibenarkan.", "error");
+        return;
+      }
+
       openConfirmModal(
         "Padam Pilihan Tugasan",
         `Tindakan memadam tugasan daripada ${bidang.toUpperCase()}`,
-        `Adakah anda pasti ingin memadam <strong>"${taskName}"</strong> daripada senarai pilihan bahagian ${bidang.toUpperCase()}?<br><span class="text-xs text-amber-700 mt-1 block font-medium">*Sebarang rekod sedia ada guru bagi jawatankuasa ini akan diselaraskan.</span>`,
+        `Adakah anda pasti ingin memadam <strong>"${taskName}"</strong>?`,
         "Ya, Padam Tugasan",
         () => {
           executeDeleteTugasan(bidang, taskName);
@@ -2302,12 +2958,10 @@
     }
 
     function executeDeleteTugasan(bidang, taskName) {
-      // 1. Buang dari senarai portfolio
       if (state.tugasanPortfolio[bidang]) {
         state.tugasanPortfolio[bidang] = state.tugasanPortfolio[bidang].filter(t => t !== taskName);
       }
 
-      // 2. Selaras rekod guru (buang tugasan ini daripada rekod guru jika ada)
       Object.keys(state.agihanTugas).forEach(guru => {
         if (state.agihanTugas[guru] && state.agihanTugas[guru][bidang]) {
           state.agihanTugas[guru][bidang] = state.agihanTugas[guru][bidang].filter(d => d.tugasan !== taskName);
@@ -2316,17 +2970,19 @@
 
       saveToStorage();
       renderSettingBidangTugasan();
-
-      if (state.activeTab === bidang) {
-        renderCurrentForm();
-      }
-
+      if (state.activeTab === bidang) renderCurrentForm();
       syncAllAnalyticsAndViews();
 
+      addAuditLog("PADAM_TUGASAN", `Tugasan "${taskName}" (${bidang.toUpperCase()}) telah dipadam.`);
       showToast(`Tugasan "${taskName}" berjaya dipadam.`, "success");
     }
 
     function addNewGuru() {
+      if (state.isSystemLocked && !isSuperAdmin()) {
+        showToast("Sistem dikunci oleh Super Admin. Tindakan dihalang.", "error");
+        return;
+      }
+
       const input = document.getElementById("newGuruInput");
       const name = input.value.trim().toUpperCase();
       if (!name) {
@@ -2344,10 +3000,11 @@
       populateGuruDropdowns();
       populateCarianSelect();
       renderSettingPanel();
+
+      addAuditLog("TAMBAH_GURU", `Guru baharu didaftarkan: "${name}".`);
       showToast(`Guru "${name}" berjaya ditambah.`, "success");
     }
 
-    // Modal Confirmation Dialog Handling
     let onModalConfirmAction = null;
 
     function openConfirmModal(title, description, message, confirmBtnText, onConfirm) {
@@ -2382,12 +3039,16 @@
       });
     }
 
-    // PENGESAHAN & PEMADAMAN GURU SECARA LENGKAP
     function promptDeleteGuru(teacherName) {
+      if (state.isSystemLocked && !isSuperAdmin()) {
+        showToast("Sistem sedang dikunci oleh Super Admin. Pemadaman guru tidak dibenarkan.", "error");
+        return;
+      }
+
       openConfirmModal(
         "Padam Rekod Guru",
         "Tindakan ini tidak boleh dikembalikan.",
-        `Adakah anda pasti ingin memadam <strong>"${teacherName}"</strong>?<br><span class="text-xs text-red-600 mt-1 block font-medium">*Semua agihan tugas dan mata berkaitan guru ini akan turut dihapuskan serta-merta.</span>`,
+        `Adakah anda pasti ingin memadam <strong>"${teacherName}"</strong>?`,
         "Ya, Padam Guru Ini",
         () => {
           executeDeleteGuru(teacherName);
@@ -2396,35 +3057,31 @@
     }
 
     function executeDeleteGuru(teacherName) {
-      // 1. Padam daripada senarai guru
       state.senaraiGuru = state.senaraiGuru.filter(g => g !== teacherName);
-
-      // 2. Padam rekod agihan tugas guru dari memori
       if (state.agihanTugas[teacherName]) {
         delete state.agihanTugas[teacherName];
       }
-
-      // 3. Kemaskini guru terpilih jika yang dipadam sedang aktif
       if (state.selectedGuru === teacherName) {
         state.selectedGuru = state.senaraiGuru.length > 0 ? state.senaraiGuru[0] : "";
       }
 
-      // 4. Simpan ke storan tempatan (localStorage)
       saveToStorage();
-
-      // 5. Kemas kini semua paparan dan dropdown yang berkaitan
       populateGuruDropdowns();
       populateCarianSelect();
       renderSettingPanel();
       renderCurrentForm();
-
       syncAllAnalyticsAndViews();
 
-      showToast(`Guru "${teacherName}" dan seluruh rekod tugasan berjaya dipadamkan.`, "success");
+      addAuditLog("PADAM_GURU", `Guru "${teacherName}" dan keseluruhan rekod agihan tugasannya telah dipadam.`);
+      showToast(`Guru "${teacherName}" berjaya dipadamkan.`, "success");
     }
 
-    // PENGESAHAN RESET DEFAULT
     function promptResetDefault() {
+      if (!isSuperAdmin()) {
+        showToast("Hanya Super Admin dibenarkan membuat tetapan semula sistem!", "error");
+        return;
+      }
+
       openConfirmModal(
         "Tetapkan Semula Data",
         "Kembalikan ke konfigurasi asal",
@@ -2435,12 +3092,12 @@
           loadDefaultData();
           initApp();
           renderSettingPanel();
+          addAuditLog("RESET_SISTEM", "Sistem telah ditetapkan semula ke data lalai sekolah.");
           showToast("Sistem telah diset semula ke konfigurasi asal.", "info");
         }
       );
     }
 
-    // FUNGSI SANDARAN & MUAT NAIK DATA PENUH (BACKUP & RESTORE)
     function exportFullSystemBackup() {
       const dataToSave = {
         senaraiGuru: state.senaraiGuru,
@@ -2458,10 +3115,17 @@
       downloadAnchor.click();
       downloadAnchor.remove();
 
+      addAuditLog("SANDARAN_DATA", "Fail sandaran JSON keseluruhan sistem telah dimuat turun.");
       showToast("Fail sandaran sistem (JSON) berjaya dimuat turun!", "success");
     }
 
     function importFullSystemBackup(event) {
+      if (state.isSystemLocked && !isSuperAdmin()) {
+        showToast("Sistem dikunci. Muat naik data sandaran tidak dibenarkan.", "error");
+        event.target.value = "";
+        return;
+      }
+
       const file = event.target.files[0];
       if (!file) return;
 
@@ -2483,6 +3147,7 @@
             renderCurrentForm();
             syncAllAnalyticsAndViews();
 
+            addAuditLog("MUATNAIK_SANDARAN", "Data sandaran JSON berjaya dimuat naik dan disegerakkan ke dalam pangkalan data sistem.");
             showToast("Data sistem berjaya dimuat naik dan disegerakkan!", "success");
           } else {
             showToast("Format fail sandaran tidak sah!", "error");
@@ -2496,6 +3161,11 @@
     }
 
     function saveJawatanPoints() {
+      if (state.isSystemLocked && !isSuperAdmin()) {
+        showToast("Sistem sedang dikunci oleh Super Admin. Tindakan dihalang.", "error");
+        return;
+      }
+
       const inputs = document.querySelectorAll(".jawatan-point-input");
       inputs.forEach(inp => {
         const jawatan = inp.getAttribute("data-jawatan");
@@ -2503,7 +3173,6 @@
         state.jawatanMata[jawatan] = val;
       });
 
-      // Kemas kini semula mata pada semua rekod tugasan guru yang memegang jawatan tersebut
       Object.keys(state.agihanTugas).forEach(guru => {
         ["pentadbiran", "kurikulum", "hem", "kokurikulum", "asrama"].forEach(bidang => {
           const list = (state.agihanTugas[guru] && state.agihanTugas[guru][bidang]) || [];
@@ -2519,7 +3188,8 @@
       renderCurrentForm();
       syncAllAnalyticsAndViews();
 
-      showToast("Mata pemberatan jawatan berjaya diselaraskan ke semua rekod guru!", "success");
+      addAuditLog("KEMASKINI_MATA", "Pemberatan mata bagi semua jawatan telah diselaraskan.");
+      showToast("Mata pemberatan jawatan berjaya diselaraskan!", "success");
     }
 
     // ================= FUNGSI CETAKAN DOKUMEN RASMI =================
@@ -2530,7 +3200,6 @@
       const tarikhKemaskini = state.tarikhKemaskini || tarikhCetak;
 
       if (type === 'single' && specificGuru) {
-        // Cetak Surat Penyerahan Tugas Individu Guru
         titleModal.textContent = `Surat Agihan Tugas - ${specificGuru}`;
         currentPrintDocTitle = `Surat_Tugas_${specificGuru.replace(/[^a-zA-Z0-9]/g, '_')}`;
         const record = state.agihanTugas[specificGuru] || { pentadbiran: [], kurikulum: [], hem: [], kokurikulum: [], asrama: [] };
@@ -2557,7 +3226,6 @@
 
         area.innerHTML = `
           <div class="border-b-2 border-blue-900 pb-4 mb-4 text-center">
-            <!-- Header Surat Rasmi Tanpa Logo -->
             <h1 class="text-xs sm:text-sm font-black uppercase tracking-wider text-blue-950">KEMENTERIAN PENDIDIKAN MALAYSIA</h1>
             <h2 class="text-base sm:text-lg font-black uppercase tracking-wider text-slate-900">SEKOLAH MENENGAH SAINS ALAM SHAH</h2>
             <p class="text-xs font-semibold text-slate-600">Dokumen Agihan & Pemantauan Beban Tugas Rasmi</p>
@@ -2577,10 +3245,9 @@
             </div>
           </div>
 
-          <!-- Jadual Perincian Setiap Bahagian -->
           <div class="space-y-4">
             <div>
-              <div class="flex justify-between items-center bg-emerald-800 text-white px-2.5 py-1 text-xs font-bold rounded-t">
+              <div class="flex justify-between items-center bg-blue-900 text-white px-2.5 py-1 text-xs font-bold rounded-t">
                 <span>1. BAHAGIAN PENTADBIRAN</span>
                 <span>Subjumlah: ${pScore} Mata</span>
               </div>
@@ -2645,7 +3312,6 @@
             </div>
           </div>
 
-          <!-- Pengesahan Guru & Pentadbir -->
           <div class="mt-8 pt-6 grid grid-cols-2 gap-10 text-xs">
             <div>
               <p class="font-bold text-slate-700">Disediakan Oleh:</p>
@@ -2661,14 +3327,12 @@
             </div>
           </div>
 
-          <!-- Footer Kredit Cetakan (Saiz 8pt) -->
           <div class="mt-6 pt-2 border-t border-slate-200 flex justify-between items-center text-slate-500" style="font-size: 8pt;">
             <span>Disediakan oleh: <strong>Mohd.Fauzi Sunary</strong>, Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah</span>
             <span>Kemaskini: ${tarikhKemaskini} | Cetakan: ${tarikhCetak}</span>
           </div>
         `;
       } else {
-        // Cetak Laporan Keseluruhan Agihan Tugas
         titleModal.textContent = "Laporan Analisis Pemberatan Tugas Keseluruhan Guru";
         currentPrintDocTitle = `Laporan_Pemberatan_Tugas_Keseluruhan_${new Date().toISOString().slice(0, 10)}`;
         const data = calculateTeacherTotals();
@@ -2733,7 +3397,6 @@
             </div>
           </div>
 
-          <!-- Footer Kredit Cetakan (Saiz 8pt) -->
           <div class="mt-6 pt-2 border-t border-slate-200 flex justify-between items-center text-slate-500" style="font-size: 8pt;">
             <span>Disediakan oleh: <strong>Mohd.Fauzi Sunary</strong>, Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah</span>
             <span>Kemaskini: ${tarikhKemaskini} | Cetakan: ${tarikhCetak}</span>
@@ -2742,6 +3405,7 @@
       }
 
       currentPrintHTMLContent = area.innerHTML;
+      addAuditLog("JANA_SURAT_CETAK", `Surat/Laporan tugas [${type.toUpperCase()}] untuk ${specificGuru || 'Semua Guru'} dibuka untuk cetakan.`);
       document.getElementById("printModal").classList.remove("hidden");
     }
 
@@ -2749,7 +3413,6 @@
       document.getElementById("printModal").classList.add("hidden");
     }
 
-    // KAEDAH 1: JANA & MUAT TURUN PDF ASLI SECARA TERUS (HTML2PDF)
     function downloadDirectPDF() {
       const element = document.getElementById("printableArea");
       if (!element) return;
@@ -2766,10 +3429,10 @@
 
       if (window.html2pdf) {
         html2pdf().set(opt).from(element).save().then(() => {
+          addAuditLog("MUAT_TURUN_PDF", `Dokumen "${currentPrintDocTitle}.pdf" berjaya dimuat turun.`);
           showToast("Fail PDF berjaya dimuat turun ke peranti anda!", "success");
         }).catch((err) => {
           console.error(err);
-          // Sandaran jika terdapat sebarang isu canvas
           downloadPrintableHTML();
         });
       } else {
@@ -2777,7 +3440,6 @@
       }
     }
 
-    // KAEDAH 2: BUKA HALAMAN CETAK DI TAB BEBAS DENGAN BLOB URL (ELAK BLOCKED BY SANDBOX)
     function openPrintInNewTab() {
       const printContents = document.getElementById("printableArea").innerHTML;
       const fullDoc = `
@@ -2810,7 +3472,7 @@
           </style>
         </head>
         <body>
-          <div class="no-print max-w-[210mm] mx-auto mb-4 flex justify-between items-center bg-emerald-900 text-white p-3 rounded-lg shadow">
+          <div class="no-print max-w-[210mm] mx-auto mb-4 flex justify-between items-center bg-blue-950 text-white p-3 rounded-lg shadow">
             <span class="text-sm font-bold">Halaman Cetakan Sedia Cetak</span>
             <button onclick="window.print()" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-extrabold px-4 py-2 rounded text-sm shadow cursor-pointer">
               🖨️ Cetak / Simpan PDF Sekarang
@@ -2833,12 +3495,12 @@
       const newWin = window.open(blobUrl, "_blank");
       
       if (!newWin) {
-        // Jika pop-up disekat oleh pelayar, gunakan butang muat turun PDF terus
         downloadDirectPDF();
+      } else {
+        addAuditLog("CETAK_TAB_BARU", `Paparan dokumen dibuka pada tab baharu: "${currentPrintDocTitle}".`);
       }
     }
 
-    // KAEDAH 3: PENCETAKAN LANGSUNG TEGUH (DIRECT DOM-MOUNT PRINTING ENGINE)
     function executeBrowserPrint() {
       const printableElement = document.getElementById("printableArea");
       if (!printableElement) return;
@@ -2852,34 +3514,29 @@
 
       showToast("Menghubungkan ke sistem pencetak...", "info");
 
-      // 1. Buang elemen isolasi lama jika wujud
       let existingMount = document.getElementById("isolatedPrintMount");
       if (existingMount) {
         existingMount.remove();
       }
 
-      // 2. Cipta elemen pelekap cetakan langsung dalam document.body
       const mountDiv = document.createElement("div");
       mountDiv.id = "isolatedPrintMount";
-      mountDiv.className = "hidden"; // Disorok dalam paparan skrin biasa, dipaparkan oleh @media print
+      mountDiv.className = "hidden";
       mountDiv.innerHTML = printableElement.innerHTML;
       document.body.appendChild(mountDiv);
 
-      // Simpan tajuk asal untuk dipulihkan kemudian
       const originalTitle = document.title;
       document.title = currentPrintDocTitle || "Dokumen_Agihan_Tugas";
 
-      // 3. Picu cetakan terus melalui window.print() utama
       setTimeout(() => {
         try {
           window.focus();
           window.print();
+          addAuditLog("CETAK_PRINTER", `Arahan cetak dihantar ke perkakasan printer: "${currentPrintDocTitle}".`);
         } catch (err) {
-          console.warn("window.print() disekat oleh persekitaran pelayar:", err);
-          // Sandaran ke kaedah tab bebas Blob
+          console.warn("window.print() disekat:", err);
           openPrintInNewTab();
         } finally {
-          // Pulihkan semula tajuk dan bersihkan elemen pelekap
           setTimeout(() => {
             document.title = originalTitle;
             if (mountDiv && mountDiv.parentNode) {
@@ -2894,7 +3551,6 @@
       }, 250);
     }
 
-    // Pilihan alternatif muat turun HTML
     function downloadPrintableHTML() {
       const printContents = document.getElementById("printableArea").innerHTML;
       const fullDoc = `
