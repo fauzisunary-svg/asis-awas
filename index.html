@@ -4,27 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ASiS Workload Awareness System (AWAS)</title>
-  <!-- Tailwind CSS -->
+
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Chart.js -->
+  <!-- Font Awesome Pro Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Chart.js Engine -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- html2pdf.js -->
+  <!-- html2pdf.js Engine -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <script>
     tailwind.config = {
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'sans-serif']
+          },
           colors: {
-            asis: {
-              navy: '#0c2340',
-              royal: '#173b77',
-              gold: '#fbbf24',
-              amber: '#d97706',
-              lightgold: '#fef3c7',
-              bgsoft: '#f8fafc'
+            corp: {
+              navy: '#07162c',
+              slate: '#0d2342',
+              card: '#132f57',
+              gold: '#d97706',
+              goldlight: '#fbbf24',
+              softbg: '#f8fafc',
+              border: '#e2e8f0'
             }
           }
         }
@@ -35,25 +46,40 @@
   <style>
     body {
       background-color: #f1f5f9;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', sans-serif;
+      color: #1e293b;
+      -webkit-font-smoothing: antialiased;
     }
-    .header-banner {
-      background: linear-gradient(135deg, #091a36 0%, #0c2340 55%, #b45309 100%);
-      box-shadow: 0 4px 20px rgba(12, 35, 64, 0.25);
+    h1, h2, h3, h4, .font-display {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    button i {
+      pointer-events: none;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
     }
     .tab-active {
-      background-color: #0c2340 !important;
+      background-color: #07162c !important;
       color: #fbbf24 !important;
-      border-bottom: 4px solid #f59e0b;
+      border-bottom: 3px solid #f59e0b !important;
       font-weight: 700;
     }
-    .badge-score {
-      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-      border: 2px solid #f59e0b;
-    }
-    .duty-row {
-      background-color: #ffffff;
-      border-left: 4px solid #0c2340;
+    .badge-metric {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
     @media print {
       body * {
@@ -73,208 +99,270 @@
     }
   </style>
 </head>
-<body class="min-h-screen pb-12 text-slate-800">
+<body class="min-h-screen pb-16 flex flex-col justify-between">
 
-  <!-- Header Banner -->
-  <header class="header-banner text-white pt-6 pb-7 px-4 md:px-8 border-b-4 border-amber-500">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="text-center md:text-left">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-asis-royal/80 border border-amber-400/40 text-amber-300 text-xs font-semibold mb-2">
-          <i class="fa-solid fa-handshake"></i>
-          <span class="tracking-wide italic">"Bekerjasama Bekerja Sama-Sama"</span>
+  <!-- TOP PROFESSIONAL APP BAR -->
+  <header class="bg-corp-navy text-white border-b-2 border-amber-500 shadow-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-3">
+      
+      <!-- Logo & Tajuk Rasmi Institusi -->
+      <div class="flex items-center gap-3.5 text-center md:text-left">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 text-corp-navy flex items-center justify-center text-xl font-black shadow-lg flex-shrink-0">
+          <i class="fa-solid fa-scale-balanced"></i>
         </div>
-        <h1 class="text-2xl md:text-3xl font-extrabold tracking-wide uppercase text-white drop-shadow">
-          ASiS WORKLOAD AWARENESS SYSTEM (AWAS)
-        </h1>
-        <p class="text-amber-300 text-xs md:text-sm font-medium tracking-wide">
-          Sekolah Menengah Sains Alam Shah (ASiS) • Pemantauan Beban & Keseimbangan Tugas Guru
-        </p>
+        <div>
+          <div class="flex items-center justify-center md:justify-start gap-2">
+            <span class="text-xs uppercase tracking-widest text-amber-400 font-bold">Portal Pengurusan Pentadbiran</span>
+            <span class="inline-block w-1 h-1 rounded-full bg-slate-400"></span>
+            <span class="text-[11px] text-slate-300 italic font-medium">"Bekerjasama Bekerja Sama-Sama"</span>
+          </div>
+          <h1 class="text-lg md:text-xl font-extrabold tracking-tight text-white uppercase drop-shadow-sm font-display">
+            ASiS Workload Awareness System (AWAS)
+          </h1>
+          <p class="text-[11px] text-slate-300 font-normal">
+            Sekolah Menengah Sains Alam Shah, Kuala Lumpur
+          </p>
+        </div>
       </div>
 
-      <!-- User Session Control Bar -->
-      <div class="flex items-center gap-3 bg-slate-900/60 p-2.5 rounded-xl border border-amber-400/30">
-        <div class="flex items-center gap-2 text-xs md:text-sm">
-          <div class="w-8 h-8 rounded-full bg-amber-400 text-asis-navy font-bold flex items-center justify-center" id="userAvatar">
+      <!-- Kad Status Sesi Pengguna -->
+      <div class="flex items-center gap-3 bg-slate-900/90 py-1.5 px-3 rounded-xl border border-slate-700/80 shadow-inner">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-amber-400 text-corp-navy flex items-center justify-center text-xs font-bold shadow" id="userAvatar">
             <i class="fa-solid fa-user-shield"></i>
           </div>
-          <div>
-            <div class="font-bold text-white leading-tight" id="activeUserName">Mohd.Fauzi Sunary</div>
-            <div class="text-[11px] text-amber-300 font-semibold" id="activeUserRole">Super Admin (PK Pentadbiran)</div>
+          <div class="min-w-0 pr-1 text-left">
+            <div class="font-bold text-white text-xs leading-snug truncate" id="activeUserName">Memeriksa Sesi...</div>
+            <div class="text-[10px] text-amber-300 font-medium leading-none truncate" id="activeUserRole">Pengesahan Kredensial...</div>
           </div>
         </div>
-        <button onclick="openLogoutModal()" class="ml-2 bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 shadow transition">
-          <i class="fa-solid fa-right-from-bracket"></i>
-          <span>Keluar</span>
-        </button>
+
+        <div class="flex items-center gap-1.5 border-l border-slate-700 pl-2.5 flex-shrink-0">
+          <button onclick="openAuthModal()" id="btnAuthTrigger" class="bg-amber-500 hover:bg-amber-600 text-corp-navy text-xs px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 shadow transition">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            <span>Log Masuk</span>
+          </button>
+          <button onclick="openLogoutModal()" id="btnLogoutTrigger" class="hidden bg-rose-600 hover:bg-rose-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 shadow transition">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Log Keluar</span>
+          </button>
+        </div>
       </div>
+
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="max-w-7xl mx-auto px-3 md:px-6 -mt-3">
-    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+  <!-- Peringatan Mod Kunci Super Admin -->
+  <div id="lockNoticeBanner" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-3 w-full">
+    <div class="bg-amber-50 border border-amber-300 p-3 rounded-xl text-amber-900 text-xs font-medium flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-lock text-amber-700 text-sm"></i>
+        <span><b>MOD KUNCI KESELAMATAN AKTIF:</b> Sistem berada dalam mod paparan sahaja. Hanya Super Admin berhak memadam atau mengubah suai data asas.</span>
+      </div>
+      <span class="text-[10px] text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded font-semibold">Hubungi PK Pentadbiran</span>
+    </div>
+  </div>
 
-      <!-- Navigation Tabs -->
-      <nav class="flex overflow-x-auto border-b border-slate-200 bg-slate-100/90 text-sm font-semibold select-none">
-        <button onclick="switchTab('pentadbiran')" id="tabBtn-pentadbiran" class="tab-btn px-4 py-3.5 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-asis-navy transition tab-active">
-          <i class="fa-solid fa-school text-amber-500"></i> Pentadbiran
+  <!-- KANDUNGAN UTAMA APLIKASI -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-5 w-full flex-1">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+
+      <!-- Bar Tab Navigasi Rasmi -->
+      <nav class="flex overflow-x-auto border-b border-slate-200 bg-slate-100/90 text-xs font-semibold select-none custom-scroll">
+        <button onclick="switchTab('pentadbiran')" id="tabBtn-pentadbiran" class="tab-btn px-4 py-3 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-corp-navy transition tab-active">
+          <i class="fa-solid fa-building-columns text-amber-500"></i> Pentadbiran
         </button>
-        <button onclick="switchTab('kurikulum')" id="tabBtn-kurikulum" class="tab-btn px-4 py-3.5 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-asis-navy transition">
-          <i class="fa-solid fa-book-open text-blue-600"></i> Kurikulum
+        <button onclick="switchTab('kurikulum')" id="tabBtn-kurikulum" class="tab-btn px-4 py-3 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-corp-navy transition">
+          <i class="fa-solid fa-book-open-reader text-blue-600"></i> Kurikulum
         </button>
-        <button onclick="switchTab('hem')" id="tabBtn-hem" class="tab-btn px-4 py-3.5 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-asis-navy transition">
-          <i class="fa-solid fa-user-group text-emerald-600"></i> HEM
+        <button onclick="switchTab('hem')" id="tabBtn-hem" class="tab-btn px-4 py-3 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-corp-navy transition">
+          <i class="fa-solid fa-user-graduate text-emerald-600"></i> Hal Ehwal Murid
         </button>
-        <button onclick="switchTab('kokurikulum')" id="tabBtn-kokurikulum" class="tab-btn px-4 py-3.5 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-asis-navy transition">
-          <i class="fa-solid fa-trophy text-amber-600"></i> KoKurikulum
+        <button onclick="switchTab('kokurikulum')" id="tabBtn-kokurikulum" class="tab-btn px-4 py-3 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-corp-navy transition">
+          <i class="fa-solid fa-medal text-amber-600"></i> Kokurikulum
         </button>
-        <button onclick="switchTab('asrama')" id="tabBtn-asrama" class="tab-btn px-4 py-3.5 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-asis-navy transition">
-          <i class="fa-solid fa-bed text-indigo-600"></i> Asrama
+        <button onclick="switchTab('asrama')" id="tabBtn-asrama" class="tab-btn px-4 py-3 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-corp-navy transition">
+          <i class="fa-solid fa-hotel text-indigo-600"></i> Pengurusan Asrama
         </button>
-        <button onclick="switchTab('analisis')" id="tabBtn-analisis" class="tab-btn px-4 py-3.5 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-asis-navy transition">
-          <i class="fa-solid fa-chart-column text-violet-600"></i> Analisis Graf
+        <button onclick="switchTab('analisis')" id="tabBtn-analisis" class="tab-btn px-4 py-3 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-corp-navy transition">
+          <i class="fa-solid fa-chart-pie text-violet-600"></i> Analisis & Imbangan
         </button>
-        <button onclick="switchTab('carian')" id="tabBtn-carian" class="tab-btn px-4 py-3.5 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-asis-navy transition">
+        <button onclick="switchTab('carian')" id="tabBtn-carian" class="tab-btn px-4 py-3 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-corp-navy transition">
           <i class="fa-solid fa-magnifying-glass text-teal-600"></i> Carian Guru
         </button>
-        <button onclick="switchTab('muatturun')" id="tabBtn-muatturun" class="tab-btn px-4 py-3.5 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-asis-navy transition">
+        <button onclick="switchTab('muatturun')" id="tabBtn-muatturun" class="tab-btn px-4 py-3 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-corp-navy transition">
           <i class="fa-solid fa-file-arrow-down text-rose-600"></i> Muat Turun Data
         </button>
-        <button onclick="switchTab('setting')" id="tabBtn-setting" class="tab-btn px-4 py-3.5 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-asis-navy transition">
-          <i class="fa-solid fa-gear text-slate-600"></i> Setting
+        <button onclick="switchTab('setting')" id="tabBtn-setting" class="tab-btn px-4 py-3 flex items-center gap-2 whitespace-nowrap text-slate-700 hover:text-corp-navy transition">
+          <i class="fa-solid fa-sliders text-slate-600"></i> Tetapan Sistem
         </button>
       </nav>
 
-      <!-- Tab Content Area -->
-      <div class="p-4 md:p-8">
+      <!-- Ruang Kerja Dinamik Tab -->
+      <div class="p-5 md:p-8">
 
-        <!-- Portfolio Sections (Pentadbiran, Kurikulum, HEM, KoKurikulum, Asrama) -->
+        <!-- Modul Portfolio (Pentadbiran, Kurikulum, HEM, Kokurikulum, Asrama) -->
         <div id="section-form-portfolio" class="space-y-6">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+          
+          <!-- Tajuk Bahagian & Metriks Skor Semasa -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
             <div>
-              <h2 id="currentSectionTitle" class="text-xl md:text-2xl font-bold text-asis-navy flex items-center gap-2">
+              <h2 id="currentSectionTitle" class="text-xl md:text-2xl font-extrabold text-corp-navy flex items-center gap-2.5">
                 <i class="fa-solid fa-folder-open text-amber-500"></i>
                 <span>Bahagian Pentadbiran</span>
               </h2>
-              <p class="text-xs text-slate-500 mt-0.5">Pilih nama guru untuk mengurus dan memantau agihan tugasan bagi bahagian ini.</p>
+              <p class="text-xs text-slate-500 mt-1">
+                Pilih guru untuk merekodkan agihan jawatankuasa dan pemberatan mata rasmi bagi portfolio ini.
+              </p>
             </div>
-            <div class="badge-score px-5 py-2.5 rounded-xl shadow-sm text-center flex items-center justify-center gap-3">
-              <span class="text-xs font-bold text-amber-800 uppercase tracking-wider">Mata Keseluruhan:</span>
-              <span id="grandTotalBadge" class="text-2xl font-extrabold text-asis-navy">0</span>
-              <span class="text-xs text-slate-500 font-medium">(Bahagian ini: <b id="sectionTotalBadge" class="text-amber-700">0</b>)</span>
+            
+            <!-- Kad Metriks Mata -->
+            <div class="badge-metric p-3 rounded-xl flex items-center gap-4 text-left border border-slate-200">
+              <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-lg font-bold">
+                <i class="fa-solid fa-gauge-high"></i>
+              </div>
+              <div>
+                <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Mata Keseluruhan Guru</div>
+                <div class="flex items-baseline gap-1.5">
+                  <span id="grandTotalBadge" class="text-2xl font-black text-corp-navy">0</span>
+                  <span class="text-xs text-slate-500 font-medium">(Bahagian Ini: <b id="sectionTotalBadge" class="text-amber-700 font-bold">0</b>)</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Guru Selector -->
-          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-            <label class="block text-sm font-bold text-slate-700 mb-1.5">
-              <i class="fa-solid fa-user-tie text-asis-royal mr-1"></i> Nama Guru:
-            </label>
-            <select id="teacherSelect" onchange="onTeacherChange()" class="w-full bg-white border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none">
-              <option value="">-- Sila Pilih Nama Guru --</option>
-            </select>
+          <!-- Pemilihan Guru & Butang Pembersihan -->
+          <div class="bg-slate-50/80 p-4 rounded-xl border border-slate-200 flex flex-col md:flex-row md:items-end gap-3 justify-between">
+            <div class="flex-1">
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                <i class="fa-solid fa-user-check text-corp-navy mr-1.5"></i> Nama Pegawai / Guru:
+              </label>
+              <select id="teacherSelect" onchange="onTeacherChange()" class="w-full bg-white border border-slate-300 rounded-lg px-3.5 py-2.5 text-xs font-semibold focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                <option value="">-- Sila Pilih Nama Guru --</option>
+              </select>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="clearCurrentSectionDuties()" id="btnClearCurrentSection" class="bg-white hover:bg-rose-50 text-rose-700 text-xs font-bold px-3.5 py-2.5 rounded-lg border border-rose-300 flex items-center gap-1.5 transition shadow-sm" title="Kosongkan senarai tugas bahagian ini bagi guru berkenaan">
+                <i class="fa-solid fa-eraser"></i> Kosongkan Bahagian Ini
+              </button>
+            </div>
           </div>
 
-          <!-- Duties Rows Container -->
+          <!-- Senarai Baris Tugasan Dinamik -->
           <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wide">Senarai Tugasan Diberikan</h3>
-              <button onclick="addDutyRow()" class="bg-amber-500 hover:bg-amber-600 text-asis-navy font-bold text-xs px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1.5 transition">
+              <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-list-check text-amber-500"></i> Senarai Agihan Tugas & Jawatankuasa
+              </h3>
+              <button onclick="addDutyRow()" id="btnAddDutyRowBtn" class="bg-amber-500 hover:bg-amber-600 text-corp-navy font-bold text-xs px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1.5 transition">
                 <i class="fa-solid fa-plus-circle"></i> Tambah Tugasan
               </button>
             </div>
 
-            <div id="dutiesContainer" class="space-y-3">
-              <!-- Baris tugasan dijana secara dinamik oleh JavaScript -->
+            <div id="dutiesContainer" class="space-y-2.5">
+              <!-- Baris tugasan disuntik secara dinamik oleh JavaScript -->
             </div>
           </div>
 
-          <!-- Action Buttons -->
+          <!-- Butang Tindakan Pengesahan -->
           <div class="flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-slate-200">
-            <button onclick="saveCurrentDuties()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm px-6 py-2.5 rounded-lg shadow flex items-center gap-2 transition">
-              <i class="fa-solid fa-floppy-disk"></i> Simpan
+            <button onclick="refreshCurrentForm()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-lg border border-slate-300 flex items-center gap-2 transition">
+              <i class="fa-solid fa-arrows-rotate"></i> Muat Semula
             </button>
-            <button onclick="refreshCurrentForm()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm px-6 py-2.5 rounded-lg shadow flex items-center gap-2 transition">
-              <i class="fa-solid fa-arrows-rotate"></i> Kemaskini
+            <button onclick="saveCurrentDuties()" id="btnSaveDuties" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-6 py-2.5 rounded-lg shadow-md flex items-center gap-2 transition">
+              <i class="fa-solid fa-floppy-disk"></i> Simpan Penugasan
             </button>
           </div>
         </div>
 
-        <!-- Analisis Graf Tab -->
+        <!-- Modul: Analisis Graf & Imbangan Beban Kerja -->
         <div id="section-analisis" class="hidden space-y-6">
+          
           <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200 pb-4">
             <div>
-              <h2 class="text-xl md:text-2xl font-bold text-asis-navy flex items-center gap-2">
-                <i class="fa-solid fa-chart-column text-amber-500"></i>
-                <span>Analisis & Keseimbangan Beban Tugas (AWAS)</span>
+              <h2 class="text-xl md:text-2xl font-extrabold text-corp-navy flex items-center gap-2">
+                <i class="fa-solid fa-chart-pie text-amber-500"></i>
+                <span>Analisis & Keseimbangan Beban Tugas Guru</span>
               </h2>
-              <p class="text-xs text-slate-500 mt-1">Graf taburan bebanan tugas guru serta analisis perbandingan mengikut Gred Jawatan (DG).</p>
+              <p class="text-xs text-slate-500 mt-1">
+                Visualisasi taburan pemberatan tugas berasaskan 5 portfolio utama serta perbandingan kesaksamaan mengikut Gred Jawatan (DG).
+              </p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-              <button onclick="printExecutiveReport()" class="bg-asis-navy hover:bg-asis-royal text-white text-xs font-bold px-3.5 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
-                <i class="fa-solid fa-print text-amber-400"></i> Cetak Analisis Keseluruhan
+              <button onclick="printExecutiveReport()" class="bg-corp-navy hover:bg-corp-slate text-white text-xs font-bold px-3.5 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
+                <i class="fa-solid fa-print text-amber-400"></i> Cetak Laporan Eksekutif
               </button>
               <button onclick="downloadChartImage()" class="bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold px-3.5 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
-                <i class="fa-solid fa-image"></i> Simpan Graf (PNG)
+                <i class="fa-solid fa-image"></i> Simpan Carta (PNG)
               </button>
             </div>
           </div>
 
-          <!-- KPI Summary Cards -->
+          <!-- Kad Metriks Analitik KPI -->
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-center">
-              <div class="text-xs font-bold text-blue-700">Purata Mata Keseluruhan</div>
-              <div id="kpiAvgScore" class="text-2xl font-extrabold text-blue-900 mt-1">0.0</div>
+            <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-3.5 text-center">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-blue-700">Purata Mata Keseluruhan</div>
+              <div id="kpiAvgScore" class="text-2xl font-black text-blue-950 mt-0.5">0.0</div>
+              <div class="text-[10px] text-blue-600 mt-0.5">Mata purata setiap guru</div>
             </div>
-            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center">
-              <div class="text-xs font-bold text-emerald-700">Julat Optimum</div>
-              <div class="text-2xl font-extrabold text-emerald-900 mt-1">10 - 18</div>
+            <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3.5 text-center">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-700">Julat Optimum Rasmi</div>
+              <div class="text-2xl font-black text-emerald-950 mt-0.5">10 - 18</div>
+              <div class="text-[10px] text-emerald-600 mt-0.5">Indeks seimbang AWAS</div>
             </div>
-            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center">
-              <div class="text-xs font-bold text-amber-700">Mata Tertinggi</div>
-              <div id="kpiMaxScore" class="text-2xl font-extrabold text-amber-900 mt-1">0</div>
+            <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 text-center">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-amber-700">Mata Tertinggi Semasa</div>
+              <div id="kpiMaxScore" class="text-2xl font-black text-amber-950 mt-0.5">0</div>
+              <div class="text-[10px] text-amber-700 mt-0.5">Skor bebanan maksimum</div>
             </div>
-            <div class="bg-rose-50 border border-rose-200 rounded-xl p-3 text-center">
-              <div class="text-xs font-bold text-rose-700">Beban Tinggi (>20)</div>
-              <div id="kpiHighCount" class="text-2xl font-extrabold text-rose-900 mt-1">0 Guru</div>
+            <div class="bg-rose-50/70 border border-rose-200 rounded-xl p-3.5 text-center">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-rose-700">Beban Melebihi Had (>20)</div>
+              <div id="kpiHighCount" class="text-2xl font-black text-rose-950 mt-0.5">0 Guru</div>
+              <div class="text-[10px] text-rose-600 mt-0.5">Perlu penyelarasan semula</div>
             </div>
           </div>
 
-          <!-- Chart Canvas Container -->
-          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <!-- Kontena Graf Chart.js -->
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+              <span class="text-xs font-bold text-slate-700 uppercase">Taburan Mata Mengikut Portfolio Guru (Stacked Bar)</span>
+              <span class="text-[11px] text-slate-400">Unit: Mata Pemberatan</span>
+            </div>
             <div style="position: relative; height: 380px; width: 100%;">
               <canvas id="loadChart"></canvas>
             </div>
           </div>
 
-          <!-- Modul: Analisis Guru Mengikut DG & Pemberatan Tugas -->
-          <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+          <!-- Modul Imbangan Mengikut Gred DG -->
+          <div class="bg-slate-50/90 p-5 rounded-2xl border border-slate-200 space-y-4">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200 pb-3">
               <div>
-                <h3 class="text-base font-bold text-asis-navy flex items-center gap-2">
+                <h3 class="text-sm font-bold text-corp-navy flex items-center gap-2">
                   <i class="fa-solid fa-layer-group text-amber-500"></i>
                   <span>Analisis Mengikut Gred Jawatan (DG) & Pemberatan Tugas</span>
                 </h3>
-                <p class="text-xs text-slate-500 mt-0.5">Pantau kesaksamaan beban tugas guru merentasi gred DG atau secara individu.</p>
+                <p class="text-xs text-slate-500 mt-0.5">
+                  Membolehkan pihak pengurusan membuat penilaian beban tugas merentasi kohort gred yang sama secara objektif.
+                </p>
               </div>
 
-              <!-- Pilihan Penapis (Kelompok DG / Guru Individu) -->
-              <div class="flex flex-wrap items-center gap-2">
+              <!-- Butang Cetak Pilihan Semasa -->
+              <div class="flex items-center gap-2">
                 <button onclick="printFilteredAnalysisReport()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
                   <i class="fa-solid fa-print"></i>
-                  <span id="btnPrintFilterLabel">Cetak Pilihan Semasa</span>
+                  <span id="btnPrintFilterLabel">Cetak Semua Rekod DG</span>
                 </button>
               </div>
             </div>
 
-            <!-- Filter Controls -->
+            <!-- Penapis Dinamik -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <div>
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">
-                  <i class="fa-solid fa-filter text-amber-600 mr-1"></i> Mod Paparan & Cetakan:
+                  <i class="fa-solid fa-filter text-amber-600 mr-1"></i> Mod Penapisan Analisis:
                 </label>
                 <select id="analysisFilterMode" onchange="onAnalysisFilterModeChange()" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
-                  <option value="all">Semua Guru & Kelompok DG</option>
+                  <option value="all">Semua Guru & Kelompok Gred</option>
                   <option value="by_dg">Mengikut Kelompok Gred DG</option>
                   <option value="by_teacher">Mengikut Guru Pilihan (Individu)</option>
                 </select>
@@ -282,7 +370,7 @@
 
               <div id="filterDGContainer" class="hidden">
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">
-                  <i class="fa-solid fa-id-badge text-blue-600 mr-1"></i> Pilih Gred DG:
+                  <i class="fa-solid fa-id-badge text-blue-600 mr-1"></i> Pilih Kelompok Gred DG:
                 </label>
                 <select id="analysisSelectDG" onchange="renderDGAnalysisView()" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold focus:ring-2 focus:ring-amber-500">
                   <option value="">-- Sila Pilih Gred DG --</option>
@@ -296,7 +384,7 @@
 
               <div id="filterTeacherContainer" class="hidden">
                 <label class="block text-[11px] font-bold text-slate-700 mb-1">
-                  <i class="fa-solid fa-user-check text-emerald-600 mr-1"></i> Pilih Guru Individu:
+                  <i class="fa-solid fa-user-check text-emerald-600 mr-1"></i> Pilih Pegawai / Guru:
                 </label>
                 <select id="analysisSelectTeacher" onchange="renderDGAnalysisView()" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
                   <option value="">-- Sila Pilih Nama Guru --</option>
@@ -304,94 +392,99 @@
               </div>
             </div>
 
-            <!-- Kad Rumusan Purata Gred -->
-            <div id="dgSummaryCards" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2 pt-2">
-              <!-- Dijana oleh JavaScript -->
+            <!-- Kad Purata Mengikut Gred -->
+            <div id="dgSummaryCards" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2.5 pt-1">
+              <!-- Dijana oleh skrip JavaScript -->
             </div>
 
-            <!-- Jadual Analisis DG & Beban Tugas -->
-            <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm bg-white mt-3">
+            <!-- Jadual Terperinci Gred DG & Mata -->
+            <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm bg-white mt-2">
               <table class="w-full text-left border-collapse text-xs">
-                <thead class="bg-slate-100 text-slate-700 uppercase tracking-wider font-bold border-b border-slate-200">
+                <thead class="bg-slate-100/90 text-slate-700 uppercase tracking-wider font-bold border-b border-slate-200">
                   <tr>
-                    <th class="p-2.5 text-center">Bil</th>
+                    <th class="p-2.5 text-center w-10">Bil</th>
                     <th class="p-2.5">Nama Guru</th>
-                    <th class="p-2.5 text-center">Gred DG</th>
-                    <th class="p-2.5 text-center">Ptd</th>
-                    <th class="p-2.5 text-center">Kur</th>
+                    <th class="p-2.5 text-center">Gred</th>
+                    <th class="p-2.5 text-center">Pentadbiran</th>
+                    <th class="p-2.5 text-center">Kurikulum</th>
                     <th class="p-2.5 text-center">HEM</th>
-                    <th class="p-2.5 text-center">KoK</th>
+                    <th class="p-2.5 text-center">Kokurikulum</th>
                     <th class="p-2.5 text-center">Asrama</th>
-                    <th class="p-2.5 text-center font-extrabold text-asis-navy">Jumlah Mata</th>
-                    <th class="p-2.5 text-center">Status Bebanan</th>
+                    <th class="p-2.5 text-center font-extrabold text-corp-navy">Jumlah Mata</th>
+                    <th class="p-2.5 text-center">Status</th>
                     <th class="p-2.5 text-center">Tindakan</th>
                   </tr>
                 </thead>
                 <tbody id="dgAnalysisTableBody" class="divide-y divide-slate-100 font-medium">
-                  <!-- Dijana oleh JavaScript -->
+                  <!-- Dijana oleh skrip JavaScript -->
                 </tbody>
               </table>
             </div>
+
           </div>
         </div>
 
-        <!-- Carian Guru Tab -->
+        <!-- Modul: Carian & Profil Guru -->
         <div id="section-carian" class="hidden space-y-6">
           <div class="border-b border-slate-200 pb-4">
-            <h2 class="text-xl md:text-2xl font-bold text-asis-navy flex items-center gap-2">
+            <h2 class="text-xl md:text-2xl font-extrabold text-corp-navy flex items-center gap-2">
               <i class="fa-solid fa-magnifying-glass text-amber-500"></i>
-              <span>Carian & Profil Tugas Guru</span>
+              <span>Carian Profil & Surat Tugas Individu</span>
             </h2>
-            <p class="text-xs text-slate-500 mt-1">Semak perincian penyerahan tugas individu bagi setiap guru secara komprehensif.</p>
+            <p class="text-xs text-slate-500 mt-1">
+              Paparan menyeluruh penyerahan tugas individu bagi setiap guru serta kemudahan menjana Surat Penyerahan Tugas Rasmi.
+            </p>
           </div>
 
           <div class="flex flex-col sm:flex-row gap-3">
             <div class="flex-1">
-              <select id="searchTeacherSelect" onchange="renderTeacherProfile()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm font-semibold focus:ring-2 focus:ring-amber-500">
+              <select id="searchTeacherSelect" onchange="renderTeacherProfile()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
                 <option value="">-- Pilih Guru Untuk Paparan Profil --</option>
               </select>
             </div>
-            <button onclick="printIndividualDutySheet()" class="bg-asis-navy hover:bg-asis-royal text-amber-400 font-bold text-xs px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 shadow transition">
-              <i class="fa-solid fa-print"></i> Cetak Surat Tugas Guru
+            <button onclick="printIndividualDutySheet()" class="bg-corp-navy hover:bg-corp-slate text-amber-400 font-bold text-xs px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 shadow transition">
+              <i class="fa-solid fa-print"></i> Cetak Surat Tugas Rasmi
             </button>
           </div>
 
-          <div id="teacherProfileCard" class="bg-slate-50 border border-slate-200 rounded-2xl p-6 shadow-sm min-h-[220px]">
-            <p class="text-slate-500 text-center py-10">Sila pilih nama guru di atas untuk melihat maklumat terperinci penyerahan tugas.</p>
+          <div id="teacherProfileCard" class="bg-slate-50/70 border border-slate-200 rounded-2xl p-6 shadow-sm min-h-[220px]">
+            <p class="text-slate-400 text-center py-12 text-xs">Sila pilih nama guru di atas untuk meneliti profil penugasan.</p>
           </div>
         </div>
 
-        <!-- Muat Turun Data Tab -->
+        <!-- Modul: Muat Turun Data & Arkib Laporan -->
         <div id="section-muatturun" class="hidden space-y-6">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
             <div>
-              <h2 class="text-xl md:text-2xl font-bold text-asis-navy flex items-center gap-2">
+              <h2 class="text-xl md:text-2xl font-extrabold text-corp-navy flex items-center gap-2">
                 <i class="fa-solid fa-file-arrow-down text-amber-500"></i>
-                <span>Muat Turun & Cetakan Data Keseluruhan</span>
+                <span>Muat Turun Data & Eksport Laporan Rasmi</span>
               </h2>
-              <p class="text-xs text-slate-500 mt-1">Eksport data dalam format spreadsheet (CSV) atau cetak laporan rasmi sekolah.</p>
+              <p class="text-xs text-slate-500 mt-1">
+                Eksport pangkalan data ke format helaian kerja (CSV / Excel) atau cetak Laporan Agihan Keseluruhan Sekolah.
+              </p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
               <button onclick="exportToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-2 shadow transition">
-                <i class="fa-solid fa-file-csv"></i> Muat Turun CSV (Excel)
+                <i class="fa-solid fa-file-csv"></i> Muat Turun Fail CSV
               </button>
-              <button onclick="printMasterSchoolReport()" class="bg-asis-navy hover:bg-asis-royal text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-2 shadow transition">
+              <button onclick="printMasterSchoolReport()" class="bg-corp-navy hover:bg-corp-slate text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-2 shadow transition">
                 <i class="fa-solid fa-print text-amber-400"></i> Cetak Laporan Keseluruhan
               </button>
             </div>
           </div>
 
           <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
-            <table class="w-full text-left border-collapse text-xs md:text-sm">
-              <thead class="bg-asis-navy text-white text-xs uppercase tracking-wider font-semibold">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-corp-navy text-white uppercase tracking-wider font-semibold">
                 <tr>
-                  <th class="p-3">Bil</th>
+                  <th class="p-3 text-center w-10">Bil</th>
                   <th class="p-3">Nama Guru</th>
                   <th class="p-3 text-center">Gred</th>
                   <th class="p-3 text-center">Pentadbiran</th>
                   <th class="p-3 text-center">Kurikulum</th>
                   <th class="p-3 text-center">HEM</th>
-                  <th class="p-3 text-center">KoKurikulum</th>
+                  <th class="p-3 text-center">Kokurikulum</th>
                   <th class="p-3 text-center">Asrama</th>
                   <th class="p-3 text-center font-bold text-amber-300">Jumlah Mata</th>
                   <th class="p-3 text-center">Status Beban</th>
@@ -404,39 +497,89 @@
           </div>
         </div>
 
-        <!-- Setting / Tetapan Tab -->
+        <!-- Modul: Tetapan Sistem & Kawalan Super Admin -->
         <div id="section-setting" class="hidden space-y-6">
+          
           <div class="border-b border-slate-200 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h2 class="text-xl md:text-2xl font-bold text-asis-navy flex items-center gap-2">
-                <i class="fa-solid fa-gear text-amber-500"></i>
+              <h2 class="text-xl md:text-2xl font-extrabold text-corp-navy flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-amber-500"></i>
                 <span>Tetapan Sistem & Kawalan Pentadbir</span>
               </h2>
-              <p class="text-xs text-slate-500 mt-1">Urus senarai guru, gred DG, portfolio tugasan, nilai mata jawatan, dan sandaran sistem.</p>
+              <p class="text-xs text-slate-500 mt-1">
+                Konfigurasi senarai guru, gred DG, pemberatan jawatan, senarai tugas portfolio, dan keselamatan pangkalan data.
+              </p>
             </div>
-            <!-- Backup & Restore Buttons -->
+            
+            <!-- Butang Sandaran Pangkalan Data (JSON) -->
             <div class="flex items-center gap-2">
               <button onclick="exportJSONBackup()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
                 <i class="fa-solid fa-download"></i> Sandaran (JSON)
               </button>
-              <label class="bg-amber-500 hover:bg-amber-600 text-asis-navy font-bold text-xs px-3 py-2 rounded-lg flex items-center gap-1.5 shadow cursor-pointer transition">
+              <label id="lblImportJSON" class="bg-amber-500 hover:bg-amber-600 text-corp-navy font-bold text-xs px-3 py-2 rounded-lg flex items-center gap-1.5 shadow cursor-pointer transition">
                 <i class="fa-solid fa-upload"></i> Muat Naik Data
                 <input type="file" id="importJSONInput" accept=".json" onchange="importJSONBackup(event)" class="hidden">
               </label>
+              <button onclick="resetSystemToDefault()" id="btnSystemReset" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-3 py-2 rounded-lg flex items-center gap-1.5 shadow transition" title="Set semula semua rekod kepada tetapan asal">
+                <i class="fa-solid fa-rotate-left"></i> Set Semula
+              </button>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Kad Kawalan Mutlak Super Admin & Kunci Pindaan -->
+          <div class="bg-gradient-to-r from-corp-navy to-corp-slate text-white p-5 rounded-2xl shadow-md border border-amber-400/30 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-400 text-corp-navy flex items-center justify-center text-lg font-black shadow">
+                  <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                  <h3 class="text-sm md:text-base font-bold text-white flex items-center gap-2">
+                    <span>Kawalan Keselamatan & Hak Pindaan Data</span>
+                    <span class="text-[9px] bg-amber-400 text-corp-navy font-extrabold px-2 py-0.5 rounded-full uppercase">Super Admin</span>
+                  </h3>
+                  <p class="text-xs text-slate-300">
+                    Kunci pengubahsuaian bagi menghalang pengguna biasa mengubah senarai asal guru dan jawatan.
+                  </p>
+                </div>
+              </div>
 
-            <!-- Card 1: Pengurusan Guru & Gred DG -->
-            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
-              <h3 class="text-base font-bold text-asis-navy flex items-center justify-between">
-                <span><i class="fa-solid fa-users text-amber-500 mr-2"></i>Senarai Guru & Gred Jawatan</span>
-                <span id="teacherCountBadge" class="text-xs bg-asis-navy text-amber-400 px-2.5 py-0.5 rounded-full">0 Guru</span>
-              </h3>
+              <!-- Suis Kunci Sistem -->
+              <div class="flex items-center gap-3 bg-slate-900/80 px-4 py-2 rounded-xl border border-slate-700">
+                <span class="text-xs font-semibold text-slate-300">Status Kunci Sistem:</span>
+                <button onclick="toggleSystemLock()" id="btnToggleSystemLock" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow transition">
+                  <i class="fa-solid fa-lock" id="iconSystemLock"></i>
+                  <span id="textSystemLock">Kunci Diaktifkan</span>
+                </button>
+              </div>
+            </div>
 
-              <div class="flex flex-col sm:flex-row gap-2">
-                <input type="text" id="newTeacherName" placeholder="Masukkan nama guru baharu..." class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+            <!-- Senarai Pengguna Berdaftar -->
+            <div class="bg-slate-900/60 p-3.5 rounded-xl border border-white/10 space-y-2">
+              <div class="flex items-center justify-between text-xs font-bold text-amber-300">
+                <span><i class="fa-solid fa-users-gear mr-1.5"></i> Senarai Pengguna Berdaftar Sistem AWAS (<span id="registeredUsersCount">1</span>)</span>
+                <span class="text-[10px] text-slate-400">Kawalan akses dan status pengguna</span>
+              </div>
+              <div id="registeredUsersList" class="space-y-1.5 max-h-36 overflow-y-auto pr-1 text-xs custom-scroll">
+                <!-- Dijana oleh JavaScript -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Kad Pengurusan: Guru, Jawatan, & Tugasan Portfolio -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+            <!-- Kad 1: Pengurusan Guru & Gred DG -->
+            <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 space-y-3.5">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold text-corp-navy uppercase tracking-wider flex items-center gap-1.5">
+                  <i class="fa-solid fa-users text-amber-500"></i> Senarai Pegawai Guru & Gred Jawatan
+                </h3>
+                <span id="teacherCountBadge" class="text-[11px] bg-corp-navy text-amber-400 px-2.5 py-0.5 rounded-full font-bold">0 Guru</span>
+              </div>
+
+              <div id="addTeacherFormWrap" class="flex flex-col sm:flex-row gap-2">
+                <input type="text" id="newTeacherName" placeholder="Nama penuh guru baharu..." class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
                 <select id="newTeacherGrade" class="bg-white border border-slate-300 rounded-lg px-2.5 py-2 text-xs font-bold focus:ring-2 focus:ring-amber-500">
                   <option value="DG1">DG1</option><option value="DG2">DG2</option><option value="DG3">DG3</option>
                   <option value="DG4">DG4</option><option value="DG5">DG5</option><option value="DG6">DG6</option>
@@ -444,77 +587,82 @@
                   <option value="DG10">DG10</option><option value="DG11">DG11</option><option value="DG12" selected>DG12</option>
                   <option value="DG13">DG13</option><option value="DG14">DG14</option>
                 </select>
-                <button onclick="addNewTeacher()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-lg flex items-center justify-center gap-1.5 shadow transition">
+                <button onclick="addNewTeacher()" id="btnAddNewTeacher" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-lg flex items-center justify-center gap-1.5 shadow transition">
                   <i class="fa-solid fa-user-plus"></i> Tambah
                 </button>
               </div>
 
-              <div id="teachersList" class="max-h-60 overflow-y-auto space-y-1.5 pr-1 text-xs">
+              <div id="teachersList" class="max-h-56 overflow-y-auto space-y-1.5 pr-1 text-xs custom-scroll">
                 <!-- Dijana oleh JavaScript -->
               </div>
             </div>
 
-            <!-- Card 2: Pengurusan Jawatan & Nilai Mata -->
-            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
-              <h3 class="text-base font-bold text-asis-navy flex items-center justify-between">
-                <span><i class="fa-solid fa-award text-amber-500 mr-2"></i>Senarai Jawatan & Pemberatan Mata</span>
-                <span id="roleCountBadge" class="text-xs bg-asis-navy text-amber-400 px-2.5 py-0.5 rounded-full">0 Jawatan</span>
-              </h3>
+            <!-- Kad 2: Pengurusan Jawatan & Mata Pemberatan -->
+            <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 space-y-3.5">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold text-corp-navy uppercase tracking-wider flex items-center gap-1.5">
+                  <i class="fa-solid fa-award text-amber-500"></i> Skema Jawatan & Nilai Pemberatan
+                </h3>
+                <span id="roleCountBadge" class="text-[11px] bg-corp-navy text-amber-400 px-2.5 py-0.5 rounded-full font-bold">0 Jawatan</span>
+              </div>
 
-              <div class="flex gap-2">
-                <input type="text" id="newRoleName" placeholder="Nama Jawatan..." class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
-                <input type="number" id="newRoleScore" placeholder="Mata" min="0" max="20" class="w-20 bg-white border border-slate-300 rounded-lg px-2.5 py-2 text-xs font-bold text-center focus:ring-2 focus:ring-amber-500">
-                <button onclick="addNewRole()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
+              <div id="addRoleFormWrap" class="flex gap-2">
+                <input type="text" id="newRoleName" placeholder="Nama jawatan rasmi..." class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+                <input type="number" id="newRoleScore" placeholder="Mata" min="0" max="25" class="w-20 bg-white border border-slate-300 rounded-lg px-2 py-2 text-xs font-bold text-center focus:ring-2 focus:ring-amber-500">
+                <button onclick="addNewRole()" id="btnAddNewRole" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
                   <i class="fa-solid fa-plus"></i> Tambah
                 </button>
               </div>
 
-              <div id="rolesList" class="max-h-60 overflow-y-auto space-y-1.5 pr-1 text-xs">
+              <div id="rolesList" class="max-h-56 overflow-y-auto space-y-1.5 pr-1 text-xs custom-scroll">
                 <!-- Dijana oleh JavaScript -->
               </div>
             </div>
 
-            <!-- Card 3: Pengurusan Senarai Tugasan Mengikut Portfolio -->
-            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4 lg:col-span-2">
+            <!-- Kad 3: Pengurusan Jawatankuasa / Tugasan Portfolio -->
+            <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 space-y-3.5 lg:col-span-2">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <h3 class="text-base font-bold text-asis-navy flex items-center gap-2">
-                  <i class="fa-solid fa-list-check text-amber-500"></i>
-                  <span>Pengurusan Tugasan / Jawatankuasa Portfolio</span>
+                <h3 class="text-xs font-bold text-corp-navy uppercase tracking-wider flex items-center gap-1.5">
+                  <i class="fa-solid fa-list-check text-amber-500"></i> Pengurusan Tugasan Portfolio
                 </h3>
-                <!-- Portfolio Selector Tabs for Settings -->
+                <!-- Pemilih Tab Kategori Portfolio bagi Tetapan -->
                 <div class="inline-flex rounded-lg border border-slate-200 bg-white p-1 text-xs font-bold">
-                  <button onclick="switchTaskSettingSection('pentadbiran')" id="btnSettingCat-pentadbiran" class="px-2.5 py-1 rounded bg-asis-navy text-amber-400">Pentadbiran</button>
-                  <button onclick="switchTaskSettingSection('kurikulum')" id="btnSettingCat-kurikulum" class="px-2.5 py-1 rounded text-slate-600 hover:text-asis-navy">Kurikulum</button>
-                  <button onclick="switchTaskSettingSection('hem')" id="btnSettingCat-hem" class="px-2.5 py-1 rounded text-slate-600 hover:text-asis-navy">HEM</button>
-                  <button onclick="switchTaskSettingSection('kokurikulum')" id="btnSettingCat-kokurikulum" class="px-2.5 py-1 rounded text-slate-600 hover:text-asis-navy">KoKurikulum</button>
-                  <button onclick="switchTaskSettingSection('asrama')" id="btnSettingCat-asrama" class="px-2.5 py-1 rounded text-slate-600 hover:text-asis-navy">Asrama</button>
+                  <button onclick="switchTaskSettingSection('pentadbiran')" id="btnSettingCat-pentadbiran" class="px-2.5 py-1 rounded bg-corp-navy text-amber-400">Pentadbiran</button>
+                  <button onclick="switchTaskSettingSection('kurikulum')" id="btnSettingCat-kurikulum" class="px-2.5 py-1 rounded text-slate-600 hover:text-corp-navy">Kurikulum</button>
+                  <button onclick="switchTaskSettingSection('hem')" id="btnSettingCat-hem" class="px-2.5 py-1 rounded text-slate-600 hover:text-corp-navy">HEM</button>
+                  <button onclick="switchTaskSettingSection('kokurikulum')" id="btnSettingCat-kokurikulum" class="px-2.5 py-1 rounded text-slate-600 hover:text-corp-navy">Kokurikulum</button>
+                  <button onclick="switchTaskSettingSection('asrama')" id="btnSettingCat-asrama" class="px-2.5 py-1 rounded text-slate-600 hover:text-corp-navy">Asrama</button>
                 </div>
               </div>
 
-              <div class="flex gap-2">
-                <input type="text" id="newTaskTitle" placeholder="Nama tugasan / jawatankuasa baharu..." class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
-                <button onclick="addNewTaskToSection()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
+              <div id="addTaskToSectionFormWrap" class="flex gap-2">
+                <input type="text" id="newTaskTitle" placeholder="Nama jawatankuasa / tugasan baharu..." class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+                <button onclick="addNewTaskToSection()" id="btnAddNewTaskToSection" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
                   <i class="fa-solid fa-plus-circle"></i> Tambah Tugasan
                 </button>
               </div>
 
-              <div id="sectionTasksList" class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-64 overflow-y-auto pr-1 text-xs">
+              <div id="sectionTasksList" class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1 text-xs custom-scroll">
                 <!-- Dijana oleh JavaScript -->
               </div>
             </div>
 
-            <!-- Card 4: Kawalan Super Admin & Log Audit -->
-            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4 lg:col-span-2">
+            <!-- Kad 4: Jejak Audit Forensik & Rekod Perubahan -->
+            <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 space-y-3 lg:col-span-2">
               <div class="flex items-center justify-between border-b border-slate-200 pb-2">
-                <h3 class="text-base font-bold text-asis-navy flex items-center gap-2">
-                  <i class="fa-solid fa-shield-halved text-amber-500"></i>
-                  <span>Jejak Audit & Log Aktiviti Pengguna</span>
+                <h3 class="text-xs font-bold text-corp-navy uppercase tracking-wider flex items-center gap-1.5">
+                  <i class="fa-solid fa-shield-halved text-amber-500"></i> Rekod Jejak Audit Perubahan (Audit Trail)
                 </h3>
-                <button onclick="exportAuditLogCSV()" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-3 py-1 rounded-md flex items-center gap-1">
-                  <i class="fa-solid fa-file-csv"></i> Eksport Log
-                </button>
+                <div class="flex items-center gap-2">
+                  <button onclick="clearAuditLogs()" id="btnClearAuditLogBtn" class="text-[11px] bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-2.5 py-1 rounded border border-rose-200 flex items-center gap-1">
+                    <i class="fa-solid fa-trash-can"></i> Kosongkan Log
+                  </button>
+                  <button onclick="exportAuditLogCSV()" class="text-[11px] bg-white hover:bg-slate-100 text-slate-700 font-bold px-2.5 py-1 rounded border border-slate-300 flex items-center gap-1">
+                    <i class="fa-solid fa-file-csv"></i> Eksport CSV
+                  </button>
+                </div>
               </div>
-              <div id="auditLogContainer" class="max-h-48 overflow-y-auto space-y-1 font-mono text-[11px] bg-slate-900 text-slate-200 p-3 rounded-lg border border-slate-800">
+              <div id="auditLogContainer" class="max-h-44 overflow-y-auto space-y-1 font-mono text-[11px] bg-slate-900 text-slate-200 p-3 rounded-xl border border-slate-800 custom-scroll">
                 <!-- Dijana oleh JavaScript -->
               </div>
             </div>
@@ -524,34 +672,151 @@
 
       </div>
 
-      <!-- Footer / Hak Cipta & Kredit Rasmi -->
-      <footer class="bg-slate-100 border-t border-slate-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-slate-600">
-        <div class="text-[8pt] text-slate-500 tracking-wide text-center sm:text-left">
+      <!-- KAKI HALAMAN RASMI APLIKASI (FOOTER) -->
+      <footer class="bg-slate-100/90 border-t border-slate-200 px-6 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-2 text-slate-600">
+        <div class="text-[8pt] text-slate-500 tracking-wide text-center sm:text-left font-medium">
           Disediakan oleh : Mohd.Fauzi Sunary ,Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah
         </div>
-        <div class="text-[8pt] text-slate-400 text-center sm:text-right">
-          ASiS Workload Awareness System (AWAS) • Kemas kini: 11 November 2026
+        <div class="text-[8pt] text-slate-400 text-center sm:text-right font-medium">
+          ASiS Workload Awareness System (AWAS) • Tarikh Kemas Kini: 11 November 2026
         </div>
       </footer>
 
     </div>
   </main>
 
-  <!-- MODAL: Logout Confirmation -->
+  <!-- MODAL: Gerbang Pengesahan Pengguna (Log Masuk & Daftar Akaun) -->
+  <div id="authModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+      
+      <!-- Kepala Modal -->
+      <div class="bg-corp-navy text-white p-6 text-center relative border-b-4 border-amber-500">
+        <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+        <div class="w-12 h-12 rounded-2xl bg-amber-400 text-corp-navy flex items-center justify-center mx-auto text-xl shadow mb-2 font-black">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h3 class="text-base font-extrabold tracking-tight uppercase text-white font-display">GERBANG KESELAMATAN AWAS</h3>
+        <p class="text-amber-300 text-xs font-medium">Sekolah Menengah Sains Alam Shah</p>
+      </div>
+
+      <!-- Tab Penukaran Borang -->
+      <div class="flex border-b border-slate-200 bg-slate-50 text-xs font-bold">
+        <button onclick="switchAuthTab('login')" id="tabBtnAuthLogin" class="flex-1 py-3 text-corp-navy border-b-2 border-amber-500 bg-white">
+          <i class="fa-solid fa-right-to-bracket mr-1"></i> Log Masuk
+        </button>
+        <button onclick="switchAuthTab('register')" id="tabBtnAuthRegister" class="flex-1 py-3 text-slate-500 hover:text-corp-navy">
+          <i class="fa-solid fa-user-plus mr-1"></i> Daftar Akaun Baharu
+        </button>
+      </div>
+
+      <div class="p-6">
+        <!-- Borang Log Masuk -->
+        <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              <i class="fa-solid fa-user text-corp-navy mr-1"></i> ID Pengguna (Username):
+            </label>
+            <input type="text" id="loginUsername" required placeholder="Masukkan ID Pengguna..." autocomplete="username" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-semibold focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              <i class="fa-solid fa-key text-corp-navy mr-1"></i> Kata Laluan:
+            </label>
+            <div class="relative">
+              <input type="password" id="loginPassword" required placeholder="Masukkan kata laluan..." autocomplete="current-password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-semibold focus:ring-2 focus:ring-amber-500 focus:outline-none">
+              <button type="button" onclick="togglePasswordVisibility('loginPassword', 'eyeLoginIcon')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-eye" id="eyeLoginIcon"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-[11px] text-amber-900 flex items-start gap-2">
+            <i class="fa-solid fa-circle-info text-amber-600 mt-0.5"></i>
+            <span>Log masuk membolehkan anda merekod dan menyemak agihan tugas berlandaskan piawaian keselamatan sekolah.</span>
+          </div>
+
+          <button type="submit" class="w-full bg-corp-navy hover:bg-corp-slate text-amber-400 font-extrabold text-xs py-3 rounded-xl shadow-md flex items-center justify-center gap-2 transition">
+            <i class="fa-solid fa-right-to-bracket"></i> Masuk ke Sistem AWAS
+          </button>
+        </form>
+
+        <!-- Borang Pendaftaran Pengguna Baharu -->
+        <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="hidden space-y-3.5">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              <i class="fa-solid fa-id-card text-corp-navy mr-1"></i> Nama Penuh Pegawai / Guru:
+            </label>
+            <input type="text" id="regFullName" required placeholder="Contoh: AHMAD BIN ABDULLAH" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              <i class="fa-solid fa-at text-corp-navy mr-1"></i> ID Pengguna (Username):
+            </label>
+            <input type="text" id="regUsername" required placeholder="Contoh: ahmad_razali" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              <i class="fa-solid fa-lock text-corp-navy mr-1"></i> Cipta Kata Laluan Piawai:
+            </label>
+            <div class="relative">
+              <input type="password" id="regPassword" oninput="checkPasswordStrength(this.value)" required placeholder="Cipta kata laluan piawai..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+              <button type="button" onclick="togglePasswordVisibility('regPassword', 'eyeRegIcon')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-eye" id="eyeRegIcon"></i>
+              </button>
+            </div>
+            
+            <!-- Penunjuk Kekuatan Kata Laluan -->
+            <div class="mt-1.5 space-y-1">
+              <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                <div id="pwdStrengthBar" class="h-full w-0 bg-rose-500 transition-all duration-300"></div>
+              </div>
+              <div class="flex justify-between text-[10px]">
+                <span class="text-slate-500">Kekuatan: <b id="pwdStrengthText" class="text-rose-600">Terlalu Lemah</b></span>
+                <span class="text-slate-400">Min 8 aksara (A, a, 1, #)</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              <i class="fa-solid fa-shield-check text-corp-navy mr-1"></i> Sahkan Kata Laluan:
+            </label>
+            <input type="password" id="regPasswordConfirm" required placeholder="Ulang kata laluan..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+          </div>
+
+          <div class="bg-blue-50 border border-blue-200 rounded-xl p-2.5 text-[10px] text-blue-900 leading-relaxed">
+            <b>Piawaian Keselamatan:</b> Kata laluan mesti mengandungi minimum 8 aksara dengan gabungan huruf besar (A-Z), huruf kecil (a-z), nombor (0-9), dan aksara khas (!@#$%^&*).
+          </div>
+
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs py-2.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition">
+            <i class="fa-solid fa-user-check"></i> Hantar Pendaftaran Akaun
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: Pengesahan Log Keluar Pintar -->
   <div id="logoutModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
       <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto text-xl">
         <i class="fa-solid fa-right-from-bracket"></i>
       </div>
       <div class="text-center">
-        <h3 class="text-lg font-bold text-asis-navy">Peringatan Sebelum Log Keluar</h3>
+        <h3 class="text-base font-bold text-corp-navy">Peringatan Sebelum Log Keluar</h3>
         <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-          Pastikan sebarang pindaan tugas guru dalam sistem AWAS telah disimpan. Anda disyorkan memuat turun sandaran (JSON) untuk keselamatan rekod sekolah.
+          Pastikan sebarang pindaan tugas dalam sistem AWAS telah disimpan. Anda disyorkan memuat turun salinan sandaran (JSON) untuk keselamatan rekod sekolah.
         </p>
       </div>
       <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 flex items-center gap-2">
         <i class="fa-solid fa-circle-info text-amber-600 text-sm"></i>
-        <span>Data anda disimpan dengan selamat dalam storan komputer ini.</span>
+        <span>Data disimpan dengan selamat dalam storan peranti ini.</span>
       </div>
       <div class="flex flex-col gap-2 pt-2">
         <button onclick="exportJSONBackup()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-2.5 rounded-lg flex items-center justify-center gap-2 shadow">
@@ -569,56 +834,177 @@
     </div>
   </div>
 
-  <!-- MODAL: Print Preview & Direct Print Engine -->
-  <div id="printModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2 sm:p-4">
-    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-slate-300">
-      <div class="bg-asis-navy text-white px-5 py-3.5 flex items-center justify-between">
+  <!-- MODAL: Dialog Pengesahan Tindakan Sebenar -->
+  <div id="actionConfirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto text-xl">
+        <i class="fa-solid fa-trash-can" id="confirmModalIcon"></i>
+      </div>
+      <div class="text-center">
+        <h3 class="text-base font-bold text-corp-navy" id="confirmModalTitle">Sahkan Tindakan</h3>
+        <p class="text-xs text-slate-600 mt-2 leading-relaxed" id="confirmModalMessage">Adakah anda pasti ingin meneruskan tindakan ini?</p>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeConfirmModal()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs py-2.5 rounded-lg transition">
+          Batal
+        </button>
+        <button id="btnExecuteConfirmAction" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs py-2.5 rounded-lg shadow transition">
+          Sahkan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFIKASI TOAST SISTEM -->
+  <div id="systemToast" class="fixed bottom-6 right-6 z-[80] hidden max-w-sm bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-amber-400/40 flex items-center gap-3 transition-all duration-300">
+    <div id="toastIcon" class="text-amber-400 text-base">
+      <i class="fa-solid fa-circle-check"></i>
+    </div>
+    <div class="text-xs font-medium" id="toastMessage">Mesej sistem...</div>
+  </div>
+
+  <!-- MODAL: Kemas Kini Maklumat Guru & Gred -->
+  <div id="editTeacherModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-sm font-bold text-corp-navy flex items-center gap-2">
+          <i class="fa-solid fa-user-pen text-amber-500"></i>
+          <span>Kemaskini Maklumat Guru</span>
+        </h3>
+        <button onclick="closeEditTeacherModal()" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <input type="hidden" id="editTeacherOriginalName">
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Nama Guru:</label>
+        <input type="text" id="editTeacherNameInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Gred Jawatan (DG):</label>
+        <select id="editTeacherGradeSelect" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold focus:ring-2 focus:ring-amber-500">
+          <option value="DG1">DG1</option><option value="DG2">DG2</option><option value="DG3">DG3</option>
+          <option value="DG4">DG4</option><option value="DG5">DG5</option><option value="DG6">DG6</option>
+          <option value="DG7">DG7</option><option value="DG8">DG8</option><option value="DG9">DG9</option>
+          <option value="DG10">DG10</option><option value="DG11">DG11</option><option value="DG12">DG12</option>
+          <option value="DG13">DG13</option><option value="DG14">DG14</option>
+        </select>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeEditTeacherModal()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs py-2 rounded-lg">Batal</button>
+        <button onclick="saveEditedTeacher()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 rounded-lg shadow">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Kemas Kini Jawatan & Mata -->
+  <div id="editRoleModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-sm font-bold text-corp-navy flex items-center gap-2">
+          <i class="fa-solid fa-award text-amber-500"></i>
+          <span>Kemaskini Skema Jawatan & Mata</span>
+        </h3>
+        <button onclick="closeEditRoleModal()" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <input type="hidden" id="editRoleOriginalTitle">
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Nama Jawatan:</label>
+        <input type="text" id="editRoleTitleInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Nilai Mata Pemberatan:</label>
+        <input type="number" id="editRoleScoreInput" min="0" max="25" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold focus:ring-2 focus:ring-amber-500">
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeEditRoleModal()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs py-2 rounded-lg">Batal</button>
+        <button onclick="saveEditedRole()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 rounded-lg shadow">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Pratonton & Enjin Cetakan Rasmi A4 -->
+  <div id="printModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-300">
+      <div class="bg-corp-navy text-white px-5 py-3.5 flex items-center justify-between border-b-2 border-amber-500">
         <div class="flex items-center gap-2 text-sm font-bold">
           <i class="fa-solid fa-print text-amber-400"></i>
           <span id="printModalHeaderTitle">Pratonton Dokumen Rasmi AWAS</span>
         </div>
-        <button onclick="closePrintModal()" class="text-slate-300 hover:text-white text-base">
-          <i class="fa-solid fa-xmark"></i>
+        <button onclick="closePrintModal()" class="text-slate-300 hover:text-white transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
 
-      <!-- Action Toolbar -->
+      <!-- Bar Alatan Tindakan Cetak -->
       <div class="bg-slate-100 p-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 text-xs">
         <div class="text-slate-600 font-medium flex items-center gap-1.5">
-          <i class="fa-solid fa-file-lines text-asis-royal"></i>
-          <span>Format: Saiz A4 Piawai Sekolah</span>
+          <i class="fa-solid fa-file-contract text-corp-navy"></i>
+          <span>Format: Saiz Piawai A4 (ISO 216)</span>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="triggerDirectHardwarePrint()" id="btnHardwarePrint" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow">
-            <i class="fa-solid fa-print"></i> Cetak ke Printer Sekarang
+            <i class="fa-solid fa-print"></i> Cetak ke Mesin Cetak
           </button>
           <button onclick="downloadAsPhysicalPDF()" id="btnDownloadPDF" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow">
             <i class="fa-solid fa-file-pdf"></i> Muat Turun Fail PDF (.pdf)
           </button>
           <button onclick="openDetachedPrintTab()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow">
-            <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Tab Bebas
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Tab Bebas
           </button>
         </div>
       </div>
 
-      <!-- A4 Document Scroll Area -->
-      <div class="p-4 sm:p-8 overflow-y-auto flex-1 bg-slate-200/60">
-        <div id="printDocumentA4" class="max-w-[210mm] mx-auto bg-white p-8 sm:p-12 shadow-md border border-slate-300 text-slate-800 text-xs">
-          <!-- Kandungan Dokumen Disuntik Oleh JavaScript -->
+      <!-- Lembaran Dokumen A4 -->
+      <div class="p-4 sm:p-8 overflow-y-auto flex-1 bg-slate-200/70 custom-scroll">
+        <div id="printDocumentA4" class="max-w-[210mm] mx-auto bg-white p-8 sm:p-12 shadow-md border border-slate-300 text-slate-800 text-xs leading-relaxed">
+          <!-- Kandungan laporan rasmi disuntik oleh JavaScript -->
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Isolated Hidden Print Mount for Hardware Printing -->
+  <!-- Ruang Pelekap Cetakan Langsung (Isolated Mount) -->
   <div id="isolatedPrintMount" class="hidden"></div>
 
-  <!-- JAVASCRIPT SYSTEM ENGINE -->
+  <!-- JAVASCRIPT SYSTEM ENGINE (VERIFIKASI & LOGIK TERAS) -->
   <script>
-    // State & Database Initialization
+    // Kunci Pangkalan Data & Kredensial
     const STORAGE_KEY = 'AWAS_ASIS_DB_v1';
+    const AUTH_SESSION_KEY = 'AWAS_AUTH_SESSION_v1';
+    const SUPERADMIN_CORRECT_HASH = "235e23730e0fcad4eec9b1e967a57a82c4481b0a88b5ec1beaa40d16c52a0a20";
+    const SUPERADMIN_RAW_PASS = "Admin@ASiS2026";
 
+    // Enkripsi Web Crypto API SHA-256
+    async function sha256(str) {
+      try {
+        if (window.crypto && crypto.subtle) {
+          const buffer = new TextEncoder().encode(str);
+          const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+          const hashArray = Array.from(new Uint8Array(hashBuffer));
+          return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+      } catch (e) {
+        console.warn("Crypto API fallback:", e);
+      }
+      return str; 
+    }
+
+    // Pangkalan Data Lalai Sistem AWAS
     const defaultState = {
+      isSystemLocked: true,
+      users: [
+        {
+          username: "admin",
+          fullName: "Mohd.Fauzi Sunary",
+          role: "superadmin",
+          passwordHash: SUPERADMIN_CORRECT_HASH,
+          status: "active",
+          createdAt: "2026-01-01 08:00:00"
+        }
+      ],
       guruList: [
         { name: "EN. AHMAD RAZALI BIN ISMAIL", grade: "DG14" },
         { name: "PN. NORLIZA BINTI HASHIM", grade: "DG12" },
@@ -671,28 +1057,91 @@
     };
 
     let state = loadFromStorage();
+    let currentUser = null;
     let currentActiveTab = 'pentadbiran';
     let currentSettingTaskCategory = 'pentadbiran';
     let loadChartInstance = null;
     let currentPrintDocTitle = "Laporan Rasmi AWAS";
     let currentPrintHTMLContent = "";
+    let pendingConfirmAction = null;
 
-    function loadFromStorage() {
-      // Migrasi lancar dari SPTG_ASIS_DB_v4 jika pengguna mempunyai rekod terdahulu
-      let saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) {
-        const legacySaved = localStorage.getItem('SPTG_ASIS_DB_v4');
-        if (legacySaved) {
-          saved = legacySaved;
-          localStorage.setItem(STORAGE_KEY, legacySaved);
-        }
+    // Toast Pemberitahuan Sistem
+    function showNotification(msg, isError = false) {
+      const toast = document.getElementById('systemToast');
+      const toastMsg = document.getElementById('toastMessage');
+      const toastIcon = document.getElementById('toastIcon');
+      if (!toast) return;
+
+      toastMsg.textContent = msg;
+      if (isError) {
+        toastIcon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-rose-400"></i>';
+        toast.className = 'fixed bottom-6 right-6 z-[80] max-w-sm bg-rose-950 text-white px-4 py-3 rounded-xl shadow-2xl border border-rose-500 flex items-center gap-3 transition-all duration-300';
+      } else {
+        toastIcon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+        toast.className = 'fixed bottom-6 right-6 z-[80] max-w-sm bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-amber-400/40 flex items-center gap-3 transition-all duration-300';
       }
 
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3500);
+    }
+
+    // Modal Pengesahan Tindakan Sebenar
+    function openConfirmDialog(title, message, onConfirmCallback, isDanger = true) {
+      document.getElementById('confirmModalTitle').textContent = title;
+      document.getElementById('confirmModalMessage').textContent = message;
+      const btnConfirm = document.getElementById('btnExecuteConfirmAction');
+      
+      if (isDanger) {
+        btnConfirm.className = 'flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs py-2.5 rounded-lg shadow transition';
+        btnConfirm.textContent = 'Sahkan Tindakan';
+      } else {
+        btnConfirm.className = 'flex-1 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs py-2.5 rounded-lg shadow transition';
+        btnConfirm.textContent = 'Teruskan';
+      }
+
+      pendingConfirmAction = onConfirmCallback;
+      document.getElementById('actionConfirmModal').classList.remove('hidden');
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('actionConfirmModal').classList.add('hidden');
+      pendingConfirmAction = null;
+    }
+
+    document.getElementById('btnExecuteConfirmAction').addEventListener('click', () => {
+      if (typeof pendingConfirmAction === 'function') {
+        const action = pendingConfirmAction;
+        closeConfirmModal();
+        action();
+      }
+    });
+
+    // Pemuatan & Penyimpanan Storan Tempatan
+    function loadFromStorage() {
+      let saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         try {
-          return JSON.parse(saved);
+          const parsed = JSON.parse(saved);
+          if (parsed && Array.isArray(parsed.guruList) && Array.isArray(parsed.jawatanList)) {
+            if (!Array.isArray(parsed.users)) {
+              parsed.users = defaultState.users;
+            } else {
+              const adminUser = parsed.users.find(u => u.username.toLowerCase() === 'admin');
+              if (adminUser) {
+                adminUser.passwordHash = SUPERADMIN_CORRECT_HASH;
+                adminUser.status = 'active';
+                adminUser.role = 'superadmin';
+              } else {
+                parsed.users.unshift(defaultState.users[0]);
+              }
+            }
+            if (typeof parsed.isSystemLocked === 'undefined') parsed.isSystemLocked = true;
+            return parsed;
+          }
         } catch (e) {
-          console.error("Gagal muat data AWAS, memulihkan data lalai:", e);
+          console.error("Gagal membaca storan AWAS:", e);
         }
       }
       return JSON.parse(JSON.stringify(defaultState));
@@ -700,18 +1149,418 @@
 
     function saveToStorage(logMessage = null) {
       if (logMessage) {
+        if (!state.auditLogs) state.auditLogs = [];
+        const author = currentUser ? `${currentUser.fullName} (${currentUser.role === 'superadmin' ? 'Super Admin' : 'Pengguna Berdaftar'})` : "Sistem AWAS";
         state.auditLogs.unshift({
           timestamp: new Date().toLocaleString('ms-MY'),
-          user: "Mohd.Fauzi Sunary (PKP)",
+          user: author,
           action: logMessage
         });
-        if (state.auditLogs.length > 80) state.auditLogs.pop();
+        if (state.auditLogs.length > 150) state.auditLogs.pop();
       }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       renderAuditLogs();
     }
 
-    // Tab Navigation
+    // Pengurusan Sesi Pengguna
+    function loadCurrentSession() {
+      const saved = sessionStorage.getItem(AUTH_SESSION_KEY);
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      return null;
+    }
+
+    function saveCurrentSession(userObj) {
+      currentUser = userObj;
+      if (userObj) {
+        sessionStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(userObj));
+      } else {
+        sessionStorage.removeItem(AUTH_SESSION_KEY);
+      }
+      updateAuthUI();
+    }
+
+    function updateAuthUI() {
+      const nameEl = document.getElementById('activeUserName');
+      const roleEl = document.getElementById('activeUserRole');
+      const avatarEl = document.getElementById('userAvatar');
+      const lockNotice = document.getElementById('lockNoticeBanner');
+
+      if (!currentUser) {
+        nameEl.textContent = "Pengguna Belum Log Masuk";
+        roleEl.textContent = "Mod Paparan Sahaja";
+        avatarEl.innerHTML = '<i class="fa-solid fa-user-lock text-slate-700"></i>';
+        avatarEl.className = 'w-8 h-8 rounded-lg bg-slate-300 text-slate-700 font-bold flex items-center justify-center flex-shrink-0 shadow';
+        document.getElementById('btnAuthTrigger').classList.remove('hidden');
+        document.getElementById('btnLogoutTrigger').classList.add('hidden');
+      } else {
+        nameEl.textContent = currentUser.fullName;
+        const isSuper = currentUser.role === 'superadmin';
+        roleEl.textContent = isSuper ? "Super Admin (PK Pentadbiran)" : "Pengguna Berdaftar";
+        avatarEl.innerHTML = isSuper ? '<i class="fa-solid fa-user-shield text-corp-navy"></i>' : '<i class="fa-solid fa-chalkboard-user text-white"></i>';
+        avatarEl.className = isSuper ? 'w-8 h-8 rounded-lg bg-amber-400 font-bold flex items-center justify-center flex-shrink-0 shadow' : 'w-8 h-8 rounded-lg bg-blue-600 font-bold flex items-center justify-center flex-shrink-0 shadow';
+        document.getElementById('btnAuthTrigger').classList.add('hidden');
+        document.getElementById('btnLogoutTrigger').classList.remove('hidden');
+      }
+
+      const isSuperAdmin = currentUser && currentUser.role === 'superadmin';
+      const isLocked = !isSuperAdmin;
+
+      if (lockNotice) {
+        lockNotice.classList.toggle('hidden', isSuperAdmin);
+      }
+
+      enforceAccessPermissions(isLocked, isSuperAdmin);
+      renderRegisteredUsersList();
+    }
+
+    function enforceAccessPermissions(isLocked, isSuperAdmin) {
+      const isGuest = !currentUser;
+
+      // Kawalan Butang Borang Tugasan
+      const btnSaveDuties = document.getElementById('btnSaveDuties');
+      const btnAddDutyRowBtn = document.getElementById('btnAddDutyRowBtn');
+      const btnClearCurrentSection = document.getElementById('btnClearCurrentSection');
+      if (btnSaveDuties) btnSaveDuties.disabled = isGuest || (state.isSystemLocked && !isSuperAdmin);
+      if (btnAddDutyRowBtn) btnAddDutyRowBtn.disabled = isGuest || (state.isSystemLocked && !isSuperAdmin);
+      if (btnClearCurrentSection) btnClearCurrentSection.disabled = isGuest || (state.isSystemLocked && !isSuperAdmin);
+
+      // Kawalan Panel Tetapan
+      const btnAddNewTeacher = document.getElementById('btnAddNewTeacher');
+      const btnAddNewRole = document.getElementById('btnAddNewRole');
+      const btnAddNewTaskToSection = document.getElementById('btnAddNewTaskToSection');
+      const btnSystemReset = document.getElementById('btnSystemReset');
+      const lblImportJSON = document.getElementById('lblImportJSON');
+
+      if (btnAddNewTeacher) btnAddNewTeacher.disabled = !isSuperAdmin;
+      if (btnAddNewRole) btnAddNewRole.disabled = !isSuperAdmin;
+      if (btnAddNewTaskToSection) btnAddNewTaskToSection.disabled = !isSuperAdmin;
+      if (btnSystemReset) btnSystemReset.disabled = !isSuperAdmin;
+      if (lblImportJSON) lblImportJSON.style.display = isSuperAdmin ? 'inline-flex' : 'none';
+
+      // Suis Kunci Sistem
+      const btnToggleLock = document.getElementById('btnToggleSystemLock');
+      const iconLock = document.getElementById('iconSystemLock');
+      const textLock = document.getElementById('textSystemLock');
+      if (btnToggleLock) {
+        btnToggleLock.disabled = !isSuperAdmin;
+        if (state.isSystemLocked) {
+          btnToggleLock.className = 'bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow transition';
+          iconLock.className = 'fa-solid fa-lock';
+          textLock.textContent = 'Kunci Diaktifkan';
+        } else {
+          btnToggleLock.className = 'bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow transition';
+          iconLock.className = 'fa-solid fa-lock-open';
+          textLock.textContent = 'Bebas Disunting';
+        }
+      }
+    }
+
+    function toggleSystemLock() {
+      if (!currentUser || currentUser.role !== 'superadmin') {
+        showNotification('Hanya Super Admin mempunyai kuasa mengunci sistem.', true);
+        return;
+      }
+      state.isSystemLocked = !state.isSystemLocked;
+      const statusText = state.isSystemLocked ? "DIKUNCI (Hanya Super Admin boleh menyunting data asas)" : "DIBUKA (Pengguna berdaftar boleh menyunting)";
+      saveToStorage(`Super Admin menukar mod kunci sistem: ${statusText}`);
+      updateAuthUI();
+      showNotification(`Status sistem: ${statusText}`);
+    }
+
+    // Modal Log Masuk & Pendaftaran
+    function openAuthModal() {
+      document.getElementById('authModal').classList.remove('hidden');
+      switchAuthTab('login');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.add('hidden');
+    }
+
+    function switchAuthTab(tab) {
+      const isLogin = tab === 'login';
+      document.getElementById('loginForm').classList.toggle('hidden', !isLogin);
+      document.getElementById('registerForm').classList.toggle('hidden', isLogin);
+
+      const tabLogin = document.getElementById('tabBtnAuthLogin');
+      const tabReg = document.getElementById('tabBtnAuthRegister');
+      if (isLogin) {
+        tabLogin.className = 'flex-1 py-3 text-corp-navy border-b-2 border-amber-500 bg-white';
+        tabReg.className = 'flex-1 py-3 text-slate-500 hover:text-corp-navy';
+      } else {
+        tabReg.className = 'flex-1 py-3 text-corp-navy border-b-2 border-amber-500 bg-white';
+        tabLogin.className = 'flex-1 py-3 text-slate-500 hover:text-corp-navy';
+      }
+    }
+
+    function togglePasswordVisibility(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fa-solid fa-eye-slash';
+      } else {
+        input.type = 'password';
+        icon.className = 'fa-solid fa-eye';
+      }
+    }
+
+    function validatePasswordStandard(pwd) {
+      if (!pwd || pwd.length < 8) {
+        return { valid: false, msg: "Kata laluan mestilah sekurang-kurangnya 8 aksara." };
+      }
+      if (!/[A-Z]/.test(pwd)) {
+        return { valid: false, msg: "Kata laluan mesti mengandungi sekurang-kurangnya 1 huruf besar (A-Z)." };
+      }
+      if (!/[a-z]/.test(pwd)) {
+        return { valid: false, msg: "Kata laluan mesti mengandungi sekurang-kurangnya 1 huruf kecil (a-z)." };
+      }
+      if (!/[0-9]/.test(pwd)) {
+        return { valid: false, msg: "Kata laluan mesti mengandungi sekurang-kurangnya 1 nombor (0-9)." };
+      }
+      if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd)) {
+        return { valid: false, msg: "Kata laluan mesti mengandungi sekurang-kurangnya 1 simbol khas (!@#$%^&*)." };
+      }
+      return { valid: true };
+    }
+
+    function checkPasswordStrength(val) {
+      const bar = document.getElementById('pwdStrengthBar');
+      const text = document.getElementById('pwdStrengthText');
+      if (!val) {
+        bar.style.width = '0%';
+        bar.className = 'h-full bg-slate-300';
+        text.textContent = 'Terlalu Lemah';
+        text.className = 'text-slate-400';
+        return;
+      }
+
+      let score = 0;
+      if (val.length >= 8) score += 25;
+      if (/[A-Z]/.test(val)) score += 25;
+      if (/[0-9]/.test(val)) score += 25;
+      if (/[!@#$%^&*]/.test(val)) score += 25;
+
+      bar.style.width = score + '%';
+      if (score <= 25) {
+        bar.className = 'h-full bg-rose-500';
+        text.textContent = 'Lemah';
+        text.className = 'text-rose-600 font-bold';
+      } else if (score <= 75) {
+        bar.className = 'h-full bg-amber-500';
+        text.textContent = 'Sederhana';
+        text.className = 'text-amber-600 font-bold';
+      } else {
+        bar.className = 'h-full bg-emerald-500';
+        text.textContent = 'Kukuh & Dipercayai';
+        text.className = 'text-emerald-600 font-bold';
+      }
+    }
+
+    // Pendaftaran Pengguna Baharu
+    async function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const fullName = document.getElementById('regFullName').value.trim();
+      const rawUser = document.getElementById('regUsername').value.trim();
+      const username = rawUser.toLowerCase();
+      const pwd = document.getElementById('regPassword').value;
+      const pwdConfirm = document.getElementById('regPasswordConfirm').value;
+
+      if (!fullName || !username) {
+        return showNotification("Sila lengkapkan nama penuh dan ID pengguna.", true);
+      }
+
+      if (pwd !== pwdConfirm) {
+        return showNotification("Kata laluan dan pengesahan kata laluan tidak sepadan.", true);
+      }
+
+      const valCheck = validatePasswordStandard(pwd);
+      if (!valCheck.valid) {
+        return showNotification(valCheck.msg, true);
+      }
+
+      if (state.users.some(u => u.username.toLowerCase() === username)) {
+        return showNotification("ID Pengguna ini telah wujud. Sila pilih ID lain.", true);
+      }
+
+      const hash = await sha256(pwd);
+      const newUser = {
+        username: username,
+        fullName: fullName,
+        role: "user",
+        passwordHash: hash,
+        status: "active",
+        createdAt: new Date().toLocaleString('ms-MY')
+      };
+
+      state.users.push(newUser);
+      saveToStorage(`Pendaftaran pengguna baharu: ${fullName} (@${username})`);
+      showNotification(`Akaun ${fullName} berjaya didaftarkan! Sila log masuk.`);
+      
+      document.getElementById('registerForm').reset();
+      checkPasswordStrength('');
+      switchAuthTab('login');
+      document.getElementById('loginUsername').value = rawUser;
+    }
+
+    // Log Masuk Pengguna
+    async function handleLoginSubmit(e) {
+      e.preventDefault();
+      const rawInputUsername = document.getElementById('loginUsername').value.trim();
+      const inputUsername = rawInputUsername.toLowerCase();
+      const inputPassword = document.getElementById('loginPassword').value;
+
+      if (!inputUsername || !inputPassword) {
+        return showNotification("Sila masukkan ID pengguna dan kata laluan.", true);
+      }
+
+      if (inputUsername === 'admin' && inputPassword === SUPERADMIN_RAW_PASS) {
+        const adminUser = state.users.find(u => u.username.toLowerCase() === 'admin') || defaultState.users[0];
+        saveCurrentSession({
+          username: "admin",
+          fullName: adminUser.fullName || "Mohd.Fauzi Sunary",
+          role: "superadmin"
+        });
+        saveToStorage(`Log masuk Super Admin berjaya: ${adminUser.fullName}`);
+        closeAuthModal();
+        document.getElementById('loginForm').reset();
+        showNotification(`Selamat kembali, ${adminUser.fullName} (Super Admin)!`);
+        return;
+      }
+
+      const computedHash = await sha256(inputPassword);
+      const user = state.users.find(u => 
+        u.username.toLowerCase() === inputUsername && 
+        (u.passwordHash === computedHash || (u.username.toLowerCase() === 'admin' && inputPassword === SUPERADMIN_RAW_PASS))
+      );
+
+      if (!user) {
+        saveToStorage(`Percubaan gagal log masuk bagi ID: ${rawInputUsername}`);
+        return showNotification("ID Pengguna atau Kata Laluan tidak tepat. Sila semak semula.", true);
+      }
+
+      if (user.status !== 'active') {
+        return showNotification("Akaun anda telah disekat oleh Super Admin.", true);
+      }
+
+      saveCurrentSession({
+        username: user.username,
+        fullName: user.fullName,
+        role: user.role
+      });
+
+      saveToStorage(`Log masuk berjaya: ${user.fullName} [${user.role.toUpperCase()}]`);
+      closeAuthModal();
+      document.getElementById('loginForm').reset();
+      showNotification(`Selamat datang, ${user.fullName}! Sesi anda kini aktif.`);
+    }
+
+    // Pengurusan Senarai Pengguna
+    function renderRegisteredUsersList() {
+      const container = document.getElementById('registeredUsersList');
+      const countEl = document.getElementById('registeredUsersCount');
+      if (!container || !countEl) return;
+
+      countEl.textContent = state.users.length;
+      container.innerHTML = '';
+
+      const isSuperAdmin = currentUser && currentUser.role === 'superadmin';
+
+      state.users.forEach((u, idx) => {
+        const isSuper = u.role === 'superadmin';
+        const item = document.createElement('div');
+        item.className = 'flex items-center justify-between p-2 bg-slate-800/80 rounded-lg border border-slate-700';
+
+        const roleBadge = isSuper 
+          ? '<span class="bg-amber-400 text-corp-navy font-black px-1.5 py-0.5 rounded text-[9px] uppercase">Super Admin</span>' 
+          : '<span class="bg-blue-600 text-white font-bold px-1.5 py-0.5 rounded text-[9px]">Pengguna Berdaftar</span>';
+
+        const statusBadge = u.status === 'active'
+          ? '<span class="text-emerald-400 text-[10px]"><i class="fa-solid fa-circle-check mr-0.5"></i>Aktif</span>'
+          : '<span class="text-rose-400 text-[10px]"><i class="fa-solid fa-ban mr-0.5"></i>Disekat</span>';
+
+        let actionBtns = '';
+        if (isSuperAdmin && !isSuper) {
+          actionBtns = `
+            <div class="flex items-center gap-1.5">
+              <button onclick="toggleUserStatus(${idx})" class="p-1 text-amber-300 hover:text-white" title="${u.status === 'active' ? 'Sekat Pengguna' : 'Aktifkan Pengguna'}">
+                <i class="fa-solid ${u.status === 'active' ? 'fa-ban' : 'fa-check'}"></i>
+              </button>
+              <button onclick="deleteRegisteredUser(${idx})" class="p-1 text-rose-400 hover:text-rose-300" title="Padam Pengguna">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          `;
+        }
+
+        item.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-white">${u.fullName}</span>
+            <span class="text-slate-400 font-mono text-[10px]">(@${u.username})</span>
+            ${roleBadge}
+            ${statusBadge}
+          </div>
+          ${actionBtns}
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function toggleUserStatus(idx) {
+      if (!currentUser || currentUser.role !== 'superadmin') return showNotification('Hanya Super Admin mempunyai hak ini.', true);
+      const user = state.users[idx];
+      if (user.role === 'superadmin') return showNotification('Akaun Super Admin tidak boleh disekat.', true);
+
+      user.status = user.status === 'active' ? 'banned' : 'active';
+      saveToStorage(`Super Admin menukar status akaun ${user.username} kepada: ${user.status.toUpperCase()}`);
+      renderRegisteredUsersList();
+      showNotification(`Status akaun ${user.fullName} telah dikemaskini.`);
+    }
+
+    function deleteRegisteredUser(idx) {
+      if (!currentUser || currentUser.role !== 'superadmin') return showNotification('Hanya Super Admin mempunyai hak ini.', true);
+      const user = state.users[idx];
+      if (user.role === 'superadmin') return showNotification('Akaun Super Admin tidak boleh dipadam.', true);
+
+      openConfirmDialog(
+        `Padam Pengguna: ${user.fullName}`,
+        `Adakah anda pasti ingin memadamkan akaun "${user.fullName}" (@${user.username})? Pengguna ini tidak lagi boleh log masuk ke dalam AWAS.`,
+        () => {
+          state.users.splice(idx, 1);
+          saveToStorage(`Super Admin memadam pengguna: ${user.fullName} (@${user.username})`);
+          renderRegisteredUsersList();
+          showNotification(`Akaun ${user.fullName} berjaya dipadam.`);
+        }
+      );
+    }
+
+    // Penyelarasan Menyeluruh Aplikasi
+    function refreshEntireSystem() {
+      renderTeacherDropdown();
+      populateSearchTeacherDropdown();
+      populateAnalysisFilters();
+      calculateTotals();
+
+      if (currentActiveTab === 'analisis') {
+        renderChart();
+        renderDGAnalysisView();
+      } else if (currentActiveTab === 'muatturun') {
+        renderMasterTable();
+      } else if (currentActiveTab === 'carian') {
+        renderTeacherProfile();
+      } else if (currentActiveTab === 'setting') {
+        renderSettingLists();
+      }
+      updateAuthUI();
+    }
+
+    // Penukaran Tab
     function switchTab(tabId) {
       currentActiveTab = tabId;
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
@@ -730,7 +1579,7 @@
           pentadbiran: "Bahagian Pentadbiran",
           kurikulum: "Bahagian Kurikulum",
           hem: "Bahagian Hal Ehwal Murid (HEM)",
-          kokurikulum: "Bahagian KoKurikulum",
+          kokurikulum: "Bahagian Kokurikulum",
           asrama: "Bahagian Pengurusan Asrama"
         };
         document.getElementById('currentSectionTitle').innerHTML = `
@@ -745,6 +1594,7 @@
         renderDGAnalysisView();
       } else if (tabId === 'carian') {
         populateSearchTeacherDropdown();
+        renderTeacherProfile();
       } else if (tabId === 'muatturun') {
         renderMasterTable();
       } else if (tabId === 'setting') {
@@ -752,7 +1602,7 @@
       }
     }
 
-    // Populate Teacher Dropdowns
+    // Dropdown Guru
     function renderTeacherDropdown() {
       const select = document.getElementById('teacherSelect');
       const curVal = select.value;
@@ -793,11 +1643,12 @@
       calculateTotals();
     }
 
-    // Dynamic Duty Rows
+    // Baris Tugasan Dinamik
     function addDutyRow(selectedTask = '', selectedRole = '', score = 0) {
+      const isLocked = !currentUser || (state.isSystemLocked && currentUser.role !== 'superadmin');
       const container = document.getElementById('dutiesContainer');
       const row = document.createElement('div');
-      row.className = 'duty-row p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center gap-3 transition hover:border-amber-400';
+      row.className = 'duty-row p-3 rounded-xl border border-slate-200 bg-white shadow-sm flex flex-col md:flex-row items-center gap-3 transition hover:border-amber-400';
 
       const taskOptions = (state.portfolioTasks[currentActiveTab] || [])
         .map(t => `<option value="${t}" ${t === selectedTask ? 'selected' : ''}>${t}</option>`)
@@ -810,14 +1661,14 @@
       row.innerHTML = `
         <div class="w-full md:flex-1">
           <label class="block text-[11px] font-bold text-slate-500 mb-1">Tugasan / Jawatankuasa:</label>
-          <select class="task-select w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+          <select ${isLocked ? 'disabled' : ''} class="task-select w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
             <option value="">-- Pilih Tugasan --</option>
             ${taskOptions}
           </select>
         </div>
         <div class="w-full md:w-64">
           <label class="block text-[11px] font-bold text-slate-500 mb-1">Jawatan:</label>
-          <select onchange="onRoleChange(this)" class="role-select w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+          <select ${isLocked ? 'disabled' : ''} onchange="onRoleChange(this)" class="role-select w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
             <option value="" data-score="0">-- Pilih Jawatan --</option>
             ${roleOptions}
           </select>
@@ -827,7 +1678,7 @@
           <input type="text" readonly value="${score}" class="score-input w-full bg-amber-50 border border-amber-300 text-amber-900 font-extrabold rounded-lg px-2 py-2 text-xs text-center">
         </div>
         <div class="pt-4 md:pt-5">
-          <button onclick="removeDutyRow(this)" class="w-8 h-8 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 flex items-center justify-center transition" title="Padam Tugasan">
+          <button onclick="removeDutyRow(this)" ${isLocked ? 'disabled' : ''} class="w-8 h-8 rounded-lg ${isLocked ? 'opacity-40 cursor-not-allowed bg-slate-200 text-slate-400' : 'bg-rose-50 hover:bg-rose-100 text-rose-700'} flex items-center justify-center transition shadow-sm" title="Padam Baris Tugasan Ini">
             <i class="fa-solid fa-trash-can text-xs"></i>
           </button>
         </div>
@@ -844,9 +1695,46 @@
     }
 
     function removeDutyRow(btn) {
+      if (!currentUser) return showNotification('Sila log masuk untuk membuat perubahan.', true);
+      if (state.isSystemLocked && currentUser.role !== 'superadmin') {
+        return showNotification('Mod Kunci Aktif: Hanya Super Admin dibenarkan memadam tugasan.', true);
+      }
       const row = btn.closest('.duty-row');
-      row.remove();
-      calculateTotals();
+      if (row) {
+        row.remove();
+        const container = document.getElementById('dutiesContainer');
+        if (container.children.length === 0) {
+          addDutyRow();
+        }
+        calculateTotals();
+        showNotification("Tugasan baris ini telah dipadam.");
+      }
+    }
+
+    function clearCurrentSectionDuties() {
+      if (!currentUser) return showNotification('Sila log masuk terlebih dahulu.', true);
+      if (state.isSystemLocked && currentUser.role !== 'superadmin') {
+        return showNotification('Mod Kunci Aktif: Hanya Super Admin dibenarkan mengosongkan tugasan.', true);
+      }
+      const teacherName = document.getElementById('teacherSelect').value;
+      if (!teacherName) {
+        showNotification("Sila pilih nama guru terlebih dahulu.", true);
+        return;
+      }
+
+      openConfirmDialog(
+        `Kosongkan Tugasan ${currentActiveTab.toUpperCase()}`,
+        `Adakah anda pasti ingin memadam dan mengosongkan semua tugasan bagi ${teacherName} dalam bahagian ${currentActiveTab.toUpperCase()}?`,
+        () => {
+          if (state.agihanTugas[teacherName]) {
+            state.agihanTugas[teacherName][currentActiveTab] = [];
+          }
+          saveToStorage(`Padam semua tugasan ${currentActiveTab.toUpperCase()}: ${teacherName}`);
+          onTeacherChange();
+          refreshEntireSystem();
+          showNotification(`Tugasan ${currentActiveTab.toUpperCase()} untuk ${teacherName} telah dikosongkan.`);
+        }
+      );
     }
 
     function calculateTotals() {
@@ -880,9 +1768,17 @@
     }
 
     function saveCurrentDuties() {
+      if (!currentUser) {
+        openAuthModal();
+        return showNotification('Sila log masuk untuk menyimpan penugasan guru.', true);
+      }
+      if (state.isSystemLocked && currentUser.role !== 'superadmin') {
+        return showNotification('Mod Kunci Aktif: Hanya Super Admin dibenarkan menyimpan perubahan tugas.', true);
+      }
+
       const teacherName = document.getElementById('teacherSelect').value;
       if (!teacherName) {
-        alert("Sila pilih nama guru terlebih dahulu.");
+        showNotification("Sila pilih nama guru terlebih dahulu.", true);
         return;
       }
 
@@ -901,35 +1797,40 @@
         state.agihanTugas[teacherName] = { pentadbiran: [], kurikulum: [], hem: [], kokurikulum: [], asrama: [] };
       }
       state.agihanTugas[teacherName][currentActiveTab] = duties;
-      saveToStorage(`Kemaskini tugas AWAS: ${teacherName} (${currentActiveTab.toUpperCase()})`);
-      alert(`Tugasan bahagian ${currentActiveTab.toUpperCase()} bagi ${teacherName} berjaya disimpan dalam sistem AWAS!`);
+      saveToStorage(`Simpan agihan tugasan AWAS: ${teacherName} (${currentActiveTab.toUpperCase()}) - ${duties.length} tugasan`);
+      refreshEntireSystem();
+      showNotification(`Tugasan bahagian ${currentActiveTab.toUpperCase()} bagi ${teacherName} berjaya disimpan!`);
     }
 
     function refreshCurrentForm() {
       onTeacherChange();
+      refreshEntireSystem();
+      showNotification("Borang telah dikemaskini.");
     }
 
-    // Chart.js Analytics
+    // Analisis Graf Menggunakan Chart.js
     function renderChart() {
-      const ctx = document.getElementById('loadChart').getContext('2d');
+      const canvas = document.getElementById('loadChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
       const labels = state.guruList.map(g => g.name.split(' ')[0] + ' (' + g.grade + ')');
       
       const datasets = [
-        { label: 'Pentadbiran', data: [], backgroundColor: '#0c2340' },
+        { label: 'Pentadbiran', data: [], backgroundColor: '#07162c' },
         { label: 'Kurikulum', data: [], backgroundColor: '#2563eb' },
         { label: 'HEM', data: [], backgroundColor: '#059669' },
-        { label: 'KoKurikulum', data: [], backgroundColor: '#d97706' },
+        { label: 'Kokurikulum', data: [], backgroundColor: '#d97706' },
         { label: 'Asrama', data: [], backgroundColor: '#4f46e5' }
       ];
 
       let grandScores = [];
       state.guruList.forEach(g => {
         const duties = state.agihanTugas[g.name] || {};
-        const pScore = (duties.pentadbiran || []).reduce((a, b) => a + b.score, 0);
-        const kScore = (duties.kurikulum || []).reduce((a, b) => a + b.score, 0);
-        const hScore = (duties.hem || []).reduce((a, b) => a + b.score, 0);
-        const koScore = (duties.kokurikulum || []).reduce((a, b) => a + b.score, 0);
-        const aScore = (duties.asrama || []).reduce((a, b) => a + b.score, 0);
+        const pScore = (duties.pentadbiran || []).reduce((a, b) => a + (parseInt(b.score) || 0), 0);
+        const kScore = (duties.kurikulum || []).reduce((a, b) => a + (parseInt(b.score) || 0), 0);
+        const hScore = (duties.hem || []).reduce((a, b) => a + (parseInt(b.score) || 0), 0);
+        const koScore = (duties.kokurikulum || []).reduce((a, b) => a + (parseInt(b.score) || 0), 0);
+        const aScore = (duties.asrama || []).reduce((a, b) => a + (parseInt(b.score) || 0), 0);
 
         datasets[0].data.push(pScore);
         datasets[1].data.push(kScore);
@@ -943,7 +1844,7 @@
       const totalTeachers = state.guruList.length || 1;
       const sumTotal = grandScores.reduce((a, b) => a + b, 0);
       const avg = (sumTotal / totalTeachers).toFixed(1);
-      const max = Math.max(...grandScores, 0);
+      const max = grandScores.length ? Math.max(...grandScores) : 0;
       const highCount = grandScores.filter(s => s > 20).length;
 
       document.getElementById('kpiAvgScore').textContent = avg;
@@ -984,9 +1885,10 @@
       a.click();
     }
 
-    // MODUL ANALISIS DG & PEMBERATAN TUGAS
+    // Analisis Kohort Gred Jawatan (DG)
     function populateAnalysisFilters() {
       const selectTeacher = document.getElementById('analysisSelectTeacher');
+      if (!selectTeacher) return;
       const curTeacher = selectTeacher.value;
       selectTeacher.innerHTML = '<option value="">-- Sila Pilih Nama Guru --</option>';
       state.guruList.forEach(g => {
@@ -1022,11 +1924,11 @@
 
     function getTeacherScores(teacherName) {
       const duties = state.agihanTugas[teacherName] || {};
-      const pScore = (duties.pentadbiran || []).reduce((a, b) => a + b.score, 0);
-      const kScore = (duties.kurikulum || []).reduce((a, b) => a + b.score, 0);
-      const hScore = (duties.hem || []).reduce((a, b) => a + b.score, 0);
-      const koScore = (duties.kokurikulum || []).reduce((a, b) => a + b.score, 0);
-      const aScore = (duties.asrama || []).reduce((a, b) => a + b.score, 0);
+      const pScore = (duties.pentadbiran || []).reduce((a, b) => a + (parseInt(b.score) || 0), 0);
+      const kScore = (duties.kurikulum || []).reduce((a, b) => a + (parseInt(b.score) || 0), 0);
+      const hScore = (duties.hem || []).reduce((a, b) => a + (parseInt(b.score) || 0), 0);
+      const koScore = (duties.kokurikulum || []).reduce((a, b) => a + (parseInt(b.score) || 0), 0);
+      const aScore = (duties.asrama || []).reduce((a, b) => a + (parseInt(b.score) || 0), 0);
       const grand = pScore + kScore + hScore + koScore + aScore;
       return { pScore, kScore, hScore, koScore, aScore, grand };
     }
@@ -1037,6 +1939,8 @@
       const selectedTeacher = document.getElementById('analysisSelectTeacher').value;
       const tbody = document.getElementById('dgAnalysisTableBody');
       const summaryCardsContainer = document.getElementById('dgSummaryCards');
+      if (!tbody || !summaryCardsContainer) return;
+
       tbody.innerHTML = '';
       summaryCardsContainer.innerHTML = '';
 
@@ -1061,10 +1965,10 @@
         const avg = (item.totalScore / (item.count || 1)).toFixed(1);
         const card = document.createElement('div');
         const isHighlight = (mode === 'by_dg' && selectedDG === gr);
-        card.className = `p-2.5 rounded-xl border text-center transition ${isHighlight ? 'bg-amber-100 border-amber-500 shadow' : 'bg-white border-slate-200'}`;
+        card.className = `p-2.5 rounded-xl border text-center transition ${isHighlight ? 'bg-amber-100 border-amber-500 shadow-sm' : 'bg-white border-slate-200'}`;
         card.innerHTML = `
-          <div class="text-[10px] font-bold text-slate-500 uppercase">${gr}</div>
-          <div class="text-base font-extrabold text-asis-navy mt-0.5">${avg} <span class="text-[10px] font-medium text-slate-400">mata</span></div>
+          <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">${gr}</div>
+          <div class="text-base font-extrabold text-corp-navy mt-0.5">${avg} <span class="text-[10px] font-medium text-slate-400">mata</span></div>
           <div class="text-[10px] text-amber-700 font-semibold">${item.count} guru</div>
         `;
         summaryCardsContainer.appendChild(card);
@@ -1085,17 +1989,17 @@
         tr.className = 'hover:bg-amber-50/40 transition border-b border-slate-100';
         tr.innerHTML = `
           <td class="p-2.5 text-center font-bold text-slate-500">${idx + 1}</td>
-          <td class="p-2.5 font-bold text-asis-navy">${g.name}</td>
-          <td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded bg-blue-100 text-asis-navy font-bold text-[11px]">${g.grade}</span></td>
+          <td class="p-2.5 font-bold text-corp-navy">${g.name}</td>
+          <td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded bg-blue-100 text-corp-navy font-bold text-[11px]">${g.grade}</span></td>
           <td class="p-2.5 text-center text-slate-600">${sc.pScore}</td>
           <td class="p-2.5 text-center text-slate-600">${sc.kScore}</td>
           <td class="p-2.5 text-center text-slate-600">${sc.hScore}</td>
           <td class="p-2.5 text-center text-slate-600">${sc.koScore}</td>
           <td class="p-2.5 text-center text-slate-600">${sc.aScore}</td>
-          <td class="p-2.5 text-center font-extrabold text-amber-800 text-sm">${sc.grand}</td>
+          <td class="p-2.5 text-center font-black text-amber-800 text-sm">${sc.grand}</td>
           <td class="p-2.5 text-center">${statusBadge}</td>
           <td class="p-2.5 text-center">
-            <button onclick="printSingleTeacherDGReport('${g.name}')" class="bg-asis-navy hover:bg-asis-royal text-amber-400 font-bold px-2 py-1 rounded text-[10px] flex items-center justify-center gap-1 mx-auto transition" title="Cetak Analisis Individu Ini">
+            <button onclick="printSingleTeacherDGReport('${g.name}')" class="bg-corp-navy hover:bg-corp-slate text-amber-400 font-bold px-2.5 py-1 rounded text-[10px] flex items-center justify-center gap-1 mx-auto transition" title="Cetak Analisis Individu Ini">
               <i class="fa-solid fa-print"></i> Cetak
             </button>
           </td>
@@ -1104,17 +2008,17 @@
       });
     }
 
-    // CETAKAN ANALISIS AWAS
+    // Enjin Cetakan & Laporan Rasmi
     function printFilteredAnalysisReport() {
       const mode = document.getElementById('analysisFilterMode').value;
       const selectedDG = document.getElementById('analysisSelectDG').value;
       const selectedTeacher = document.getElementById('analysisSelectTeacher').value;
 
       if (mode === 'by_teacher') {
-        if (!selectedTeacher) return alert('Sila pilih nama guru terlebih dahulu.');
+        if (!selectedTeacher) return showNotification('Sila pilih nama guru terlebih dahulu.', true);
         printSingleTeacherDGReport(selectedTeacher);
       } else if (mode === 'by_dg') {
-        if (!selectedDG) return alert('Sila pilih gred DG terlebih dahulu.');
+        if (!selectedDG) return showNotification('Sila pilih gred DG terlebih dahulu.', true);
         printGroupDGReport(selectedDG);
       } else {
         printAllDGComparativeReport();
@@ -1123,7 +2027,7 @@
 
     function printGroupDGReport(grade) {
       const teachers = state.guruList.filter(g => g.grade === grade);
-      if (teachers.length === 0) return alert(`Tiada guru berdaftar di bawah kelompok ${grade}.`);
+      if (teachers.length === 0) return showNotification(`Tiada guru berdaftar di bawah kelompok ${grade}.`, true);
 
       let totalScore = 0;
       let rowsHTML = '';
@@ -1135,7 +2039,7 @@
           <tr class="border-b border-slate-200">
             <td class="p-2 text-center">${idx + 1}</td>
             <td class="p-2 font-semibold">${g.name}</td>
-            <td class="p-2 text-center font-bold text-asis-navy">${g.grade}</td>
+            <td class="p-2 text-center font-bold text-corp-navy">${g.grade}</td>
             <td class="p-2 text-center">${sc.pScore}</td>
             <td class="p-2 text-center">${sc.kScore}</td>
             <td class="p-2 text-center">${sc.hScore}</td>
@@ -1152,14 +2056,14 @@
       const html = `
         <div class="text-center border-b-2 border-slate-800 pb-4 mb-6">
           <div class="text-xs font-bold uppercase tracking-widest text-slate-600">Kementerian Pendidikan Malaysia</div>
-          <h2 class="text-base font-extrabold text-asis-navy uppercase mt-1">SEKOLAH MENENGAH SAINS ALAM SHAH (ASiS)</h2>
+          <h2 class="text-base font-extrabold text-corp-navy uppercase mt-1">SEKOLAH MENENGAH SAINS ALAM SHAH (ASiS)</h2>
           <div class="text-[11px] font-bold text-amber-700 tracking-wide mt-0.5">ASiS WORKLOAD AWARENESS SYSTEM (AWAS)</div>
           <p class="text-[10px] italic text-slate-500">"Bekerjasama Bekerja Sama-Sama"</p>
           <div class="mt-2 text-[11px] text-slate-600">Laporan Analisis Kelompok Gred: <b>${grade}</b> • Tarikh Cetakan: <b>${new Date().toLocaleString('ms-MY')}</b></div>
         </div>
 
         <div class="grid grid-cols-3 gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200 text-center text-xs mb-4">
-          <div>Kelompok Gred: <b class="text-asis-navy">${grade}</b></div>
+          <div>Kelompok Gred: <b class="text-corp-navy">${grade}</b></div>
           <div>Bilangan Guru: <b>${teachers.length} Orang</b></div>
           <div>Purata Mata Kelompok: <b class="text-amber-800">${avgScore} Mata</b></div>
         </div>
@@ -1173,7 +2077,7 @@
               <th class="p-2 text-center">Ptd</th>
               <th class="p-2 text-center">Kur</th>
               <th class="p-2 text-center">HEM</th>
-              <th class="p-2 text-center">KoK</th>
+              <th class="p-2 text-center">Kok</th>
               <th class="p-2 text-center">Asr</th>
               <th class="p-2 text-center font-bold">Mata</th>
               <th class="p-2 text-center">Status</th>
@@ -1216,12 +2120,12 @@
 
       const renderDetailedDuties = (catName, catKey) => {
         const list = duties[catKey] || [];
-        if (list.length === 0) return `<tr><td colspan="3" class="p-2 text-slate-400 italic">Tiada tugas</td></tr>`;
+        if (list.length === 0) return `<tr><td colspan="3" class="p-2 text-slate-400 italic">Tiada tugas ditetapkan</td></tr>`;
         return list.map((item, idx) => `
           <tr class="border-b border-slate-100">
             <td class="p-2 text-center">${idx + 1}</td>
             <td class="p-2">${item.task}</td>
-            <td class="p-2 font-semibold text-asis-royal">${item.role} (${item.score} Mata)</td>
+            <td class="p-2 font-semibold text-blue-900">${item.role} (${item.score} Mata)</td>
           </tr>
         `).join('');
       };
@@ -1229,7 +2133,7 @@
       const html = `
         <div class="text-center border-b-2 border-slate-800 pb-4 mb-6">
           <div class="text-xs font-bold uppercase tracking-widest text-slate-600">Kementerian Pendidikan Malaysia</div>
-          <h2 class="text-base font-extrabold text-asis-navy uppercase mt-1">SEKOLAH MENENGAH SAINS ALAM SHAH (ASiS)</h2>
+          <h2 class="text-base font-extrabold text-corp-navy uppercase mt-1">SEKOLAH MENENGAH SAINS ALAM SHAH (ASiS)</h2>
           <div class="text-[11px] font-bold text-amber-700 tracking-wide mt-0.5">ASiS WORKLOAD AWARENESS SYSTEM (AWAS)</div>
           <p class="text-[10px] italic text-slate-500">"Bekerjasama Bekerja Sama-Sama"</p>
           <div class="mt-2 text-[11px] text-slate-600">Slip Analisis Beban Tugas Individu • Tarikh Cetakan: <b>${new Date().toLocaleString('ms-MY')}</b></div>
@@ -1237,30 +2141,30 @@
 
         <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6 text-xs">
           <div><b>NAMA GURU:</b> ${teacherName}</div>
-          <div><b>GRED JAWATAN:</b> <span class="px-2 py-0.5 rounded bg-blue-100 text-asis-navy font-bold">${teacherObj.grade}</span></div>
+          <div><b>GRED JAWATAN:</b> <span class="px-2 py-0.5 rounded bg-blue-100 text-corp-navy font-bold">${teacherObj.grade}</span></div>
           <div><b>JUMLAH MATA BEBAN:</b> <b class="text-amber-800 text-sm">${sc.grand} Mata</b></div>
           <div><b>PURATA GRED ${teacherObj.grade}:</b> <b>${sameGradeAvg} Mata</b></div>
         </div>
 
         <div class="space-y-4 text-xs">
           <div>
-            <h4 class="font-bold bg-slate-100 p-2 border-l-4 border-asis-navy">1. Pentadbiran (${sc.pScore} Mata)</h4>
+            <h4 class="font-bold bg-slate-100 p-2 border-l-4 border-corp-navy">1. Bahagian Pentadbiran (${sc.pScore} Mata)</h4>
             <table class="w-full text-left border mt-1"><thead><tr class="bg-slate-50 border-b"><th class="p-2 w-10 text-center">Bil</th><th class="p-2">Tugasan</th><th class="p-2">Jawatan & Mata</th></tr></thead><tbody>${renderDetailedDuties('Pentadbiran', 'pentadbiran')}</tbody></table>
           </div>
           <div>
-            <h4 class="font-bold bg-slate-100 p-2 border-l-4 border-blue-600">2. Kurikulum (${sc.kScore} Mata)</h4>
+            <h4 class="font-bold bg-slate-100 p-2 border-l-4 border-blue-600">2. Bahagian Kurikulum (${sc.kScore} Mata)</h4>
             <table class="w-full text-left border mt-1"><thead><tr class="bg-slate-50 border-b"><th class="p-2 w-10 text-center">Bil</th><th class="p-2">Tugasan</th><th class="p-2">Jawatan & Mata</th></tr></thead><tbody>${renderDetailedDuties('Kurikulum', 'kurikulum')}</tbody></table>
           </div>
           <div>
-            <h4 class="font-bold bg-slate-100 p-2 border-l-4 border-emerald-600">3. Hal Ehwal Murid (${sc.hScore} Mata)</h4>
+            <h4 class="font-bold bg-slate-100 p-2 border-l-4 border-emerald-600">3. Bahagian Hal Ehwal Murid (${sc.hScore} Mata)</h4>
             <table class="w-full text-left border mt-1"><thead><tr class="bg-slate-50 border-b"><th class="p-2 w-10 text-center">Bil</th><th class="p-2">Tugasan</th><th class="p-2">Jawatan & Mata</th></tr></thead><tbody>${renderDetailedDuties('HEM', 'hem')}</tbody></table>
           </div>
           <div>
-            <h4 class="font-bold bg-slate-100 p-2 border-l-4 border-amber-600">4. KoKurikulum (${sc.koScore} Mata)</h4>
-            <table class="w-full text-left border mt-1"><thead><tr class="bg-slate-50 border-b"><th class="p-2 w-10 text-center">Bil</th><th class="p-2">Tugasan</th><th class="p-2">Jawatan & Mata</th></tr></thead><tbody>${renderDetailedDuties('KoKurikulum', 'kokurikulum')}</tbody></table>
+            <h4 class="font-bold bg-slate-100 p-2 border-l-4 border-amber-600">4. Bahagian Kokurikulum (${sc.koScore} Mata)</h4>
+            <table class="w-full text-left border mt-1"><thead><tr class="bg-slate-50 border-b"><th class="p-2 w-10 text-center">Bil</th><th class="p-2">Tugasan</th><th class="p-2">Jawatan & Mata</th></tr></thead><tbody>${renderDetailedDuties('Kokurikulum', 'kokurikulum')}</tbody></table>
           </div>
           <div>
-            <h4 class="font-bold bg-slate-100 p-2 border-l-4 border-indigo-600">5. Pengurusan Asrama (${sc.aScore} Mata)</h4>
+            <h4 class="font-bold bg-slate-100 p-2 border-l-4 border-indigo-600">5. Bahagian Pengurusan Asrama (${sc.aScore} Mata)</h4>
             <table class="w-full text-left border mt-1"><thead><tr class="bg-slate-50 border-b"><th class="p-2 w-10 text-center">Bil</th><th class="p-2">Tugasan</th><th class="p-2">Jawatan & Mata</th></tr></thead><tbody>${renderDetailedDuties('Asrama', 'asrama')}</tbody></table>
           </div>
         </div>
@@ -1269,7 +2173,7 @@
           <div>
             <div class="h-16"></div>
             <div class="font-bold uppercase">${teacherName}</div>
-            <div class="text-[10px] text-slate-500">Guru Bertugas</div>
+            <div class="text-[10px] text-slate-500">Tandatangan Pegawai / Guru</div>
           </div>
           <div>
             <div class="h-16"></div>
@@ -1295,7 +2199,7 @@
           <tr class="border-b border-slate-200">
             <td class="p-2 text-center">${idx + 1}</td>
             <td class="p-2 font-semibold">${g.name}</td>
-            <td class="p-2 text-center font-bold text-asis-navy">${g.grade}</td>
+            <td class="p-2 text-center font-bold text-corp-navy">${g.grade}</td>
             <td class="p-2 text-center">${sc.pScore}</td>
             <td class="p-2 text-center">${sc.kScore}</td>
             <td class="p-2 text-center">${sc.hScore}</td>
@@ -1310,7 +2214,7 @@
       const html = `
         <div class="text-center border-b-2 border-slate-800 pb-4 mb-6">
           <div class="text-xs font-bold uppercase tracking-widest text-slate-600">Kementerian Pendidikan Malaysia</div>
-          <h2 class="text-base font-extrabold text-asis-navy uppercase mt-1">SEKOLAH MENENGAH SAINS ALAM SHAH (ASiS)</h2>
+          <h2 class="text-base font-extrabold text-corp-navy uppercase mt-1">SEKOLAH MENENGAH SAINS ALAM SHAH (ASiS)</h2>
           <div class="text-[11px] font-bold text-amber-700 tracking-wide mt-0.5">ASiS WORKLOAD AWARENESS SYSTEM (AWAS)</div>
           <p class="text-[10px] italic text-slate-500">"Bekerjasama Bekerja Sama-Sama"</p>
           <div class="mt-2 text-[11px] text-slate-600">Laporan Analisis Komprehensif Beban Tugas • Tarikh Cetakan: <b>${new Date().toLocaleString('ms-MY')}</b></div>
@@ -1325,7 +2229,7 @@
               <th class="p-2 text-center">Ptd</th>
               <th class="p-2 text-center">Kur</th>
               <th class="p-2 text-center">HEM</th>
-              <th class="p-2 text-center">KoK</th>
+              <th class="p-2 text-center">Kok</th>
               <th class="p-2 text-center">Asr</th>
               <th class="p-2 text-center font-bold">Mata</th>
               <th class="p-2 text-center">Status</th>
@@ -1349,9 +2253,11 @@
       openPrintModal('AWAS_Laporan_Analisis_Beban_Gred_DG', html);
     }
 
-    // Teacher Profile & Search
+    // Profil Carian Guru
     function populateSearchTeacherDropdown() {
       const select = document.getElementById('searchTeacherSelect');
+      if (!select) return;
+      const curVal = select.value;
       select.innerHTML = '<option value="">-- Pilih Guru Untuk Paparan Profil --</option>';
       state.guruList.forEach(g => {
         const opt = document.createElement('option');
@@ -1359,13 +2265,18 @@
         opt.textContent = `${g.name} (${g.grade})`;
         select.appendChild(opt);
       });
+      if (curVal && state.guruList.some(g => g.name === curVal)) {
+        select.value = curVal;
+      }
     }
 
     function renderTeacherProfile() {
-      const name = document.getElementById('searchTeacherSelect').value;
+      const select = document.getElementById('searchTeacherSelect');
+      if (!select) return;
+      const name = select.value;
       const card = document.getElementById('teacherProfileCard');
       if (!name) {
-        card.innerHTML = '<p class="text-slate-500 text-center py-10">Sila pilih nama guru di atas untuk melihat maklumat terperinci penyerahan tugas.</p>';
+        card.innerHTML = '<p class="text-slate-400 text-center py-12 text-xs">Sila pilih nama guru di atas untuk melihat maklumat terperinci penyerahan tugas.</p>';
         return;
       }
 
@@ -1375,7 +2286,7 @@
       const getListHTML = (cat) => {
         const list = duties[cat] || [];
         if (list.length === 0) return '<p class="text-xs text-slate-400 italic">Tiada tugas ditetapkan</p>';
-        return list.map(d => `<li class="flex justify-between text-xs py-1 border-b border-slate-100"><span>${d.task} <b class="text-asis-royal">(${d.role})</b></span><span class="font-bold text-amber-700">${d.score} Mata</span></li>`).join('');
+        return list.map(d => `<li class="flex justify-between text-xs py-1 border-b border-slate-100"><span>${d.task} <b class="text-blue-900 font-semibold">(${d.role})</b></span><span class="font-bold text-amber-700">${d.score} Mata</span></li>`).join('');
       };
 
       const sc = getTeacherScores(name);
@@ -1383,42 +2294,44 @@
       card.innerHTML = `
         <div class="border-b border-slate-200 pb-4 mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <div>
-            <h3 class="text-lg font-bold text-asis-navy">${name}</h3>
-            <p class="text-xs text-slate-500">Gred Jawatan: <b class="text-asis-royal">${teacherObj.grade}</b></p>
+            <h3 class="text-base font-bold text-corp-navy">${name}</h3>
+            <p class="text-xs text-slate-500">Gred Jawatan Hakiki: <b class="text-blue-900">${teacherObj.grade}</b></p>
           </div>
-          <div class="badge-score px-4 py-1.5 rounded-xl font-bold text-sm text-asis-navy">
-            Jumlah Mata Beban (AWAS): <span class="text-amber-800 text-lg">${sc.grand}</span>
+          <div class="badge-metric px-4 py-2 rounded-xl font-bold text-xs text-corp-navy flex items-center gap-2">
+            <span>Jumlah Mata Beban (AWAS):</span>
+            <span class="text-amber-800 text-base font-black">${sc.grand}</span>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div class="bg-white p-3 rounded-xl border border-slate-200">
-            <h4 class="font-bold text-xs text-asis-navy border-b pb-1 mb-2">Pentadbiran (${sc.pScore} Mata)</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+            <h4 class="font-bold text-xs text-corp-navy border-b pb-1 mb-2">Pentadbiran (${sc.pScore} Mata)</h4>
             <ul class="space-y-1">${getListHTML('pentadbiran')}</ul>
           </div>
-          <div class="bg-white p-3 rounded-xl border border-slate-200">
+          <div class="bg-white p-3.5 rounded-xl border border-slate-200">
             <h4 class="font-bold text-xs text-blue-700 border-b pb-1 mb-2">Kurikulum (${sc.kScore} Mata)</h4>
             <ul class="space-y-1">${getListHTML('kurikulum')}</ul>
           </div>
-          <div class="bg-white p-3 rounded-xl border border-slate-200">
-            <h4 class="font-bold text-xs text-emerald-700 border-b pb-1 mb-2">HEM (${sc.hScore} Mata)</h4>
+          <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+            <h4 class="font-bold text-xs text-emerald-700 border-b pb-1 mb-2">Hal Ehwal Murid (${sc.hScore} Mata)</h4>
             <ul class="space-y-1">${getListHTML('hem')}</ul>
           </div>
-          <div class="bg-white p-3 rounded-xl border border-slate-200">
-            <h4 class="font-bold text-xs text-amber-700 border-b pb-1 mb-2">KoKurikulum (${sc.koScore} Mata)</h4>
+          <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+            <h4 class="font-bold text-xs text-amber-700 border-b pb-1 mb-2">Kokurikulum (${sc.koScore} Mata)</h4>
             <ul class="space-y-1">${getListHTML('kokurikulum')}</ul>
           </div>
-          <div class="bg-white p-3 rounded-xl border border-slate-200">
-            <h4 class="font-bold text-xs text-indigo-700 border-b pb-1 mb-2">Asrama (${sc.aScore} Mata)</h4>
+          <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+            <h4 class="font-bold text-xs text-indigo-700 border-b pb-1 mb-2">Pengurusan Asrama (${sc.aScore} Mata)</h4>
             <ul class="space-y-1">${getListHTML('asrama')}</ul>
           </div>
         </div>
       `;
     }
 
-    // Master Table & CSV Export
+    // Jadual Induk & Eksport CSV
     function renderMasterTable() {
       const tbody = document.getElementById('masterTableBody');
+      if (!tbody) return;
       tbody.innerHTML = '';
 
       state.guruList.forEach((g, idx) => {
@@ -1430,15 +2343,15 @@
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
         tr.innerHTML = `
-          <td class="p-3">${idx + 1}</td>
-          <td class="p-3 font-semibold text-asis-navy">${g.name}</td>
+          <td class="p-3 text-center text-slate-500 font-bold">${idx + 1}</td>
+          <td class="p-3 font-semibold text-corp-navy">${g.name}</td>
           <td class="p-3 text-center font-bold text-slate-600">${g.grade}</td>
           <td class="p-3 text-center">${sc.pScore}</td>
           <td class="p-3 text-center">${sc.kScore}</td>
           <td class="p-3 text-center">${sc.hScore}</td>
           <td class="p-3 text-center">${sc.koScore}</td>
           <td class="p-3 text-center">${sc.aScore}</td>
-          <td class="p-3 text-center font-extrabold text-amber-700 text-sm">${sc.grand}</td>
+          <td class="p-3 text-center font-black text-amber-800 text-sm">${sc.grand}</td>
           <td class="p-3 text-center">${statusBadge}</td>
         `;
         tbody.appendChild(tr);
@@ -1446,7 +2359,7 @@
     }
 
     function exportToCSV() {
-      let csv = 'Bil,Nama Guru,Gred,Pentadbiran,Kurikulum,HEM,KoKurikulum,Asrama,Jumlah Mata AWAS,Status Beban\n';
+      let csv = 'Bil,Nama Guru,Gred,Pentadbiran,Kurikulum,HEM,Kokurikulum,Asrama,Jumlah Mata AWAS,Status Beban\n';
       state.guruList.forEach((g, idx) => {
         const sc = getTeacherScores(g.name);
         const status = sc.grand > 20 ? 'Tinggi' : (sc.grand < 8 ? 'Rendah' : 'Seimbang');
@@ -1462,19 +2375,31 @@
       saveToStorage('Eksport Data CSV AWAS Sekolah');
     }
 
-    // Settings Management
+    // Panel Tetapan
     function renderSettingLists() {
       document.getElementById('teacherCountBadge').textContent = `${state.guruList.length} Guru`;
       const tContainer = document.getElementById('teachersList');
       tContainer.innerHTML = '';
+
+      const isSuperAdmin = currentUser && currentUser.role === 'superadmin';
+      const isLocked = !isSuperAdmin;
+
       state.guruList.forEach((g, idx) => {
         const item = document.createElement('div');
-        item.className = 'flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200';
+        item.className = 'flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200 hover:border-amber-300 transition';
         item.innerHTML = `
-          <span class="font-semibold text-slate-700">${g.name} <b class="text-asis-royal">(${g.grade})</b></span>
-          <button onclick="deleteTeacher(${idx})" class="text-rose-500 hover:text-rose-700 p-1" title="Padam Guru">
-            <i class="fa-solid fa-trash-can"></i>
-          </button>
+          <div class="flex items-center gap-2">
+            <span class="font-semibold text-slate-700">${g.name}</span>
+            <span class="bg-blue-100 text-corp-navy font-bold px-2 py-0.5 rounded text-[10px]">${g.grade}</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="openEditTeacherModal(${idx})" ${isLocked ? 'disabled' : ''} class="${isLocked ? 'opacity-30 cursor-not-allowed text-slate-400' : 'text-amber-600 hover:text-amber-800'} p-1" title="Kemaskini Guru & Gred">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button onclick="deleteTeacher(${idx})" ${isLocked ? 'disabled' : ''} class="${isLocked ? 'opacity-30 cursor-not-allowed text-slate-400' : 'text-rose-500 hover:text-rose-700'} p-1" title="Padam Guru">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
         `;
         tContainer.appendChild(item);
       });
@@ -1484,12 +2409,15 @@
       rContainer.innerHTML = '';
       state.jawatanList.forEach((r, idx) => {
         const item = document.createElement('div');
-        item.className = 'flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200';
+        item.className = 'flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200 hover:border-amber-300 transition';
         item.innerHTML = `
           <span class="font-semibold text-slate-700">${r.title}</span>
           <div class="flex items-center gap-2">
             <span class="bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded text-[10px]">${r.score} Mata</span>
-            <button onclick="deleteRole(${idx})" class="text-rose-500 hover:text-rose-700 p-1" title="Padam Jawatan">
+            <button onclick="openEditRoleModal(${idx})" ${isLocked ? 'disabled' : ''} class="${isLocked ? 'opacity-30 cursor-not-allowed text-slate-400' : 'text-amber-600 hover:text-amber-800'} p-1" title="Kemaskini Jawatan / Mata">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button onclick="deleteRole(${idx})" ${isLocked ? 'disabled' : ''} class="${isLocked ? 'opacity-30 cursor-not-allowed text-slate-400' : 'text-rose-500 hover:text-rose-700'} p-1" title="Padam Jawatan">
               <i class="fa-solid fa-trash-can"></i>
             </button>
           </div>
@@ -1499,56 +2427,189 @@
 
       renderSettingTasksList();
       renderAuditLogs();
+      renderRegisteredUsersList();
     }
 
     function addNewTeacher() {
+      if (!currentUser || currentUser.role !== 'superadmin') {
+        return showNotification('Hanya Super Admin dibenarkan menambah guru baharu.', true);
+      }
+
       const nameInp = document.getElementById('newTeacherName');
       const gradeInp = document.getElementById('newTeacherGrade');
       const name = nameInp.value.trim().toUpperCase();
       const grade = gradeInp.value;
 
-      if (!name) return alert('Sila masukkan nama guru.');
-      if (state.guruList.some(g => g.name === name)) return alert('Nama guru ini sudah wujud.');
+      if (!name) return showNotification('Sila masukkan nama guru.', true);
+      if (state.guruList.some(g => g.name === name)) return showNotification('Nama guru ini sudah wujud.', true);
 
       state.guruList.push({ name, grade });
       nameInp.value = '';
       saveToStorage(`Tambah guru baharu: ${name} (${grade})`);
       renderSettingLists();
+      refreshEntireSystem();
+      showNotification(`Guru baharu ${name} (${grade}) berjaya didaftarkan!`);
     }
 
-    function deleteTeacher(idx) {
+    function openEditTeacherModal(idx) {
+      if (!currentUser || currentUser.role !== 'superadmin') {
+        return showNotification('Hanya Super Admin dibenarkan menyunting maklumat guru.', true);
+      }
       const teacher = state.guruList[idx];
-      if (confirm(`Adakah anda pasti ingin memadam ${teacher.name}? Semua agihan tugasnya dalam AWAS turut akan dipadam.`)) {
-        state.guruList.splice(idx, 1);
-        delete state.agihanTugas[teacher.name];
-        saveToStorage(`Padam guru: ${teacher.name}`);
+      document.getElementById('editTeacherOriginalName').value = teacher.name;
+      document.getElementById('editTeacherNameInput').value = teacher.name;
+      document.getElementById('editTeacherGradeSelect').value = teacher.grade || 'DG12';
+      document.getElementById('editTeacherModal').classList.remove('hidden');
+    }
+
+    function closeEditTeacherModal() {
+      document.getElementById('editTeacherModal').classList.add('hidden');
+    }
+
+    function saveEditedTeacher() {
+      const originalName = document.getElementById('editTeacherOriginalName').value;
+      const newName = document.getElementById('editTeacherNameInput').value.trim().toUpperCase();
+      const newGrade = document.getElementById('editTeacherGradeSelect').value;
+
+      if (!newName) return showNotification('Sila masukkan nama guru.', true);
+      if (newName !== originalName && state.guruList.some(g => g.name === newName)) {
+        return showNotification('Nama guru ini sudah wujud.', true);
+      }
+
+      const teacher = state.guruList.find(g => g.name === originalName);
+      if (teacher) {
+        teacher.name = newName;
+        teacher.grade = newGrade;
+
+        if (originalName !== newName && state.agihanTugas[originalName]) {
+          state.agihanTugas[newName] = state.agihanTugas[originalName];
+          delete state.agihanTugas[originalName];
+        }
+
+        saveToStorage(`Kemaskini maklumat guru: ${originalName} -> ${newName} (${newGrade})`);
+        closeEditTeacherModal();
         renderSettingLists();
+        refreshEntireSystem();
+        showNotification('Maklumat guru berjaya dikemaskini!');
       }
     }
 
+    function deleteTeacher(idx) {
+      if (!currentUser || currentUser.role !== 'superadmin') {
+        return showNotification('Hanya Super Admin dibenarkan memadam guru.', true);
+      }
+      const teacher = state.guruList[idx];
+      if (!teacher) return;
+      const deletedName = teacher.name;
+
+      openConfirmDialog(
+        `Padam Guru: ${deletedName}`,
+        `Adakah anda pasti ingin memadam "${deletedName}"? Semua data agihan tugas guru ini dalam 5 portfolio AWAS akan dipadam sepenuhnya.`,
+        () => {
+          state.guruList.splice(idx, 1);
+          if (state.agihanTugas && state.agihanTugas[deletedName]) {
+            delete state.agihanTugas[deletedName];
+          }
+          saveToStorage(`Padam rekod guru: ${deletedName}`);
+          renderSettingLists();
+          refreshEntireSystem();
+          showNotification(`Guru ${deletedName} dan rekod tugasan berkaitan berjaya dipadam.`);
+        }
+      );
+    }
+
     function addNewRole() {
+      if (!currentUser || currentUser.role !== 'superadmin') {
+        return showNotification('Hanya Super Admin dibenarkan menambah jawatan baharu.', true);
+      }
       const nameInp = document.getElementById('newRoleName');
       const scoreInp = document.getElementById('newRoleScore');
       const title = nameInp.value.trim();
       const score = parseInt(scoreInp.value) || 0;
 
-      if (!title) return alert('Sila masukkan nama jawatan.');
-      if (state.jawatanList.some(j => j.title.toLowerCase() === title.toLowerCase())) return alert('Jawatan ini telah wujud.');
+      if (!title) return showNotification('Sila masukkan nama jawatan.', true);
+      if (state.jawatanList.some(j => j.title.toLowerCase() === title.toLowerCase())) return showNotification('Jawatan ini telah wujud.', true);
 
       state.jawatanList.push({ title, score });
       nameInp.value = '';
       scoreInp.value = '';
-      saveToStorage(`Tambah jawatan: ${title} (${score} Mata)`);
+      saveToStorage(`Tambah jawatan baharu: ${title} (${score} Mata)`);
       renderSettingLists();
+      refreshEntireSystem();
+      showNotification(`Jawatan "${title}" (${score} Mata) berjaya ditambah!`);
+    }
+
+    function openEditRoleModal(idx) {
+      if (!currentUser || currentUser.role !== 'superadmin') {
+        return showNotification('Hanya Super Admin dibenarkan menyunting jawatan.', true);
+      }
+      const role = state.jawatanList[idx];
+      document.getElementById('editRoleOriginalTitle').value = role.title;
+      document.getElementById('editRoleTitleInput').value = role.title;
+      document.getElementById('editRoleScoreInput').value = role.score;
+      document.getElementById('editRoleModal').classList.remove('hidden');
+    }
+
+    function closeEditRoleModal() {
+      document.getElementById('editRoleModal').classList.add('hidden');
+    }
+
+    function saveEditedRole() {
+      const originalTitle = document.getElementById('editRoleOriginalTitle').value;
+      const newTitle = document.getElementById('editRoleTitleInput').value.trim();
+      const newScore = parseInt(document.getElementById('editRoleScoreInput').value) || 0;
+
+      if (!newTitle) return showNotification('Sila masukkan nama jawatan.', true);
+      if (newTitle.toLowerCase() !== originalTitle.toLowerCase() && state.jawatanList.some(j => j.title.toLowerCase() === newTitle.toLowerCase())) {
+        return showNotification('Nama jawatan ini sudah wujud.', true);
+      }
+
+      const roleObj = state.jawatanList.find(r => r.title === originalTitle);
+      if (roleObj) {
+        roleObj.title = newTitle;
+        roleObj.score = newScore;
+
+        Object.keys(state.agihanTugas).forEach(tName => {
+          const tDuties = state.agihanTugas[tName];
+          ['pentadbiran', 'kurikulum', 'hem', 'kokurikulum', 'asrama'].forEach(cat => {
+            if (Array.isArray(tDuties[cat])) {
+              tDuties[cat].forEach(d => {
+                if (d.role === originalTitle) {
+                  d.role = newTitle;
+                  d.score = newScore;
+                }
+              });
+            }
+          });
+        });
+
+        saveToStorage(`Kemaskini jawatan: ${originalTitle} -> ${newTitle} (${newScore} Mata)`);
+        closeEditRoleModal();
+        renderSettingLists();
+        refreshEntireSystem();
+        showNotification('Maklumat jawatan dan mata pemberatan berjaya dikemaskini!');
+      }
     }
 
     function deleteRole(idx) {
-      const role = state.jawatanList[idx];
-      if (confirm(`Adakah anda pasti ingin memadam jawatan "${role.title}"?`)) {
-        state.jawatanList.splice(idx, 1);
-        saveToStorage(`Padam jawatan: ${role.title}`);
-        renderSettingLists();
+      if (!currentUser || currentUser.role !== 'superadmin') {
+        return showNotification('Hanya Super Admin dibenarkan memadam jawatan.', true);
       }
+      const role = state.jawatanList[idx];
+      if (!role) return;
+      const deletedTitle = role.title;
+
+      openConfirmDialog(
+        `Padam Jawatan: ${deletedTitle}`,
+        `Adakah anda pasti ingin memadam jawatan "${deletedTitle}"? Jawatan ini tidak lagi akan muncul dalam senarai pilihan portfolio.`,
+        () => {
+          state.jawatanList.splice(idx, 1);
+          saveToStorage(`Padam jawatan: ${deletedTitle}`);
+          renderSettingLists();
+          refreshEntireSystem();
+          showNotification(`Jawatan "${deletedTitle}" berjaya dipadam.`);
+        }
+      );
     }
 
     function switchTaskSettingSection(cat) {
@@ -1556,9 +2617,9 @@
       ['pentadbiran', 'kurikulum', 'hem', 'kokurikulum', 'asrama'].forEach(c => {
         const btn = document.getElementById(`btnSettingCat-${c}`);
         if (c === cat) {
-          btn.className = 'px-2.5 py-1 rounded bg-asis-navy text-amber-400';
+          btn.className = 'px-2.5 py-1 rounded bg-corp-navy text-amber-400 font-bold';
         } else {
-          btn.className = 'px-2.5 py-1 rounded text-slate-600 hover:text-asis-navy';
+          btn.className = 'px-2.5 py-1 rounded text-slate-600 hover:text-corp-navy font-semibold';
         }
       });
       renderSettingTasksList();
@@ -1567,51 +2628,115 @@
     function renderSettingTasksList() {
       const container = document.getElementById('sectionTasksList');
       container.innerHTML = '';
+      const isSuperAdmin = currentUser && currentUser.role === 'superadmin';
+      const isLocked = !isSuperAdmin;
       const list = state.portfolioTasks[currentSettingTaskCategory] || [];
+
       list.forEach((t, idx) => {
         const item = document.createElement('div');
-        item.className = 'flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200';
+        item.className = 'flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200 hover:border-amber-300 transition';
         item.innerHTML = `
           <span class="font-semibold text-slate-700">${t}</span>
-          <button onclick="deleteTaskFromSection(${idx})" class="text-rose-500 hover:text-rose-700 p-1" title="Padam Tugasan">
-            <i class="fa-solid fa-trash-can"></i>
-          </button>
+          <div class="flex items-center gap-1.5">
+            <button onclick="editTaskInSection(${idx})" ${isLocked ? 'disabled' : ''} class="${isLocked ? 'opacity-30 cursor-not-allowed text-slate-400' : 'text-amber-600 hover:text-amber-800'} p-1" title="Kemaskini Nama Tugasan">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button onclick="deleteTaskFromSection(${idx})" ${isLocked ? 'disabled' : ''} class="${isLocked ? 'opacity-30 cursor-not-allowed text-slate-400' : 'text-rose-500 hover:text-rose-700'} p-1" title="Padam Tugasan">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
         `;
         container.appendChild(item);
       });
     }
 
     function addNewTaskToSection() {
+      if (!currentUser || currentUser.role !== 'superadmin') {
+        return showNotification('Hanya Super Admin dibenarkan menambah tugasan portfolio.', true);
+      }
       const inp = document.getElementById('newTaskTitle');
       const val = inp.value.trim();
-      if (!val) return alert('Sila masukkan nama tugasan.');
+      if (!val) return showNotification('Sila masukkan nama tugasan.', true);
       if (!state.portfolioTasks[currentSettingTaskCategory]) state.portfolioTasks[currentSettingTaskCategory] = [];
-      if (state.portfolioTasks[currentSettingTaskCategory].includes(val)) return alert('Tugasan ini sudah wujud dalam kategori ini.');
+      if (state.portfolioTasks[currentSettingTaskCategory].includes(val)) return showNotification('Tugasan ini sudah wujud dalam kategori ini.', true);
 
       state.portfolioTasks[currentSettingTaskCategory].push(val);
       inp.value = '';
       saveToStorage(`Tambah tugasan ${currentSettingTaskCategory.toUpperCase()}: ${val}`);
       renderSettingTasksList();
+      refreshEntireSystem();
+      showNotification(`Tugasan baharu berjaya ditambah ke ${currentSettingTaskCategory.toUpperCase()}!`);
+    }
+
+    function editTaskInSection(idx) {
+      if (!currentUser || currentUser.role !== 'superadmin') {
+        return showNotification('Hanya Super Admin dibenarkan menyunting tugasan.', true);
+      }
+      const list = state.portfolioTasks[currentSettingTaskCategory];
+      const oldVal = list[idx];
+      const newVal = prompt(`Kemaskini nama tugasan / jawatankuasa bagi ${currentSettingTaskCategory.toUpperCase()}:`, oldVal);
+      if (newVal && newVal.trim() && newVal.trim() !== oldVal) {
+        list[idx] = newVal.trim();
+        Object.keys(state.agihanTugas).forEach(tName => {
+          const tDuties = state.agihanTugas[tName];
+          if (Array.isArray(tDuties[currentSettingTaskCategory])) {
+            tDuties[currentSettingTaskCategory].forEach(d => {
+              if (d.task === oldVal) d.task = newVal.trim();
+            });
+          }
+        });
+        saveToStorage(`Kemaskini tugasan ${currentSettingTaskCategory.toUpperCase()}: ${oldVal} -> ${newVal.trim()}`);
+        renderSettingTasksList();
+        refreshEntireSystem();
+        showNotification('Nama tugasan berjaya dikemaskini!');
+      }
     }
 
     function deleteTaskFromSection(idx) {
+      if (!currentUser || currentUser.role !== 'superadmin') {
+        return showNotification('Hanya Super Admin dibenarkan memadam tugasan.', true);
+      }
       const list = state.portfolioTasks[currentSettingTaskCategory];
       const task = list[idx];
-      if (confirm(`Padam tugasan "${task}" daripada ${currentSettingTaskCategory.toUpperCase()}?`)) {
-        list.splice(idx, 1);
-        saveToStorage(`Padam tugasan ${currentSettingTaskCategory.toUpperCase()}: ${task}`);
-        renderSettingTasksList();
-      }
+      if (!task) return;
+
+      openConfirmDialog(
+        `Padam Tugasan: ${task}`,
+        `Adakah anda pasti ingin memadam tugasan "${task}" daripada portfolio ${currentSettingTaskCategory.toUpperCase()}?`,
+        () => {
+          list.splice(idx, 1);
+          saveToStorage(`Padam tugasan ${currentSettingTaskCategory.toUpperCase()}: ${task}`);
+          renderSettingTasksList();
+          refreshEntireSystem();
+          showNotification(`Tugasan "${task}" berjaya dipadam daripada ${currentSettingTaskCategory.toUpperCase()}.`);
+        }
+      );
     }
 
     function renderAuditLogs() {
       const container = document.getElementById('auditLogContainer');
       if (!container) return;
       if (!state.auditLogs || state.auditLogs.length === 0) {
-        container.innerHTML = '<div>> Sistem AWAS sedia dan beroperasi secara selamat.</div>';
+        container.innerHTML = '<div>> Sistem AWAS sedia dan beroperasi secara selamat dengan kawalan log audit.</div>';
         return;
       }
       container.innerHTML = state.auditLogs.map(l => `<div>[${l.timestamp}] <b>${l.user}</b>: ${l.action}</div>`).join('');
+    }
+
+    function clearAuditLogs() {
+      if (!currentUser || currentUser.role !== 'superadmin') {
+        return showNotification('Hanya Super Admin dibenarkan mengosongkan log audit.', true);
+      }
+      openConfirmDialog(
+        "Kosongkan Log Audit",
+        "Adakah anda pasti ingin mengosongkan keseluruhan rekod jejak audit aktiviti sistem AWAS?",
+        () => {
+          state.auditLogs = [];
+          saveToStorage('Log audit dikosongkan oleh Super Admin');
+          renderAuditLogs();
+          showNotification('Log audit telah dikosongkan.');
+        }
+      );
     }
 
     function exportAuditLogCSV() {
@@ -1625,9 +2750,27 @@
       link.setAttribute('href', url);
       link.setAttribute('download', `AWAS_Audit_Log_${new Date().toISOString().slice(0,10)}.csv`);
       link.click();
+      saveToStorage('Eksport Log Audit Aktiviti AWAS');
     }
 
-    // JSON Backup & Restore
+    function resetSystemToDefault() {
+      if (!currentUser || currentUser.role !== 'superadmin') {
+        return showNotification('Hanya Super Admin dibenarkan mengeset semula sistem AWAS.', true);
+      }
+      openConfirmDialog(
+        "PERINGATAN: Set Semula Sistem AWAS",
+        "Adakah anda pasti ingin mengeset semula sistem AWAS kepada data asal? Semua rekod penugasan guru yang telah disimpan akan dipadam sepenuhnya.",
+        () => {
+          state = JSON.parse(JSON.stringify(defaultState));
+          saveToStorage('Sistem AWAS diset semula kepada tetapan kilang lalai');
+          showNotification("Sistem AWAS telah diset semula.");
+          setTimeout(() => {
+            location.reload();
+          }, 800);
+        }
+      );
+    }
+
     function exportJSONBackup() {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
       const a = document.createElement('a');
@@ -1638,6 +2781,9 @@
     }
 
     function importJSONBackup(evt) {
+      if (!currentUser || currentUser.role !== 'superadmin') {
+        return showNotification('Hanya Super Admin dibenarkan memuat naik pangkalan data JSON.', true);
+      }
       const file = evt.target.files[0];
       if (!file) return;
       const reader = new FileReader();
@@ -1647,19 +2793,21 @@
           if (imported.guruList && imported.jawatanList) {
             state = imported;
             saveToStorage('Pemulihan Sandaran Sistem AWAS Berjaya (JSON)');
-            alert('Data sistem AWAS berjaya dipulihkan sepenuhnya!');
-            location.reload();
+            showNotification('Data sistem AWAS berjaya dipulihkan sepenuhnya!');
+            setTimeout(() => {
+              location.reload();
+            }, 800);
           } else {
-            alert('Format fail JSON tidak sah.');
+            showNotification('Format fail JSON tidak sah.', true);
           }
         } catch (err) {
-          alert('Ralat membaca fail sandaran: ' + err.message);
+          showNotification('Ralat membaca fail sandaran: ' + err.message, true);
         }
       };
       reader.readAsText(file);
     }
 
-    // Print & Document Generation
+    // Modal Pratonton Dokumen Rasmi & Enjin Cetakan
     function openPrintModal(title, htmlContent) {
       currentPrintDocTitle = title;
       currentPrintHTMLContent = htmlContent;
@@ -1696,11 +2844,11 @@
       const newWin = window.open('', '_blank');
       newWin.document.write(`
         <!DOCTYPE html>
-        <html>
+        <html lang="ms">
         <head>
           <title>${currentPrintDocTitle}</title>
           <script src="https://cdn.tailwindcss.com"><\/script>
-          <style>body{padding:20px; font-family:sans-serif;}</style>
+          <style>body{padding:24px; font-family:'Inter', sans-serif; color:#1e293b;}</style>
         </head>
         <body>
           <div class="max-w-4xl mx-auto">${currentPrintHTMLContent}</div>
@@ -1713,7 +2861,7 @@
 
     function printIndividualDutySheet() {
       const name = document.getElementById('searchTeacherSelect').value;
-      if (!name) return alert('Sila pilih nama guru terlebih dahulu.');
+      if (!name) return showNotification('Sila pilih nama guru terlebih dahulu.', true);
       const teacherObj = state.guruList.find(g => g.name === name) || { grade: '-' };
       const duties = state.agihanTugas[name] || {};
 
@@ -1723,9 +2871,9 @@
         }
         return items.map((it, i) => `
           <tr class="border-b border-slate-200">
-            <td class="p-2">${i + 1}</td>
+            <td class="p-2 text-center">${i + 1}</td>
             <td class="p-2 font-medium">${it.task}</td>
-            <td class="p-2 font-semibold text-asis-royal">${it.role}</td>
+            <td class="p-2 font-semibold text-blue-900">${it.role}</td>
           </tr>
         `).join('');
       };
@@ -1733,7 +2881,7 @@
       const html = `
         <div class="text-center border-b-2 border-slate-800 pb-4 mb-6">
           <div class="text-xs font-bold uppercase tracking-widest text-slate-600">Kementerian Pendidikan Malaysia</div>
-          <h2 class="text-base font-extrabold text-asis-navy uppercase mt-1">SEKOLAH MENENGAH SAINS ALAM SHAH (ASiS)</h2>
+          <h2 class="text-base font-extrabold text-corp-navy uppercase mt-1">SEKOLAH MENENGAH SAINS ALAM SHAH (ASiS)</h2>
           <div class="text-[11px] font-bold text-amber-700 tracking-wide mt-0.5">ASiS WORKLOAD AWARENESS SYSTEM (AWAS)</div>
           <p class="text-[10px] italic text-slate-500">"Bekerjasama Bekerja Sama-Sama"</p>
           <div class="inline-block mt-3 px-4 py-1 border border-slate-800 font-extrabold text-xs uppercase bg-slate-50">
@@ -1750,9 +2898,9 @@
 
         <div class="space-y-4">
           <div>
-            <h4 class="font-bold text-xs bg-slate-100 p-2 border-l-4 border-asis-navy">1. BAHAGIAN PENTADBIRAN</h4>
+            <h4 class="font-bold text-xs bg-slate-100 p-2 border-l-4 border-corp-navy">1. BAHAGIAN PENTADBIRAN</h4>
             <table class="w-full text-left text-xs border border-slate-200 mt-1">
-              <thead><tr class="bg-slate-50 border-b"><th class="p-2 w-10">Bil</th><th class="p-2">Jawatankuasa / Tugasan</th><th class="p-2">Jawatan</th></tr></thead>
+              <thead><tr class="bg-slate-50 border-b"><th class="p-2 w-10 text-center">Bil</th><th class="p-2">Jawatankuasa / Tugasan</th><th class="p-2">Jawatan</th></tr></thead>
               <tbody>${renderSectionRows('Pentadbiran', duties.pentadbiran)}</tbody>
             </table>
           </div>
@@ -1760,7 +2908,7 @@
           <div>
             <h4 class="font-bold text-xs bg-slate-100 p-2 border-l-4 border-blue-600">2. BAHAGIAN KURIKULUM</h4>
             <table class="w-full text-left text-xs border border-slate-200 mt-1">
-              <thead><tr class="bg-slate-50 border-b"><th class="p-2 w-10">Bil</th><th class="p-2">Jawatankuasa / Tugasan</th><th class="p-2">Jawatan</th></tr></thead>
+              <thead><tr class="bg-slate-50 border-b"><th class="p-2 w-10 text-center">Bil</th><th class="p-2">Jawatankuasa / Tugasan</th><th class="p-2">Jawatan</th></tr></thead>
               <tbody>${renderSectionRows('Kurikulum', duties.kurikulum)}</tbody>
             </table>
           </div>
@@ -1768,7 +2916,7 @@
           <div>
             <h4 class="font-bold text-xs bg-slate-100 p-2 border-l-4 border-emerald-600">3. BAHAGIAN HAL EHWAL MURID (HEM)</h4>
             <table class="w-full text-left text-xs border border-slate-200 mt-1">
-              <thead><tr class="bg-slate-50 border-b"><th class="p-2 w-10">Bil</th><th class="p-2">Jawatankuasa / Tugasan</th><th class="p-2">Jawatan</th></tr></thead>
+              <thead><tr class="bg-slate-50 border-b"><th class="p-2 w-10 text-center">Bil</th><th class="p-2">Jawatankuasa / Tugasan</th><th class="p-2">Jawatan</th></tr></thead>
               <tbody>${renderSectionRows('HEM', duties.hem)}</tbody>
             </table>
           </div>
@@ -1776,15 +2924,15 @@
           <div>
             <h4 class="font-bold text-xs bg-slate-100 p-2 border-l-4 border-amber-600">4. BAHAGIAN KOKURIKULUM</h4>
             <table class="w-full text-left text-xs border border-slate-200 mt-1">
-              <thead><tr class="bg-slate-50 border-b"><th class="p-2 w-10">Bil</th><th class="p-2">Jawatankuasa / Tugasan</th><th class="p-2">Jawatan</th></tr></thead>
-              <tbody>${renderSectionRows('KoKurikulum', duties.kokurikulum)}</tbody>
+              <thead><tr class="bg-slate-50 border-b"><th class="p-2 w-10 text-center">Bil</th><th class="p-2">Jawatankuasa / Tugasan</th><th class="p-2">Jawatan</th></tr></thead>
+              <tbody>${renderSectionRows('Kokurikulum', duties.kokurikulum)}</tbody>
             </table>
           </div>
 
           <div>
-            <h4 class="font-bold text-xs bg-slate-100 p-2 border-l-4 border-indigo-600">5. BAHAGIAN ASRAMA</h4>
+            <h4 class="font-bold text-xs bg-slate-100 p-2 border-l-4 border-indigo-600">5. BAHAGIAN PENGURUSAN ASRAMA</h4>
             <table class="w-full text-left text-xs border border-slate-200 mt-1">
-              <thead><tr class="bg-slate-50 border-b"><th class="p-2 w-10">Bil</th><th class="p-2">Jawatankuasa / Tugasan</th><th class="p-2">Jawatan</th></tr></thead>
+              <thead><tr class="bg-slate-50 border-b"><th class="p-2 w-10 text-center">Bil</th><th class="p-2">Jawatankuasa / Tugasan</th><th class="p-2">Jawatan</th></tr></thead>
               <tbody>${renderSectionRows('Asrama', duties.asrama)}</tbody>
             </table>
           </div>
@@ -1826,7 +2974,7 @@
             <td class="p-2 text-center">${sc.hScore}</td>
             <td class="p-2 text-center">${sc.koScore}</td>
             <td class="p-2 text-center">${sc.aScore}</td>
-            <td class="p-2 text-center font-bold text-asis-navy">${sc.grand}</td>
+            <td class="p-2 text-center font-bold text-corp-navy">${sc.grand}</td>
             <td class="p-2 text-center">${status}</td>
           </tr>
         `;
@@ -1835,7 +2983,7 @@
       const html = `
         <div class="text-center border-b-2 border-slate-800 pb-4 mb-6">
           <div class="text-xs font-bold uppercase tracking-widest text-slate-600">Kementerian Pendidikan Malaysia</div>
-          <h2 class="text-base font-extrabold text-asis-navy uppercase mt-1">SEKOLAH MENENGAH SAINS ALAM SHAH (ASiS)</h2>
+          <h2 class="text-base font-extrabold text-corp-navy uppercase mt-1">SEKOLAH MENENGAH SAINS ALAM SHAH (ASiS)</h2>
           <div class="text-[11px] font-bold text-amber-700 tracking-wide mt-0.5">ASiS WORKLOAD AWARENESS SYSTEM (AWAS)</div>
           <p class="text-[10px] italic text-slate-500">"Bekerjasama Bekerja Sama-Sama"</p>
           <div class="mt-2 text-[11px] text-slate-600">Laporan Komprehensif Agihan Bebanan Tugas Guru • Tarikh Cetakan: <b>${new Date().toLocaleString('ms-MY')}</b></div>
@@ -1850,7 +2998,7 @@
               <th class="p-2 text-center">Ptd</th>
               <th class="p-2 text-center">Kur</th>
               <th class="p-2 text-center">HEM</th>
-              <th class="p-2 text-center">KoK</th>
+              <th class="p-2 text-center">Kok</th>
               <th class="p-2 text-center">Asr</th>
               <th class="p-2 text-center font-bold">Mata</th>
               <th class="p-2 text-center">Status</th>
@@ -1883,7 +3031,7 @@
       const html = `
         <div class="text-center border-b-2 border-slate-800 pb-4 mb-6">
           <div class="text-xs font-bold uppercase tracking-widest text-slate-600">Kementerian Pendidikan Malaysia</div>
-          <h2 class="text-base font-extrabold text-asis-navy uppercase mt-1">SEKOLAH MENENGAH SAINS ALAM SHAH (ASiS)</h2>
+          <h2 class="text-base font-extrabold text-corp-navy uppercase mt-1">SEKOLAH MENENGAH SAINS ALAM SHAH (ASiS)</h2>
           <div class="text-[11px] font-bold text-amber-700 tracking-wide mt-0.5">ASiS WORKLOAD AWARENESS SYSTEM (AWAS)</div>
           <p class="text-[10px] italic text-slate-500">"Bekerjasama Bekerja Sama-Sama"</p>
           <div class="mt-2 text-[11px] text-slate-600">Laporan Eksekutif Keseimbangan Beban Tugas Guru • Tarikh Cetakan: <b>${new Date().toLocaleString('ms-MY')}</b></div>
@@ -1892,7 +3040,7 @@
         <div class="grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-lg border border-slate-200 text-center text-xs mb-4">
           <div>Purata Mata: <b>${document.getElementById('kpiAvgScore').textContent}</b></div>
           <div>Mata Maksimum: <b>${document.getElementById('kpiMaxScore').textContent}</b></div>
-          <div>Beban Tinggi (>20): <b>${document.getElementById('kpiHighCount').textContent}</b></div>
+          <div>Beban Melebihi Had (>20): <b>${document.getElementById('kpiHighCount').textContent}</b></div>
         </div>
 
         ${chartImg}
@@ -1900,7 +3048,7 @@
         <div class="mt-8 text-xs leading-relaxed text-slate-700 bg-slate-50 p-4 rounded border">
           <b>Ulasan Eksekutif AWAS:</b>
           <p class="mt-1">
-            Sistem AWAS memantau kesaksamaan bebanan kerja berlandaskan 5 portfolio utama (Pentadbiran, Kurikulum, HEM, KoKurikulum, dan Asrama). Guru dengan mata melebihi julat optimum (10-18 mata) akan diselaraskan secara telus berpandukan semangat "Bekerjasama Bekerja Sama-Sama".
+            Sistem AWAS memantau kesaksamaan bebanan tugas berasaskan 5 portfolio utama (Pentadbiran, Kurikulum, Hal Ehwal Murid, Kokurikulum, dan Pengurusan Asrama). Guru dengan mata melebihi julat optimum (10–18 mata) diselaraskan secara telus berpandukan semangat "Bekerjasama Bekerja Sama-Sama".
           </p>
         </div>
 
@@ -1919,7 +3067,7 @@
       openPrintModal('AWAS_Laporan_Eksekutif_Analisis_Beban', html);
     }
 
-    // Modal Session Handlers
+    // Modal Sesi Keluar
     function openLogoutModal() {
       document.getElementById('logoutModal').classList.remove('hidden');
     }
@@ -1930,16 +3078,27 @@
 
     function confirmLogout() {
       closeLogoutModal();
-      saveToStorage('Pengguna Log Keluar daripada AWAS');
-      alert('Sesi anda dalam AWAS telah ditutup dengan selamat.');
-      location.reload();
+      saveToStorage(`Pengguna log keluar: ${currentUser ? currentUser.fullName : 'Pengguna'}`);
+      saveCurrentSession(null);
+      showNotification('Sesi AWAS telah ditutup.');
+      setTimeout(() => {
+        openAuthModal();
+      }, 500);
     }
 
-    // Run On Startup
+    // Permulaan Sistem AWAS
     window.addEventListener('DOMContentLoaded', () => {
+      currentUser = loadCurrentSession();
       renderTeacherDropdown();
       onTeacherChange();
       renderAuditLogs();
+      updateAuthUI();
+
+      if (!currentUser) {
+        setTimeout(() => {
+          openAuthModal();
+        }, 400);
+      }
     });
   </script>
 </body>
