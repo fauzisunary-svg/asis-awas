@@ -479,7 +479,7 @@
               <thead class="bg-corp-navy text-white uppercase tracking-wider font-semibold">
                 <tr>
                   <th class="p-3 text-center w-10">Bil</th>
-                  <th class="p-3">Nama Guru</th>
+                  <th class="p-3">Nama Guru & Jawatan Hakiki</th>
                   <th class="p-3 text-center">Gred</th>
                   <th class="p-3 text-center">Pentadbiran</th>
                   <th class="p-3 text-center">Kurikulum</th>
@@ -507,7 +507,7 @@
                 <span>Tetapan Sistem & Kawalan Pentadbir</span>
               </h2>
               <p class="text-xs text-slate-500 mt-1">
-                Konfigurasi senarai guru, gred DG, pemberatan jawatan, senarai tugas portfolio, dan keselamatan pangkalan data.
+                Konfigurasi senarai guru, jawatan hakiki, gred DG, pemberatan jawatan, senarai tugas portfolio, dan keselamatan pangkalan data.
               </p>
             </div>
             
@@ -566,30 +566,35 @@
             </div>
           </div>
 
-          <!-- Kad Pengurusan: Guru, Jawatan, & Tugasan Portfolio -->
+          <!-- Kad Pengurusan: Guru, Jawatan Hakiki, Jawatan Portfolio, & Tugasan -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
-            <!-- Kad 1: Pengurusan Guru & Gred DG -->
+            <!-- Kad 1: Pengurusan Guru, Jawatan Hakiki & Gred DG -->
             <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 space-y-3.5">
               <div class="flex items-center justify-between">
                 <h3 class="text-xs font-bold text-corp-navy uppercase tracking-wider flex items-center gap-1.5">
-                  <i class="fa-solid fa-users text-amber-500"></i> Senarai Pegawai Guru & Gred Jawatan
+                  <i class="fa-solid fa-users text-amber-500"></i> Senarai Pegawai Guru, Jawatan Hakiki & Gred
                 </h3>
                 <span id="teacherCountBadge" class="text-[11px] bg-corp-navy text-amber-400 px-2.5 py-0.5 rounded-full font-bold">0 Guru</span>
               </div>
 
-              <div id="addTeacherFormWrap" class="flex flex-col sm:flex-row gap-2">
-                <input type="text" id="newTeacherName" placeholder="Nama penuh guru baharu..." class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
-                <select id="newTeacherGrade" class="bg-white border border-slate-300 rounded-lg px-2.5 py-2 text-xs font-bold focus:ring-2 focus:ring-amber-500">
-                  <option value="DG1">DG1</option><option value="DG2">DG2</option><option value="DG3">DG3</option>
-                  <option value="DG4">DG4</option><option value="DG5">DG5</option><option value="DG6">DG6</option>
-                  <option value="DG7">DG7</option><option value="DG8">DG8</option><option value="DG9">DG9</option>
-                  <option value="DG10">DG10</option><option value="DG11">DG11</option><option value="DG12" selected>DG12</option>
-                  <option value="DG13">DG13</option><option value="DG14">DG14</option>
-                </select>
-                <button onclick="addNewTeacher()" id="btnAddNewTeacher" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-lg flex items-center justify-center gap-1.5 shadow transition">
-                  <i class="fa-solid fa-user-plus"></i> Tambah
-                </button>
+              <div id="addTeacherFormWrap" class="space-y-2 bg-white p-3 rounded-xl border border-slate-200">
+                <input type="text" id="newTeacherName" placeholder="Nama penuh guru baharu..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+                <div class="flex flex-col sm:flex-row gap-2">
+                  <select id="newTeacherHakiki" class="flex-1 bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+                    <!-- Dijana secara dinamik oleh JavaScript -->
+                  </select>
+                  <select id="newTeacherGrade" class="sm:w-24 bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-2 text-xs font-bold focus:ring-2 focus:ring-amber-500">
+                    <option value="DG1">DG1</option><option value="DG2">DG2</option><option value="DG3">DG3</option>
+                    <option value="DG4">DG4</option><option value="DG5">DG5</option><option value="DG6">DG6</option>
+                    <option value="DG7">DG7</option><option value="DG8">DG8</option><option value="DG9">DG9</option>
+                    <option value="DG10">DG10</option><option value="DG11">DG11</option><option value="DG12" selected>DG12</option>
+                    <option value="DG13">DG13</option><option value="DG14">DG14</option>
+                  </select>
+                  <button onclick="addNewTeacher()" id="btnAddNewTeacher" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-lg flex items-center justify-center gap-1.5 shadow transition">
+                    <i class="fa-solid fa-user-plus"></i> Tambah
+                  </button>
+                </div>
               </div>
 
               <div id="teachersList" class="max-h-56 overflow-y-auto space-y-1.5 pr-1 text-xs custom-scroll">
@@ -597,17 +602,38 @@
               </div>
             </div>
 
-            <!-- Kad 2: Pengurusan Jawatan & Mata Pemberatan -->
+            <!-- Kad 2: Pengurusan Senarai Jawatan Hakiki (Boleh Tambah / Ubah Suai) -->
             <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 space-y-3.5">
               <div class="flex items-center justify-between">
                 <h3 class="text-xs font-bold text-corp-navy uppercase tracking-wider flex items-center gap-1.5">
-                  <i class="fa-solid fa-award text-amber-500"></i> Skema Jawatan & Nilai Pemberatan
+                  <i class="fa-solid fa-briefcase text-amber-500"></i> Pengurusan Pilihan Jawatan Hakiki
+                </h3>
+                <span id="hakikiCountBadge" class="text-[11px] bg-corp-navy text-amber-400 px-2.5 py-0.5 rounded-full font-bold">0 Pilihan</span>
+              </div>
+
+              <div class="flex gap-2 bg-white p-3 rounded-xl border border-slate-200">
+                <input type="text" id="newHakikiTitle" placeholder="Tambah jawatan hakiki baharu..." class="flex-1 bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+                <button onclick="addNewHakiki()" id="btnAddNewHakiki" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
+                  <i class="fa-solid fa-plus"></i> Tambah
+                </button>
+              </div>
+
+              <div id="hakikiListContainer" class="max-h-56 overflow-y-auto space-y-1.5 pr-1 text-xs custom-scroll">
+                <!-- Dijana oleh JavaScript -->
+              </div>
+            </div>
+
+            <!-- Kad 3: Pengurusan Jawatan & Mata Pemberatan -->
+            <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 space-y-3.5">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold text-corp-navy uppercase tracking-wider flex items-center gap-1.5">
+                  <i class="fa-solid fa-award text-amber-500"></i> Skema Jawatan Tugas & Nilai Pemberatan
                 </h3>
                 <span id="roleCountBadge" class="text-[11px] bg-corp-navy text-amber-400 px-2.5 py-0.5 rounded-full font-bold">0 Jawatan</span>
               </div>
 
               <div id="addRoleFormWrap" class="flex gap-2">
-                <input type="text" id="newRoleName" placeholder="Nama jawatan rasmi..." class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+                <input type="text" id="newRoleName" placeholder="Nama jawatan tugas..." class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
                 <input type="number" id="newRoleScore" placeholder="Mata" min="0" max="25" class="w-20 bg-white border border-slate-300 rounded-lg px-2 py-2 text-xs font-bold text-center focus:ring-2 focus:ring-amber-500">
                 <button onclick="addNewRole()" id="btnAddNewRole" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
                   <i class="fa-solid fa-plus"></i> Tambah
@@ -619,35 +645,36 @@
               </div>
             </div>
 
-            <!-- Kad 3: Pengurusan Jawatankuasa / Tugasan Portfolio -->
-            <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 space-y-3.5 lg:col-span-2">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <!-- Kad 4: Pengurusan Jawatankuasa / Tugasan Portfolio -->
+            <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 space-y-3.5">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <h3 class="text-xs font-bold text-corp-navy uppercase tracking-wider flex items-center gap-1.5">
                   <i class="fa-solid fa-list-check text-amber-500"></i> Pengurusan Tugasan Portfolio
                 </h3>
-                <!-- Pemilih Tab Kategori Portfolio bagi Tetapan -->
-                <div class="inline-flex rounded-lg border border-slate-200 bg-white p-1 text-xs font-bold">
-                  <button onclick="switchTaskSettingSection('pentadbiran')" id="btnSettingCat-pentadbiran" class="px-2.5 py-1 rounded bg-corp-navy text-amber-400">Pentadbiran</button>
-                  <button onclick="switchTaskSettingSection('kurikulum')" id="btnSettingCat-kurikulum" class="px-2.5 py-1 rounded text-slate-600 hover:text-corp-navy">Kurikulum</button>
-                  <button onclick="switchTaskSettingSection('hem')" id="btnSettingCat-hem" class="px-2.5 py-1 rounded text-slate-600 hover:text-corp-navy">HEM</button>
-                  <button onclick="switchTaskSettingSection('kokurikulum')" id="btnSettingCat-kokurikulum" class="px-2.5 py-1 rounded text-slate-600 hover:text-corp-navy">Kokurikulum</button>
-                  <button onclick="switchTaskSettingSection('asrama')" id="btnSettingCat-asrama" class="px-2.5 py-1 rounded text-slate-600 hover:text-corp-navy">Asrama</button>
-                </div>
+              </div>
+              
+              <!-- Pemilih Tab Kategori Portfolio bagi Tetapan -->
+              <div class="flex flex-wrap gap-1 rounded-lg border border-slate-200 bg-white p-1 text-[11px] font-bold">
+                <button onclick="switchTaskSettingSection('pentadbiran')" id="btnSettingCat-pentadbiran" class="px-2 py-1 rounded bg-corp-navy text-amber-400">Pentadbiran</button>
+                <button onclick="switchTaskSettingSection('kurikulum')" id="btnSettingCat-kurikulum" class="px-2 py-1 rounded text-slate-600 hover:text-corp-navy">Kurikulum</button>
+                <button onclick="switchTaskSettingSection('hem')" id="btnSettingCat-hem" class="px-2 py-1 rounded text-slate-600 hover:text-corp-navy">HEM</button>
+                <button onclick="switchTaskSettingSection('kokurikulum')" id="btnSettingCat-kokurikulum" class="px-2 py-1 rounded text-slate-600 hover:text-corp-navy">Kokurikulum</button>
+                <button onclick="switchTaskSettingSection('asrama')" id="btnSettingCat-asrama" class="px-2 py-1 rounded text-slate-600 hover:text-corp-navy">Asrama</button>
               </div>
 
               <div id="addTaskToSectionFormWrap" class="flex gap-2">
                 <input type="text" id="newTaskTitle" placeholder="Nama jawatankuasa / tugasan baharu..." class="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
-                <button onclick="addNewTaskToSection()" id="btnAddNewTaskToSection" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
-                  <i class="fa-solid fa-plus-circle"></i> Tambah Tugasan
+                <button onclick="addNewTaskToSection()" id="btnAddNewTaskToSection" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
+                  <i class="fa-solid fa-plus-circle"></i> Tambah
                 </button>
               </div>
 
-              <div id="sectionTasksList" class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1 text-xs custom-scroll">
+              <div id="sectionTasksList" class="space-y-1.5 max-h-44 overflow-y-auto pr-1 text-xs custom-scroll">
                 <!-- Dijana oleh JavaScript -->
               </div>
             </div>
 
-            <!-- Kad 4: Jejak Audit Forensik & Rekod Perubahan -->
+            <!-- Kad 5: Jejak Audit Forensik & Rekod Perubahan -->
             <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 space-y-3 lg:col-span-2">
               <div class="flex items-center justify-between border-b border-slate-200 pb-2">
                 <h3 class="text-xs font-bold text-corp-navy uppercase tracking-wider flex items-center gap-1.5">
@@ -678,7 +705,7 @@
           Disediakan oleh : Mohd.Fauzi Sunary ,Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah
         </div>
         <div class="text-[8pt] text-slate-400 text-center sm:text-right font-medium">
-          ASiS Workload Awareness System (AWAS) • Tarikh Kemas Kini: 11 November 2026
+          ASiS Workload Awareness System (AWAS) • Tarikh Kemas Kini: 19 November 2026
         </div>
       </footer>
 
@@ -863,7 +890,7 @@
     <div class="text-xs font-medium" id="toastMessage">Mesej sistem...</div>
   </div>
 
-  <!-- MODAL: Kemas Kini Maklumat Guru & Gred -->
+  <!-- MODAL: Kemas Kini Maklumat Guru, Jawatan Hakiki & Gred -->
   <div id="editTeacherModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
@@ -881,6 +908,12 @@
         <input type="text" id="editTeacherNameInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
       </div>
       <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Jawatan Hakiki:</label>
+        <select id="editTeacherHakikiSelect" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+          <!-- Dijana secara dinamik oleh JavaScript -->
+        </select>
+      </div>
+      <div>
         <label class="block text-xs font-bold text-slate-700 mb-1">Gred Jawatan (DG):</label>
         <select id="editTeacherGradeSelect" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold focus:ring-2 focus:ring-amber-500">
           <option value="DG1">DG1</option><option value="DG2">DG2</option><option value="DG3">DG3</option>
@@ -893,6 +926,30 @@
       <div class="flex gap-2 pt-2">
         <button onclick="closeEditTeacherModal()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs py-2 rounded-lg">Batal</button>
         <button onclick="saveEditedTeacher()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 rounded-lg shadow">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Kemas Kini Nama Jawatan Hakiki -->
+  <div id="editHakikiModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-sm font-bold text-corp-navy flex items-center gap-2">
+          <i class="fa-solid fa-briefcase text-amber-500"></i>
+          <span>Kemaskini Jawatan Hakiki</span>
+        </h3>
+        <button onclick="closeEditHakikiModal()" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <input type="hidden" id="editHakikiIndex">
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Nama Jawatan Hakiki Baharu:</label>
+        <input type="text" id="editHakikiTitleInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeEditHakikiModal()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs py-2 rounded-lg">Batal</button>
+        <button onclick="saveEditedHakiki()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 rounded-lg shadow">Simpan Perubahan</button>
       </div>
     </div>
   </div>
@@ -921,6 +978,34 @@
       <div class="flex gap-2 pt-2">
         <button onclick="closeEditRoleModal()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs py-2 rounded-lg">Batal</button>
         <button onclick="saveEditedRole()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 rounded-lg shadow">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Kemas Kini Nama Tugasan Portfolio -->
+  <div id="editTaskModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="text-sm font-bold text-corp-navy flex items-center gap-2">
+          <i class="fa-solid fa-list-check text-amber-500"></i>
+          <span>Kemaskini Jawatankuasa / Tugasan</span>
+        </h3>
+        <button onclick="closeEditTaskModal()" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <input type="hidden" id="editTaskIndex">
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Kategori Portfolio:</label>
+        <input type="text" id="editTaskCategoryLabel" readonly class="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-xs font-bold text-slate-500 uppercase">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Nama Jawatankuasa / Tugasan Baharu:</label>
+        <input type="text" id="editTaskNameInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-amber-500">
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeEditTaskModal()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs py-2 rounded-lg">Batal</button>
+        <button onclick="saveEditedTask()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 rounded-lg shadow">Simpan Perubahan</button>
       </div>
     </div>
   </div>
@@ -971,11 +1056,27 @@
 
   <!-- JAVASCRIPT SYSTEM ENGINE (VERIFIKASI & LOGIK TERAS) -->
   <script>
-    // Kunci Pangkalan Data & Kredensial
+    // Kunci Pangkalan Data & Kredensial (Kekal Selaras Tanpa Mengganggu Data Sedia Ada)
     const STORAGE_KEY = 'AWAS_ASIS_DB_v1';
     const AUTH_SESSION_KEY = 'AWAS_AUTH_SESSION_v1';
     const SUPERADMIN_CORRECT_HASH = "235e23730e0fcad4eec9b1e967a57a82c4481b0a88b5ec1beaa40d16c52a0a20";
     const SUPERADMIN_RAW_PASS = "Admin@ASiS2026";
+
+    const DEFAULT_JAWATAN_HAKIKI = [
+      "Pengetua",
+      "Guru Penolong Kanan Pentadbiran",
+      "Guru Penolong Kanan Hal Ehwal Murid",
+      "Guru Penolong Kanan Kokurikulum",
+      "Guru Kanan Mata Pelajaran Bidang Bahasa",
+      "Guru Kanan Bidang Sains Matematik",
+      "Guru Kanan Bidang Kemanusiaan",
+      "Guru Kanan Bidang Teknik dan Vokasional",
+      "Guru Perpustakaan & Media",
+      "Guru Bimbingan & Kaunseling",
+      "Guru Data",
+      "Guru Akademik Biasa",
+      "Lain-lain"
+    ];
 
     // Enkripsi Web Crypto API SHA-256
     async function sha256(str) {
@@ -1005,15 +1106,16 @@
           createdAt: "2026-01-01 08:00:00"
         }
       ],
+      jawatanHakikiList: [...DEFAULT_JAWATAN_HAKIKI],
       guruList: [
-        { name: "EN. AHMAD RAZALI BIN ISMAIL", grade: "DG14" },
-        { name: "PN. NORLIZA BINTI HASHIM", grade: "DG12" },
-        { name: "EN. KHAIRUL AZHAR BIN MAT", grade: "DG12" },
-        { name: "CIK SITI ZUBAIDAH BINTI ADNAN", grade: "DG10" },
-        { name: "EN. MOHD FAIZAL BIN ZULKIFLI", grade: "DG12" },
-        { name: "PN. FARIDAH BINTI OTHMAN", grade: "DG10" },
-        { name: "EN. WAN HASSAN BIN WAN JUSOH", grade: "DG14" },
-        { name: "PN. ROSNAH BINTI ABDULLAH", grade: "DG12" }
+        { name: "EN. AHMAD RAZALI BIN ISMAIL", grade: "DG14", hakiki: "Guru Kanan Bidang Sains Matematik" },
+        { name: "PN. NORLIZA BINTI HASHIM", grade: "DG12", hakiki: "Guru Kanan Mata Pelajaran Bidang Bahasa" },
+        { name: "EN. KHAIRUL AZHAR BIN MAT", grade: "DG12", hakiki: "Guru Akademik Biasa" },
+        { name: "CIK SITI ZUBAIDAH BINTI ADNAN", grade: "DG10", hakiki: "Guru Perpustakaan & Media" },
+        { name: "EN. MOHD FAIZAL BIN ZULKIFLI", grade: "DG12", hakiki: "Guru Akademik Biasa" },
+        { name: "PN. FARIDAH BINTI OTHMAN", grade: "DG10", hakiki: "Guru Akademik Biasa" },
+        { name: "EN. WAN HASSAN BIN WAN JUSOH", grade: "DG14", hakiki: "Guru Kanan Bidang Kemanusiaan" },
+        { name: "PN. ROSNAH BINTI ABDULLAH", grade: "DG12", hakiki: "Guru Kanan Bidang Teknik dan Vokasional" }
       ],
       jawatanList: [
         { title: "Pengerusi", score: 6 },
@@ -1064,6 +1166,51 @@
     let currentPrintDocTitle = "Laporan Rasmi AWAS";
     let currentPrintHTMLContent = "";
     let pendingConfirmAction = null;
+
+    // Blok Tandatangan Piawai dengan Pengesahan Pengetua
+    function getSignatureBlockHTML(includeTeacherSign = false, teacherName = "") {
+      if (includeTeacherSign) {
+        return `
+          <div class="mt-12 pt-6 border-t border-slate-300 grid grid-cols-3 gap-6 text-center text-xs">
+            <div>
+              <div class="text-[10px] font-bold uppercase text-slate-500 mb-1">Diterima Oleh:</div>
+              <div class="h-14"></div>
+              <div class="border-t border-slate-400 pt-1.5 font-bold uppercase">${teacherName}</div>
+              <div class="text-[10px] text-slate-500">Pegawai / Guru Berkenaan<br>SM Sains Alam Shah</div>
+            </div>
+            <div>
+              <div class="text-[10px] font-bold uppercase text-slate-500 mb-1">Disediakan Oleh:</div>
+              <div class="h-14"></div>
+              <div class="border-t border-slate-400 pt-1.5 font-bold uppercase">MOHD.FAUZI SUNARY</div>
+              <div class="text-[10px] text-slate-500">Guru Penolong Kanan Pentadbiran<br>SM Sains Alam Shah</div>
+            </div>
+            <div>
+              <div class="text-[10px] font-bold uppercase text-slate-500 mb-1">Disahkan Oleh:</div>
+              <div class="h-14"></div>
+              <div class="border-t border-slate-400 pt-1.5 font-bold uppercase">PENGETUA</div>
+              <div class="text-[10px] text-slate-500">Sekolah Menengah Sains Alam Shah<br>Kuala Lumpur</div>
+            </div>
+          </div>
+        `;
+      } else {
+        return `
+          <div class="mt-12 pt-6 border-t border-slate-300 grid grid-cols-2 gap-12 text-center text-xs">
+            <div class="max-w-xs mx-auto w-full">
+              <div class="text-[10px] font-bold uppercase text-slate-500 mb-1">Disediakan Oleh:</div>
+              <div class="h-16"></div>
+              <div class="border-t border-slate-400 pt-1.5 font-bold uppercase">MOHD.FAUZI SUNARY</div>
+              <div class="text-[10px] text-slate-500">Guru Penolong Kanan Pentadbiran<br>SM Sains Alam Shah</div>
+            </div>
+            <div class="max-w-xs mx-auto w-full">
+              <div class="text-[10px] font-bold uppercase text-slate-500 mb-1">Disahkan Oleh:</div>
+              <div class="h-16"></div>
+              <div class="border-t border-slate-400 pt-1.5 font-bold uppercase">PENGETUA</div>
+              <div class="text-[10px] text-slate-500">Sekolah Menengah Sains Alam Shah<br>Kuala Lumpur</div>
+            </div>
+          </div>
+        `;
+      }
+    }
 
     // Toast Pemberitahuan Sistem
     function showNotification(msg, isError = false) {
@@ -1118,7 +1265,7 @@
       }
     });
 
-    // Pemuatan & Penyimpanan Storan Tempatan
+    // Pemuatan & Penyimpanan Storan Tempatan (Menjamin Data Sedia Ada Kekal)
     function loadFromStorage() {
       let saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
@@ -1137,7 +1284,16 @@
                 parsed.users.unshift(defaultState.users[0]);
               }
             }
+            if (!Array.isArray(parsed.jawatanHakikiList) || parsed.jawatanHakikiList.length === 0) {
+              parsed.jawatanHakikiList = [...DEFAULT_JAWATAN_HAKIKI];
+            }
+            // Pastikan guru sedia ada mempunyai nilai jawatan hakiki lalai tanpa memadam sebarang maklumat
+            parsed.guruList.forEach(g => {
+              if (!g.hakiki) g.hakiki = "Guru Akademik Biasa";
+            });
             if (typeof parsed.isSystemLocked === 'undefined') parsed.isSystemLocked = true;
+            if (!parsed.portfolioTasks) parsed.portfolioTasks = defaultState.portfolioTasks;
+            if (!parsed.agihanTugas) parsed.agihanTugas = {};
             return parsed;
           }
         } catch (e) {
@@ -1232,12 +1388,14 @@
 
       // Kawalan Panel Tetapan
       const btnAddNewTeacher = document.getElementById('btnAddNewTeacher');
+      const btnAddNewHakiki = document.getElementById('btnAddNewHakiki');
       const btnAddNewRole = document.getElementById('btnAddNewRole');
       const btnAddNewTaskToSection = document.getElementById('btnAddNewTaskToSection');
       const btnSystemReset = document.getElementById('btnSystemReset');
       const lblImportJSON = document.getElementById('lblImportJSON');
 
       if (btnAddNewTeacher) btnAddNewTeacher.disabled = !isSuperAdmin;
+      if (btnAddNewHakiki) btnAddNewHakiki.disabled = !isSuperAdmin;
       if (btnAddNewRole) btnAddNewRole.disabled = !isSuperAdmin;
       if (btnAddNewTaskToSection) btnAddNewTaskToSection.disabled = !isSuperAdmin;
       if (btnSystemReset) btnSystemReset.disabled = !isSuperAdmin;
@@ -1270,6 +1428,7 @@
       const statusText = state.isSystemLocked ? "DIKUNCI (Hanya Super Admin boleh menyunting data asas)" : "DIBUKA (Pengguna berdaftar boleh menyunting)";
       saveToStorage(`Super Admin menukar mod kunci sistem: ${statusText}`);
       updateAuthUI();
+      onTeacherChange();
       showNotification(`Status sistem: ${statusText}`);
     }
 
@@ -1430,6 +1589,8 @@
         saveToStorage(`Log masuk Super Admin berjaya: ${adminUser.fullName}`);
         closeAuthModal();
         document.getElementById('loginForm').reset();
+        refreshEntireSystem();
+        onTeacherChange();
         showNotification(`Selamat kembali, ${adminUser.fullName} (Super Admin)!`);
         return;
       }
@@ -1458,6 +1619,8 @@
       saveToStorage(`Log masuk berjaya: ${user.fullName} [${user.role.toUpperCase()}]`);
       closeAuthModal();
       document.getElementById('loginForm').reset();
+      refreshEntireSystem();
+      onTeacherChange();
       showNotification(`Selamat datang, ${user.fullName}! Sesi anda kini aktif.`);
     }
 
@@ -1542,6 +1705,7 @@
 
     // Penyelarasan Menyeluruh Aplikasi
     function refreshEntireSystem() {
+      populateHakikiDropdowns();
       renderTeacherDropdown();
       populateSearchTeacherDropdown();
       populateAnalysisFilters();
@@ -1598,19 +1762,46 @@
       } else if (tabId === 'muatturun') {
         renderMasterTable();
       } else if (tabId === 'setting') {
+        populateHakikiDropdowns();
         renderSettingLists();
       }
+    }
+
+    // Pengisian Dropdown Pilihan Jawatan Hakiki
+    function populateHakikiDropdowns() {
+      const list = state.jawatanHakikiList || DEFAULT_JAWATAN_HAKIKI;
+      const selectNew = document.getElementById('newTeacherHakiki');
+      const selectEdit = document.getElementById('editTeacherHakikiSelect');
+
+      [selectNew, selectEdit].forEach(sel => {
+        if (!sel) return;
+        const cur = sel.value;
+        sel.innerHTML = '';
+        list.forEach(item => {
+          const opt = document.createElement('option');
+          opt.value = item;
+          opt.textContent = item;
+          sel.appendChild(opt);
+        });
+        if (cur && list.includes(cur)) {
+          sel.value = cur;
+        } else if (list.includes("Guru Akademik Biasa")) {
+          sel.value = "Guru Akademik Biasa";
+        }
+      });
     }
 
     // Dropdown Guru
     function renderTeacherDropdown() {
       const select = document.getElementById('teacherSelect');
+      if (!select) return;
       const curVal = select.value;
       select.innerHTML = '<option value="">-- Sila Pilih Nama Guru --</option>';
       state.guruList.forEach(g => {
         const opt = document.createElement('option');
         opt.value = g.name;
-        opt.textContent = `${g.name} (${g.grade})`;
+        const hakikiStr = g.hakiki ? ` - ${g.hakiki}` : '';
+        opt.textContent = `${g.name} (${g.grade}${hakikiStr})`;
         select.appendChild(opt);
       });
       if (curVal && state.guruList.some(g => g.name === curVal)) {
@@ -1621,6 +1812,7 @@
     function onTeacherChange() {
       const teacherName = document.getElementById('teacherSelect').value;
       const container = document.getElementById('dutiesContainer');
+      if (!container) return;
       container.innerHTML = '';
 
       if (!teacherName) {
@@ -1647,16 +1839,27 @@
     function addDutyRow(selectedTask = '', selectedRole = '', score = 0) {
       const isLocked = !currentUser || (state.isSystemLocked && currentUser.role !== 'superadmin');
       const container = document.getElementById('dutiesContainer');
+      if (!container) return;
+
       const row = document.createElement('div');
       row.className = 'duty-row p-3 rounded-xl border border-slate-200 bg-white shadow-sm flex flex-col md:flex-row items-center gap-3 transition hover:border-amber-400';
 
-      const taskOptions = (state.portfolioTasks[currentActiveTab] || [])
+      const taskList = state.portfolioTasks[currentActiveTab] || [];
+      const hasTaskInList = taskList.includes(selectedTask);
+      let taskOptions = taskList
         .map(t => `<option value="${t}" ${t === selectedTask ? 'selected' : ''}>${t}</option>`)
         .join('');
+      if (selectedTask && !hasTaskInList) {
+        taskOptions = `<option value="${selectedTask}" selected>${selectedTask}</option>` + taskOptions;
+      }
 
-      const roleOptions = state.jawatanList
+      const hasRoleInList = state.jawatanList.some(r => r.title === selectedRole);
+      let roleOptions = state.jawatanList
         .map(r => `<option value="${r.title}" data-score="${r.score}" ${r.title === selectedRole ? 'selected' : ''}>${r.title} (${r.score} Mata)</option>`)
         .join('');
+      if (selectedRole && !hasRoleInList) {
+        roleOptions = `<option value="${selectedRole}" data-score="${score}" selected>${selectedRole} (${score} Mata)</option>` + roleOptions;
+      }
 
       row.innerHTML = `
         <div class="w-full md:flex-1">
@@ -1707,7 +1910,7 @@
           addDutyRow();
         }
         calculateTotals();
-        showNotification("Tugasan baris ini telah dipadam.");
+        showNotification("Baris tugasan telah dibuang. Tekan 'Simpan Penugasan' untuk mengesahkan.");
       }
     }
 
@@ -1989,7 +2192,10 @@
         tr.className = 'hover:bg-amber-50/40 transition border-b border-slate-100';
         tr.innerHTML = `
           <td class="p-2.5 text-center font-bold text-slate-500">${idx + 1}</td>
-          <td class="p-2.5 font-bold text-corp-navy">${g.name}</td>
+          <td class="p-2.5">
+            <div class="font-bold text-corp-navy">${g.name}</div>
+            <div class="text-[10px] text-slate-500">${g.hakiki || 'Guru Akademik Biasa'}</div>
+          </td>
           <td class="p-2.5 text-center"><span class="px-2 py-0.5 rounded bg-blue-100 text-corp-navy font-bold text-[11px]">${g.grade}</span></td>
           <td class="p-2.5 text-center text-slate-600">${sc.pScore}</td>
           <td class="p-2.5 text-center text-slate-600">${sc.kScore}</td>
@@ -1999,7 +2205,7 @@
           <td class="p-2.5 text-center font-black text-amber-800 text-sm">${sc.grand}</td>
           <td class="p-2.5 text-center">${statusBadge}</td>
           <td class="p-2.5 text-center">
-            <button onclick="printSingleTeacherDGReport('${g.name}')" class="bg-corp-navy hover:bg-corp-slate text-amber-400 font-bold px-2.5 py-1 rounded text-[10px] flex items-center justify-center gap-1 mx-auto transition" title="Cetak Analisis Individu Ini">
+            <button onclick="printSingleTeacherDGReport('${g.name.replace(/'/g, "\\'")}')" class="bg-corp-navy hover:bg-corp-slate text-amber-400 font-bold px-2.5 py-1 rounded text-[10px] flex items-center justify-center gap-1 mx-auto transition" title="Cetak Analisis Individu Ini">
               <i class="fa-solid fa-print"></i> Cetak
             </button>
           </td>
@@ -2038,7 +2244,10 @@
         rowsHTML += `
           <tr class="border-b border-slate-200">
             <td class="p-2 text-center">${idx + 1}</td>
-            <td class="p-2 font-semibold">${g.name}</td>
+            <td class="p-2">
+              <div class="font-semibold">${g.name}</div>
+              <div class="text-[9px] text-slate-500">${g.hakiki || 'Guru Akademik Biasa'}</div>
+            </td>
             <td class="p-2 text-center font-bold text-corp-navy">${g.grade}</td>
             <td class="p-2 text-center">${sc.pScore}</td>
             <td class="p-2 text-center">${sc.kScore}</td>
@@ -2072,7 +2281,7 @@
           <thead class="bg-slate-100 border-b">
             <tr>
               <th class="p-2 text-center">Bil</th>
-              <th class="p-2">Nama Guru</th>
+              <th class="p-2">Nama Guru & Jawatan Hakiki</th>
               <th class="p-2 text-center">Gred</th>
               <th class="p-2 text-center">Ptd</th>
               <th class="p-2 text-center">Kur</th>
@@ -2090,13 +2299,7 @@
           <b>Ulasan Pentadbiran AWAS:</b> Purata bebanan bagi kelompok <b>${grade}</b> adalah <b>${avgScore} mata</b>. Semua penugasan guru di bawah gred ini diselaraskan mengikut prinsip kesaksamaan beban tugas.
         </div>
 
-        <div class="mt-12 pt-6 border-t border-slate-200 flex justify-end text-center text-xs">
-          <div class="w-64">
-            <div class="h-16"></div>
-            <div class="font-bold uppercase">MOHD.FAUZI SUNARY</div>
-            <div class="text-[10px] text-slate-500">Guru Penolong Kanan Pentadbiran<br>SM Sains Alam Shah</div>
-          </div>
-        </div>
+        ${getSignatureBlockHTML(false)}
 
         <div class="mt-8 text-center text-[8pt] text-slate-400 border-t pt-2">
           Disediakan oleh : Mohd.Fauzi Sunary ,Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah
@@ -2107,7 +2310,7 @@
     }
 
     function printSingleTeacherDGReport(teacherName) {
-      const teacherObj = state.guruList.find(g => g.name === teacherName) || { grade: '-' };
+      const teacherObj = state.guruList.find(g => g.name === teacherName) || { grade: '-', hakiki: 'Guru Akademik Biasa' };
       const sc = getTeacherScores(teacherName);
       const duties = state.agihanTugas[teacherName] || {};
 
@@ -2139,11 +2342,11 @@
           <div class="mt-2 text-[11px] text-slate-600">Slip Analisis Beban Tugas Individu • Tarikh Cetakan: <b>${new Date().toLocaleString('ms-MY')}</b></div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6 text-xs">
-          <div><b>NAMA GURU:</b> ${teacherName}</div>
+        <div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6 text-xs">
+          <div class="col-span-2"><b>NAMA PEGAWAI / GURU:</b> ${teacherName}</div>
+          <div class="col-span-2"><b>JAWATAN HAKIKI:</b> ${teacherObj.hakiki || 'Guru Akademik Biasa'}</div>
           <div><b>GRED JAWATAN:</b> <span class="px-2 py-0.5 rounded bg-blue-100 text-corp-navy font-bold">${teacherObj.grade}</span></div>
-          <div><b>JUMLAH MATA BEBAN:</b> <b class="text-amber-800 text-sm">${sc.grand} Mata</b></div>
-          <div><b>PURATA GRED ${teacherObj.grade}:</b> <b>${sameGradeAvg} Mata</b></div>
+          <div><b>JUMLAH MATA BEBAN:</b> <b class="text-amber-800 text-sm">${sc.grand} Mata</b> (Purata ${teacherObj.grade}: ${sameGradeAvg})</div>
         </div>
 
         <div class="space-y-4 text-xs">
@@ -2169,18 +2372,7 @@
           </div>
         </div>
 
-        <div class="mt-12 pt-6 border-t border-slate-200 grid grid-cols-2 gap-8 text-center text-xs">
-          <div>
-            <div class="h-16"></div>
-            <div class="font-bold uppercase">${teacherName}</div>
-            <div class="text-[10px] text-slate-500">Tandatangan Pegawai / Guru</div>
-          </div>
-          <div>
-            <div class="h-16"></div>
-            <div class="font-bold uppercase">MOHD.FAUZI SUNARY</div>
-            <div class="text-[10px] text-slate-500">Guru Penolong Kanan Pentadbiran<br>SM Sains Alam Shah</div>
-          </div>
-        </div>
+        ${getSignatureBlockHTML(true, teacherName)}
 
         <div class="mt-8 text-center text-[8pt] text-slate-400 border-t pt-2">
           Disediakan oleh : Mohd.Fauzi Sunary ,Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah
@@ -2198,7 +2390,10 @@
         rowsHTML += `
           <tr class="border-b border-slate-200">
             <td class="p-2 text-center">${idx + 1}</td>
-            <td class="p-2 font-semibold">${g.name}</td>
+            <td class="p-2">
+              <div class="font-semibold">${g.name}</div>
+              <div class="text-[9px] text-slate-500">${g.hakiki || 'Guru Akademik Biasa'}</div>
+            </td>
             <td class="p-2 text-center font-bold text-corp-navy">${g.grade}</td>
             <td class="p-2 text-center">${sc.pScore}</td>
             <td class="p-2 text-center">${sc.kScore}</td>
@@ -2224,7 +2419,7 @@
           <thead class="bg-slate-100 border-b">
             <tr>
               <th class="p-2 text-center">Bil</th>
-              <th class="p-2">Nama Guru</th>
+              <th class="p-2">Nama Guru & Jawatan Hakiki</th>
               <th class="p-2 text-center">Gred</th>
               <th class="p-2 text-center">Ptd</th>
               <th class="p-2 text-center">Kur</th>
@@ -2238,13 +2433,7 @@
           <tbody>${rowsHTML}</tbody>
         </table>
 
-        <div class="mt-12 pt-6 border-t border-slate-200 flex justify-end text-center text-xs">
-          <div class="w-64">
-            <div class="h-16"></div>
-            <div class="font-bold uppercase">MOHD.FAUZI SUNARY</div>
-            <div class="text-[10px] text-slate-500">Guru Penolong Kanan Pentadbiran<br>SM Sains Alam Shah</div>
-          </div>
-        </div>
+        ${getSignatureBlockHTML(false)}
 
         <div class="mt-8 text-center text-[8pt] text-slate-400 border-t pt-2">
           Disediakan oleh : Mohd.Fauzi Sunary ,Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah
@@ -2280,7 +2469,7 @@
         return;
       }
 
-      const teacherObj = state.guruList.find(g => g.name === name) || { grade: '-' };
+      const teacherObj = state.guruList.find(g => g.name === name) || { grade: '-', hakiki: 'Guru Akademik Biasa' };
       const duties = state.agihanTugas[name] || {};
       
       const getListHTML = (cat) => {
@@ -2295,7 +2484,10 @@
         <div class="border-b border-slate-200 pb-4 mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <div>
             <h3 class="text-base font-bold text-corp-navy">${name}</h3>
-            <p class="text-xs text-slate-500">Gred Jawatan Hakiki: <b class="text-blue-900">${teacherObj.grade}</b></p>
+            <p class="text-xs text-slate-600 mt-0.5">
+              Jawatan Hakiki: <b class="text-corp-navy">${teacherObj.hakiki || 'Guru Akademik Biasa'}</b> • 
+              Gred: <b class="text-blue-900">${teacherObj.grade}</b>
+            </p>
           </div>
           <div class="badge-metric px-4 py-2 rounded-xl font-bold text-xs text-corp-navy flex items-center gap-2">
             <span>Jumlah Mata Beban (AWAS):</span>
@@ -2344,7 +2536,10 @@
         tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
         tr.innerHTML = `
           <td class="p-3 text-center text-slate-500 font-bold">${idx + 1}</td>
-          <td class="p-3 font-semibold text-corp-navy">${g.name}</td>
+          <td class="p-3">
+            <div class="font-semibold text-corp-navy">${g.name}</div>
+            <div class="text-[10px] text-slate-500">${g.hakiki || 'Guru Akademik Biasa'}</div>
+          </td>
           <td class="p-3 text-center font-bold text-slate-600">${g.grade}</td>
           <td class="p-3 text-center">${sc.pScore}</td>
           <td class="p-3 text-center">${sc.kScore}</td>
@@ -2359,11 +2554,12 @@
     }
 
     function exportToCSV() {
-      let csv = 'Bil,Nama Guru,Gred,Pentadbiran,Kurikulum,HEM,Kokurikulum,Asrama,Jumlah Mata AWAS,Status Beban\n';
+      let csv = 'Bil,Nama Guru,Jawatan Hakiki,Gred,Pentadbiran,Kurikulum,HEM,Kokurikulum,Asrama,Jumlah Mata AWAS,Status Beban\n';
       state.guruList.forEach((g, idx) => {
         const sc = getTeacherScores(g.name);
         const status = sc.grand > 20 ? 'Tinggi' : (sc.grand < 8 ? 'Rendah' : 'Seimbang');
-        csv += `"${idx + 1}","${g.name}","${g.grade}","${sc.pScore}","${sc.kScore}","${sc.hScore}","${sc.koScore}","${sc.aScore}","${sc.grand}","${status}"\n`;
+        const hakiki = g.hakiki || 'Guru Akademik Biasa';
+        csv += `"${idx + 1}","${g.name}","${hakiki}","${g.grade}","${sc.pScore}","${sc.kScore}","${sc.hScore}","${sc.koScore}","${sc.aScore}","${sc.grand}","${status}"\n`;
       });
 
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -2386,14 +2582,17 @@
 
       state.guruList.forEach((g, idx) => {
         const item = document.createElement('div');
-        item.className = 'flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200 hover:border-amber-300 transition';
+        item.className = 'flex items-center justify-between p-2.5 bg-white rounded-lg border border-slate-200 hover:border-amber-300 transition';
         item.innerHTML = `
-          <div class="flex items-center gap-2">
-            <span class="font-semibold text-slate-700">${g.name}</span>
-            <span class="bg-blue-100 text-corp-navy font-bold px-2 py-0.5 rounded text-[10px]">${g.grade}</span>
+          <div class="min-w-0 pr-2">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-slate-800 truncate">${g.name}</span>
+              <span class="bg-blue-100 text-corp-navy font-bold px-2 py-0.5 rounded text-[10px] flex-shrink-0">${g.grade}</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-0.5 truncate"><i class="fa-solid fa-briefcase text-amber-600 mr-1"></i>${g.hakiki || 'Guru Akademik Biasa'}</div>
           </div>
-          <div class="flex items-center gap-1.5">
-            <button onclick="openEditTeacherModal(${idx})" ${isLocked ? 'disabled' : ''} class="${isLocked ? 'opacity-30 cursor-not-allowed text-slate-400' : 'text-amber-600 hover:text-amber-800'} p-1" title="Kemaskini Guru & Gred">
+          <div class="flex items-center gap-1.5 flex-shrink-0">
+            <button onclick="openEditTeacherModal(${idx})" ${isLocked ? 'disabled' : ''} class="${isLocked ? 'opacity-30 cursor-not-allowed text-slate-400' : 'text-amber-600 hover:text-amber-800'} p-1" title="Kemaskini Guru, Jawatan Hakiki & Gred">
               <i class="fa-solid fa-pen-to-square"></i>
             </button>
             <button onclick="deleteTeacher(${idx})" ${isLocked ? 'disabled' : ''} class="${isLocked ? 'opacity-30 cursor-not-allowed text-slate-400' : 'text-rose-500 hover:text-rose-700'} p-1" title="Padam Guru">
@@ -2403,6 +2602,9 @@
         `;
         tContainer.appendChild(item);
       });
+
+      // Senarai Jawatan Hakiki
+      renderHakikiSettingList();
 
       document.getElementById('roleCountBadge').textContent = `${state.jawatanList.length} Jawatan`;
       const rContainer = document.getElementById('rolesList');
@@ -2430,34 +2632,155 @@
       renderRegisteredUsersList();
     }
 
+    // Pengurusan Jawatan Hakiki
+    function renderHakikiSettingList() {
+      const list = state.jawatanHakikiList || DEFAULT_JAWATAN_HAKIKI;
+      const badge = document.getElementById('hakikiCountBadge');
+      const container = document.getElementById('hakikiListContainer');
+      if (!container || !badge) return;
+
+      badge.textContent = `${list.length} Pilihan`;
+      container.innerHTML = '';
+
+      const isSuperAdmin = currentUser && currentUser.role === 'superadmin';
+      const isLocked = !isSuperAdmin;
+
+      list.forEach((itemTitle, idx) => {
+        const item = document.createElement('div');
+        item.className = 'flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200 hover:border-amber-300 transition';
+        item.innerHTML = `
+          <span class="font-semibold text-slate-700">${itemTitle}</span>
+          <div class="flex items-center gap-1.5 flex-shrink-0">
+            <button onclick="openEditHakikiModal(${idx})" ${isLocked ? 'disabled' : ''} class="${isLocked ? 'opacity-30 cursor-not-allowed text-slate-400' : 'text-amber-600 hover:text-amber-800'} p-1" title="Kemaskini Jawatan Hakiki">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button onclick="deleteHakikiItem(${idx})" ${isLocked ? 'disabled' : ''} class="${isLocked ? 'opacity-30 cursor-not-allowed text-slate-400' : 'text-rose-500 hover:text-rose-700'} p-1" title="Padam Jawatan Hakiki">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function addNewHakiki() {
+      if (!currentUser || currentUser.role !== 'superadmin') {
+        return showNotification('Hanya Super Admin dibenarkan menambah jawatan hakiki.', true);
+      }
+      const inp = document.getElementById('newHakikiTitle');
+      const val = inp.value.trim();
+      if (!val) return showNotification('Sila masukkan nama jawatan hakiki.', true);
+      if (!state.jawatanHakikiList) state.jawatanHakikiList = [...DEFAULT_JAWATAN_HAKIKI];
+      if (state.jawatanHakikiList.some(h => h.toLowerCase() === val.toLowerCase())) {
+        return showNotification('Jawatan hakiki ini sudah wujud dalam senarai.', true);
+      }
+
+      state.jawatanHakikiList.push(val);
+      inp.value = '';
+      saveToStorage(`Tambah jawatan hakiki baharu: ${val}`);
+      populateHakikiDropdowns();
+      renderHakikiSettingList();
+      showNotification(`Jawatan hakiki "${val}" berjaya ditambah!`);
+    }
+
+    function openEditHakikiModal(idx) {
+      if (!currentUser || currentUser.role !== 'superadmin') {
+        return showNotification('Hanya Super Admin dibenarkan menyunting jawatan hakiki.', true);
+      }
+      const list = state.jawatanHakikiList || [];
+      const currentVal = list[idx];
+      if (!currentVal) return;
+
+      document.getElementById('editHakikiIndex').value = idx;
+      document.getElementById('editHakikiTitleInput').value = currentVal;
+      document.getElementById('editHakikiModal').classList.remove('hidden');
+    }
+
+    function closeEditHakikiModal() {
+      document.getElementById('editHakikiModal').classList.add('hidden');
+    }
+
+    function saveEditedHakiki() {
+      const idx = parseInt(document.getElementById('editHakikiIndex').value);
+      const newVal = document.getElementById('editHakikiTitleInput').value.trim();
+      const list = state.jawatanHakikiList;
+
+      if (!newVal) return showNotification('Sila masukkan nama jawatan hakiki.', true);
+      const oldVal = list[idx];
+      if (!oldVal) return;
+
+      if (newVal.toLowerCase() !== oldVal.toLowerCase() && list.some(h => h.toLowerCase() === newVal.toLowerCase())) {
+        return showNotification('Nama jawatan hakiki ini sudah wujud.', true);
+      }
+
+      list[idx] = newVal;
+
+      // Selaraskan rekod guru yang memegang jawatan hakiki lama kepada nama yang dikemaskini
+      state.guruList.forEach(g => {
+        if (g.hakiki === oldVal) g.hakiki = newVal;
+      });
+
+      saveToStorage(`Kemaskini jawatan hakiki: ${oldVal} -> ${newVal}`);
+      closeEditHakikiModal();
+      populateHakikiDropdowns();
+      renderSettingLists();
+      refreshEntireSystem();
+      showNotification('Nama jawatan hakiki berjaya dikemaskini!');
+    }
+
+    function deleteHakikiItem(idx) {
+      if (!currentUser || currentUser.role !== 'superadmin') {
+        return showNotification('Hanya Super Admin dibenarkan memadam jawatan hakiki.', true);
+      }
+      const list = state.jawatanHakikiList;
+      const itemTitle = list[idx];
+      if (!itemTitle) return;
+
+      openConfirmDialog(
+        `Padam Jawatan Hakiki: ${itemTitle}`,
+        `Adakah anda pasti ingin memadam "${itemTitle}" daripada senarai pilihan jawatan hakiki?`,
+        () => {
+          list.splice(idx, 1);
+          saveToStorage(`Padam jawatan hakiki: ${itemTitle}`);
+          populateHakikiDropdowns();
+          renderHakikiSettingList();
+          showNotification(`Jawatan hakiki "${itemTitle}" berjaya dipadam.`);
+        }
+      );
+    }
+
     function addNewTeacher() {
       if (!currentUser || currentUser.role !== 'superadmin') {
         return showNotification('Hanya Super Admin dibenarkan menambah guru baharu.', true);
       }
 
       const nameInp = document.getElementById('newTeacherName');
+      const hakikiInp = document.getElementById('newTeacherHakiki');
       const gradeInp = document.getElementById('newTeacherGrade');
       const name = nameInp.value.trim().toUpperCase();
+      const hakiki = hakikiInp.value || "Guru Akademik Biasa";
       const grade = gradeInp.value;
 
       if (!name) return showNotification('Sila masukkan nama guru.', true);
       if (state.guruList.some(g => g.name === name)) return showNotification('Nama guru ini sudah wujud.', true);
 
-      state.guruList.push({ name, grade });
+      state.guruList.push({ name, grade, hakiki });
       nameInp.value = '';
-      saveToStorage(`Tambah guru baharu: ${name} (${grade})`);
+      saveToStorage(`Tambah guru baharu: ${name} (${hakiki} - ${grade})`);
       renderSettingLists();
       refreshEntireSystem();
-      showNotification(`Guru baharu ${name} (${grade}) berjaya didaftarkan!`);
+      showNotification(`Guru baharu ${name} (${hakiki}) berjaya didaftarkan!`);
     }
 
     function openEditTeacherModal(idx) {
       if (!currentUser || currentUser.role !== 'superadmin') {
         return showNotification('Hanya Super Admin dibenarkan menyunting maklumat guru.', true);
       }
+      populateHakikiDropdowns();
       const teacher = state.guruList[idx];
       document.getElementById('editTeacherOriginalName').value = teacher.name;
       document.getElementById('editTeacherNameInput').value = teacher.name;
+      document.getElementById('editTeacherHakikiSelect').value = teacher.hakiki || 'Guru Akademik Biasa';
       document.getElementById('editTeacherGradeSelect').value = teacher.grade || 'DG12';
       document.getElementById('editTeacherModal').classList.remove('hidden');
     }
@@ -2469,6 +2792,7 @@
     function saveEditedTeacher() {
       const originalName = document.getElementById('editTeacherOriginalName').value;
       const newName = document.getElementById('editTeacherNameInput').value.trim().toUpperCase();
+      const newHakiki = document.getElementById('editTeacherHakikiSelect').value;
       const newGrade = document.getElementById('editTeacherGradeSelect').value;
 
       if (!newName) return showNotification('Sila masukkan nama guru.', true);
@@ -2479,6 +2803,7 @@
       const teacher = state.guruList.find(g => g.name === originalName);
       if (teacher) {
         teacher.name = newName;
+        teacher.hakiki = newHakiki;
         teacher.grade = newGrade;
 
         if (originalName !== newName && state.agihanTugas[originalName]) {
@@ -2486,11 +2811,11 @@
           delete state.agihanTugas[originalName];
         }
 
-        saveToStorage(`Kemaskini maklumat guru: ${originalName} -> ${newName} (${newGrade})`);
+        saveToStorage(`Kemaskini maklumat guru: ${originalName} -> ${newName} (${newHakiki}, ${newGrade})`);
         closeEditTeacherModal();
         renderSettingLists();
         refreshEntireSystem();
-        showNotification('Maklumat guru berjaya dikemaskini!');
+        showNotification('Maklumat guru & jawatan hakiki berjaya dikemaskini!');
       }
     }
 
@@ -2617,9 +2942,9 @@
       ['pentadbiran', 'kurikulum', 'hem', 'kokurikulum', 'asrama'].forEach(c => {
         const btn = document.getElementById(`btnSettingCat-${c}`);
         if (c === cat) {
-          btn.className = 'px-2.5 py-1 rounded bg-corp-navy text-amber-400 font-bold';
+          btn.className = 'px-2 py-1 rounded bg-corp-navy text-amber-400 font-bold';
         } else {
-          btn.className = 'px-2.5 py-1 rounded text-slate-600 hover:text-corp-navy font-semibold';
+          btn.className = 'px-2 py-1 rounded text-slate-600 hover:text-corp-navy font-semibold';
         }
       });
       renderSettingTasksList();
@@ -2627,6 +2952,7 @@
 
     function renderSettingTasksList() {
       const container = document.getElementById('sectionTasksList');
+      if (!container) return;
       container.innerHTML = '';
       const isSuperAdmin = currentUser && currentUser.role === 'superadmin';
       const isLocked = !isSuperAdmin;
@@ -2638,7 +2964,7 @@
         item.innerHTML = `
           <span class="font-semibold text-slate-700">${t}</span>
           <div class="flex items-center gap-1.5">
-            <button onclick="editTaskInSection(${idx})" ${isLocked ? 'disabled' : ''} class="${isLocked ? 'opacity-30 cursor-not-allowed text-slate-400' : 'text-amber-600 hover:text-amber-800'} p-1" title="Kemaskini Nama Tugasan">
+            <button onclick="openEditTaskModal(${idx})" ${isLocked ? 'disabled' : ''} class="${isLocked ? 'opacity-30 cursor-not-allowed text-slate-400' : 'text-amber-600 hover:text-amber-800'} p-1" title="Kemaskini Nama Tugasan">
               <i class="fa-solid fa-pen-to-square"></i>
             </button>
             <button onclick="deleteTaskFromSection(${idx})" ${isLocked ? 'disabled' : ''} class="${isLocked ? 'opacity-30 cursor-not-allowed text-slate-400' : 'text-rose-500 hover:text-rose-700'} p-1" title="Padam Tugasan">
@@ -2668,28 +2994,53 @@
       showNotification(`Tugasan baharu berjaya ditambah ke ${currentSettingTaskCategory.toUpperCase()}!`);
     }
 
-    function editTaskInSection(idx) {
+    function openEditTaskModal(idx) {
       if (!currentUser || currentUser.role !== 'superadmin') {
         return showNotification('Hanya Super Admin dibenarkan menyunting tugasan.', true);
       }
+      const list = state.portfolioTasks[currentSettingTaskCategory] || [];
+      const currentVal = list[idx];
+      if (!currentVal) return;
+
+      document.getElementById('editTaskIndex').value = idx;
+      document.getElementById('editTaskCategoryLabel').value = currentSettingTaskCategory.toUpperCase();
+      document.getElementById('editTaskNameInput').value = currentVal;
+      document.getElementById('editTaskModal').classList.remove('hidden');
+    }
+
+    function closeEditTaskModal() {
+      document.getElementById('editTaskModal').classList.add('hidden');
+    }
+
+    function saveEditedTask() {
+      const idx = parseInt(document.getElementById('editTaskIndex').value);
+      const newVal = document.getElementById('editTaskNameInput').value.trim();
       const list = state.portfolioTasks[currentSettingTaskCategory];
+
+      if (!newVal) return showNotification('Sila masukkan nama jawatankuasa / tugasan.', true);
       const oldVal = list[idx];
-      const newVal = prompt(`Kemaskini nama tugasan / jawatankuasa bagi ${currentSettingTaskCategory.toUpperCase()}:`, oldVal);
-      if (newVal && newVal.trim() && newVal.trim() !== oldVal) {
-        list[idx] = newVal.trim();
-        Object.keys(state.agihanTugas).forEach(tName => {
-          const tDuties = state.agihanTugas[tName];
-          if (Array.isArray(tDuties[currentSettingTaskCategory])) {
-            tDuties[currentSettingTaskCategory].forEach(d => {
-              if (d.task === oldVal) d.task = newVal.trim();
-            });
-          }
-        });
-        saveToStorage(`Kemaskini tugasan ${currentSettingTaskCategory.toUpperCase()}: ${oldVal} -> ${newVal.trim()}`);
-        renderSettingTasksList();
-        refreshEntireSystem();
-        showNotification('Nama tugasan berjaya dikemaskini!');
+      if (!oldVal) return;
+
+      if (newVal !== oldVal && list.includes(newVal)) {
+        return showNotification('Nama tugasan ini telah wujud dalam kategori ini.', true);
       }
+
+      list[idx] = newVal;
+
+      Object.keys(state.agihanTugas).forEach(tName => {
+        const tDuties = state.agihanTugas[tName];
+        if (Array.isArray(tDuties[currentSettingTaskCategory])) {
+          tDuties[currentSettingTaskCategory].forEach(d => {
+            if (d.task === oldVal) d.task = newVal;
+          });
+        }
+      });
+
+      saveToStorage(`Kemaskini tugasan ${currentSettingTaskCategory.toUpperCase()}: ${oldVal} -> ${newVal}`);
+      closeEditTaskModal();
+      renderSettingTasksList();
+      refreshEntireSystem();
+      showNotification('Nama tugasan berjaya dikemaskini dan diselaraskan!');
     }
 
     function deleteTaskFromSection(idx) {
@@ -2862,7 +3213,7 @@
     function printIndividualDutySheet() {
       const name = document.getElementById('searchTeacherSelect').value;
       if (!name) return showNotification('Sila pilih nama guru terlebih dahulu.', true);
-      const teacherObj = state.guruList.find(g => g.name === name) || { grade: '-' };
+      const teacherObj = state.guruList.find(g => g.name === name) || { grade: '-', hakiki: 'Guru Akademik Biasa' };
       const duties = state.agihanTugas[name] || {};
 
       const renderSectionRows = (catName, items) => {
@@ -2889,11 +3240,11 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6 text-xs">
-          <div><b>NAMA GURU:</b> ${name}</div>
+        <div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6 text-xs">
+          <div class="col-span-2"><b>NAMA PEGAWAI / GURU:</b> ${name}</div>
+          <div class="col-span-2"><b>JAWATAN HAKIKI:</b> ${teacherObj.hakiki || 'Guru Akademik Biasa'}</div>
           <div><b>GRED JAWATAN:</b> ${teacherObj.grade}</div>
           <div><b>TARIKH CETAKAN:</b> ${new Date().toLocaleString('ms-MY')}</div>
-          <div><b>STATUS:</b> BERKUAT KUASA SERTA-MERTA</div>
         </div>
 
         <div class="space-y-4">
@@ -2938,18 +3289,7 @@
           </div>
         </div>
 
-        <div class="mt-12 pt-6 border-t border-slate-200 grid grid-cols-2 gap-8 text-center text-xs">
-          <div>
-            <div class="h-16"></div>
-            <div class="font-bold uppercase">${name}</div>
-            <div class="text-[10px] text-slate-500">Tandatangan Penerimaan Tugas</div>
-          </div>
-          <div>
-            <div class="h-16"></div>
-            <div class="font-bold uppercase">MOHD.FAUZI SUNARY</div>
-            <div class="text-[10px] text-slate-500">Guru Penolong Kanan Pentadbiran<br>SM Sains Alam Shah</div>
-          </div>
-        </div>
+        ${getSignatureBlockHTML(true, name)}
 
         <div class="mt-8 text-center text-[8pt] text-slate-400 border-t pt-2">
           Disediakan oleh : Mohd.Fauzi Sunary ,Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah
@@ -2967,7 +3307,10 @@
         rowsHTML += `
           <tr class="border-b border-slate-200">
             <td class="p-2 text-center">${idx + 1}</td>
-            <td class="p-2 font-semibold">${g.name}</td>
+            <td class="p-2">
+              <div class="font-semibold">${g.name}</div>
+              <div class="text-[9px] text-slate-500">${g.hakiki || 'Guru Akademik Biasa'}</div>
+            </td>
             <td class="p-2 text-center">${g.grade}</td>
             <td class="p-2 text-center">${sc.pScore}</td>
             <td class="p-2 text-center">${sc.kScore}</td>
@@ -2993,7 +3336,7 @@
           <thead class="bg-slate-100 border-b">
             <tr>
               <th class="p-2 text-center">Bil</th>
-              <th class="p-2">Nama Guru</th>
+              <th class="p-2">Nama Guru & Jawatan Hakiki</th>
               <th class="p-2 text-center">Gred</th>
               <th class="p-2 text-center">Ptd</th>
               <th class="p-2 text-center">Kur</th>
@@ -3007,13 +3350,7 @@
           <tbody>${rowsHTML}</tbody>
         </table>
 
-        <div class="mt-12 pt-6 border-t border-slate-200 flex justify-end text-center text-xs">
-          <div class="w-64">
-            <div class="h-16"></div>
-            <div class="font-bold uppercase">MOHD.FAUZI SUNARY</div>
-            <div class="text-[10px] text-slate-500">Guru Penolong Kanan Pentadbiran<br>SM Sains Alam Shah</div>
-          </div>
-        </div>
+        ${getSignatureBlockHTML(false)}
 
         <div class="mt-8 text-center text-[8pt] text-slate-400 border-t pt-2">
           Disediakan oleh : Mohd.Fauzi Sunary ,Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah
@@ -3052,13 +3389,7 @@
           </p>
         </div>
 
-        <div class="mt-12 pt-6 border-t border-slate-200 flex justify-end text-center text-xs">
-          <div class="w-64">
-            <div class="h-16"></div>
-            <div class="font-bold uppercase">MOHD.FAUZI SUNARY</div>
-            <div class="text-[10px] text-slate-500">Guru Penolong Kanan Pentadbiran<br>SM Sains Alam Shah</div>
-          </div>
-        </div>
+        ${getSignatureBlockHTML(false)}
 
         <div class="mt-8 text-center text-[8pt] text-slate-400 border-t pt-2">
           Disediakan oleh : Mohd.Fauzi Sunary ,Guru Penolong Kanan Pentadbiran, SM Sains Alam Shah
@@ -3080,6 +3411,7 @@
       closeLogoutModal();
       saveToStorage(`Pengguna log keluar: ${currentUser ? currentUser.fullName : 'Pengguna'}`);
       saveCurrentSession(null);
+      onTeacherChange();
       showNotification('Sesi AWAS telah ditutup.');
       setTimeout(() => {
         openAuthModal();
@@ -3089,6 +3421,7 @@
     // Permulaan Sistem AWAS
     window.addEventListener('DOMContentLoaded', () => {
       currentUser = loadCurrentSession();
+      populateHakikiDropdowns();
       renderTeacherDropdown();
       onTeacherChange();
       renderAuditLogs();
